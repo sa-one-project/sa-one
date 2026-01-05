@@ -1,4 +1,4 @@
-<init>(<global>): <프로젝트 전체 세팅>
+<type>(<scope>): <subject>
 
 # --- COMMIT END ---
 # Type:
