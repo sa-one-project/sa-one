@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: local
+    group:
+      local: common, secret
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+  servlet:
+    multipart:
+      max-file-size: 10MB    # 파일 하나당 크기
+      max-request-size: 100MB    # 요청 전체 크기
+
+server:
+  tomcat:
+    max-swallow-size: -1  # 스프링 부트가 주는걸 다 기다리겠다
+
+
+springdoc:
+  swagger-ui:
+    path: doc
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.korit.post_mini_project_back.entity
