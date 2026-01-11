@@ -1,6 +1,6 @@
 package com.korit.sa_one_back.filter;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
 import com.korit.sa_one_back.mapper.UserMapper;
 import com.korit.sa_one_back.security.PrincipalUser;
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 토큰이 유효할 경우
         int userId = jwtTokenProvider.getUserId(accessToken);
-        User foundUser = userMapper.findByUserId(userId);
+        UserEntity foundUser = userMapper.findByUserId(userId);
 
         if (foundUser == null) {
             filterChain.doFilter(request, response);

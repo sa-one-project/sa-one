@@ -24,63 +24,63 @@
         )
     </insert>
 
-    <select id="findByUserId" resultType="User">
+    <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
-            user_id       as userId,
-            username      as username,
-            password      as password,
-            oauth2_id     as oauth2Id,
-            provider      as provider,
-            name          as name,
-            phone         as phone,
-            email         as email,
-            img_url       as imgUrl,
-            img_path      as imgPath,
-            role_id       as roleId,
-            created_at    as createdAt,
-            updated_at    as updatedAt
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
         from
             user_tb
         where
             user_id = #{userId}
     </select>
 
-    <select id="findByUsername" resultType="User">
+    <select id="findByUsername" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
-            user_id       as userId,
-            username      as username,
-            password      as password,
-            oauth2_id     as oauth2Id,
-            provider      as provider,
-            name          as name,
-            phone         as phone,
-            email         as email,
-            img_url       as imgUrl,
-            img_path      as imgPath,
-            role_id       as roleId,
-            created_at    as createdAt,
-            updated_at    as updatedAt
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
         from
             user_tb
         where
             username = #{username}
     </select>
 
-    <select id="findByOauth2IdAndProvider" resultType="User">
+    <select id="findByOauth2IdAndProvider" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
-            user_id       as userId,
-            username      as username,
-            password      as password,
-            oauth2_id     as oauth2Id,
-            provider      as provider,
-            name          as name,
-            phone         as phone,
-            email         as email,
-            img_url       as imgUrl,
-            img_path      as imgPath,
-            role_id       as roleId,
-            created_at    as createdAt,
-            updated_at    as updatedAt
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
         from
             user_tb
         where

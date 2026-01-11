@@ -1,8 +1,7 @@
 package com.korit.sa_one_back.mapper;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper {
@@ -28,11 +27,11 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
-    int insert(User user);
+    int insert(UserEntity user);
 
-    User findByUserId(int userId);
-    User findByUsername(String username);
-    User findByOauth2IdAndProvider(User user);
+    UserEntity findByUserId(int userId);
+    UserEntity findByUsername(String username);
+    UserEntity findByOauth2IdAndProvider(UserEntity user);
 
 
 }

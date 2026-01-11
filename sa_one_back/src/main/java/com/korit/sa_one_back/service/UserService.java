@@ -1,11 +1,9 @@
 package com.korit.sa_one_back.service;
 
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.mapper.UserMapper;
-import com.korit.sa_one_back.security.PrincipalUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +13,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     public void createOauth2User(OAuth2SignUpReqDto dto) {
-        User user = User.builder()
+        UserEntity user = UserEntity.builder()
                 .oauth2Id(dto.getOauth2Id())
                 .provider(dto.getProvider())
                 .name(dto.getName())

@@ -4,16 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
 
-@Alias("User")
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserEntity {
     private int userId; // PK, NN, AI
     private String username; // NN, UQ
     private String password;

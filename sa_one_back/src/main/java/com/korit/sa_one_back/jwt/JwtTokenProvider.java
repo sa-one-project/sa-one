@@ -1,6 +1,6 @@
 package com.korit.sa_one_back.jwt;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -22,7 +22,7 @@ public class JwtTokenProvider {
         key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createToken(User userEntity) {
+    public String createToken(UserEntity userEntity) {
 
         Date now = new Date();
 

@@ -1,6 +1,6 @@
 package com.korit.sa_one_back.service;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.security.PrincipalUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -26,7 +26,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         Collection<? extends GrantedAuthority> authorities = oAuth2User.getAuthorities();
         Map<String, Object> attributes = new LinkedHashMap<>();
         String nameAttributeKey = null;
-        User user = null;
+        UserEntity user = null;
 
         if ("NAVER".equalsIgnoreCase(clientName)) {
             Map<String, Object> response =
@@ -35,7 +35,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
             attributes.putAll(response);
             nameAttributeKey = "id";
 
-            user = User.builder()
+            user = UserEntity.builder()
                     .oauth2Id((String) response.get("id"))
                     .name((String) response.get("name"))
                     .email((String) response.get("email"))

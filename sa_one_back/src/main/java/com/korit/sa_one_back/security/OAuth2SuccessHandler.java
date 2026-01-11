@@ -1,10 +1,8 @@
 package com.korit.sa_one_back.security;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
 import com.korit.sa_one_back.mapper.UserMapper;
-import com.korit.sa_one_back.service.UserService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +25,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             throws IOException {
 
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
-        User oauthUser = principalUser.getUser();
+        UserEntity oauthUser = principalUser.getUser();
 
         // 1️⃣ DB에 이미 있는 소셜 유저인지 확인
-        User foundUser =
+        UserEntity foundUser =
                 userMapper.findByOauth2IdAndProvider(oauthUser);
 
         if (foundUser != null) {
