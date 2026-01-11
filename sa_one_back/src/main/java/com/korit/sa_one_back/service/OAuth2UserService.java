@@ -17,7 +17,9 @@ import java.util.Map;
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+    public OAuth2User loadUser(OAuth2UserRequest userRequest)
+            throws OAuth2AuthenticationException {
+
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String clientName = userRequest.getClientRegistration().getClientName();
 
@@ -27,19 +29,23 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         User user = null;
 
         if ("NAVER".equalsIgnoreCase(clientName)) {
-            Map<String, Object> response = (Map<String, Object>) oAuth2User.getAttributes().get("response");
+            Map<String, Object> response =
+                    (Map<String, Object>) oAuth2User.getAttributes().get("response");
+
             attributes.putAll(response);
             nameAttributeKey = "id";
+
             user = User.builder()
                     .oauth2Id((String) response.get("id"))
                     .name((String) response.get("name"))
                     .email((String) response.get("email"))
                     .provider(clientName)
-                    .role(authorities.stream().findFirst().get().toString())
                     .imgUrl((String) response.get("profile_image"))
-                    .imgFilePath(null)
+                    .imgPath(null)
+                    .roleId(0) // 가입유형 미정
                     .build();
         }
+
 
         return new PrincipalUser(authorities, attributes, nameAttributeKey, user);
     }

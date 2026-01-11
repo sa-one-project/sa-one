@@ -45,6 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
         // 토큰이 유효할 경우
         int userId = jwtTokenProvider.getUserId(accessToken);
         User foundUser = userMapper.findByUserId(userId);
@@ -53,14 +54,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        // System.out.println("필터 동작 !!");
 
-        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(foundUser.getRole()));
-        PrincipalUser principalUser = new PrincipalUser(authorities, Map.of("id", foundUser.getOauth2Id()), "id", foundUser);
-        String password = "";
+        String role = foundUser.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+
+
+        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+
+        // oauth2Id null 방지
+        String oauth2Id = foundUser.getOauth2Id() == null ? "" : foundUser.getOauth2Id();
+
+        PrincipalUser principalUser = new PrincipalUser(authorities, Map.of("id", oauth2Id), "id", foundUser);
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(principalUser, password, authorities);
+                new UsernamePasswordAuthenticationToken(principalUser, "", authorities);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 필터 연결
         filterChain.doFilter(request, response);

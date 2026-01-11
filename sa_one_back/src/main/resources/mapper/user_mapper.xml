@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.UserMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_tb
+        values (
+            default,
+            #{username},
+            #{password},
+            #{oauth2Id},
+            #{provider},
+            #{name},
+            #{phone},
+            #{email},
+            #{imgUrl},
+            #{imgPath},
+            #{roleId},
+            now(),
+            now()
+        )
+    </insert>
+
+    <select id="findByUserId" resultType="User">
+        select
+            user_id       as userId,
+            username      as username,
+            password      as password,
+            oauth2_id     as oauth2Id,
+            provider      as provider,
+            name          as name,
+            phone         as phone,
+            email         as email,
+            img_url       as imgUrl,
+            img_path      as imgPath,
+            role_id       as roleId,
+            created_at    as createdAt,
+            updated_at    as updatedAt
+        from
+            user_tb
+        where
+            user_id = #{userId}
+    </select>
+
+    <select id="findByUsername" resultType="User">
+        select
+            user_id       as userId,
+            username      as username,
+            password      as password,
+            oauth2_id     as oauth2Id,
+            provider      as provider,
+            name          as name,
+            phone         as phone,
+            email         as email,
+            img_url       as imgUrl,
+            img_path      as imgPath,
+            role_id       as roleId,
+            created_at    as createdAt,
+            updated_at    as updatedAt
+        from
+            user_tb
+        where
+            username = #{username}
+    </select>
+
+    <select id="findByOauth2IdAndProvider" resultType="User">
+        select
+            user_id       as userId,
+            username      as username,
+            password      as password,
+            oauth2_id     as oauth2Id,
+            provider      as provider,
+            name          as name,
+            phone         as phone,
+            email         as email,
+            img_url       as imgUrl,
+            img_path      as imgPath,
+            role_id       as roleId,
+            created_at    as createdAt,
+            updated_at    as updatedAt
+        from
+            user_tb
+        where
+            oauth2_id = #{oauth2Id}
+        and
+            provider = #{provider}
+    </select>
+
+</mapper>
