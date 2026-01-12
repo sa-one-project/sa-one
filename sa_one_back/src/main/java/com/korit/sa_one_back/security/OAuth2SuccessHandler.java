@@ -1,9 +1,8 @@
 package com.korit.sa_one_back.security;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
-import com.korit.sa_one_back.service.UserService;
-import jakarta.servlet.ServletException;
+import com.korit.sa_one_back.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,32 +11,39 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        // 로그인하면 이까지 넘어옴
-        System.out.println(authentication);
-//        DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-//        oAuth2User.getAttributes().get("id");
-        // 이 과정을 getName으로 압축시킴
-        User foundUser = userService.findUserByOauth2Id(authentication.getName());
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication)
+            throws IOException {
 
-        // 데이터베이스에서 User 정보 조회
-//        User foundUser = User.builder()
-//                .userId(10)
-//                .build();
-        if (foundUser == null) {
-            // 회원가입
-            foundUser = userService.createUser(authentication);
+        PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
+        UserEntity oauthUser = principalUser.getUser();
+
+        // 1️⃣ DB에 이미 있는 소셜 유저인지 확인
+        UserEntity foundUser =
+                userMapper.findByOauth2IdAndProvider(oauthUser);
+
+        if (foundUser != null) {
+            // 2️⃣ 이미 가입됨 → JWT 발급 → 로그인 완료
+            String token = jwtTokenProvider.createToken(foundUser);
+            response.sendRedirect(
+                    "http://localhost:5173/auth/login/oauth2?accessToken=" + token
+            );
+            return;
         }
-        String accessToken = jwtTokenProvider.createToken(foundUser);
-        response.sendRedirect("http://localhost:5173/auth/login/oauth2?accessToken=" + accessToken);
+
+        // 3️⃣ 신규 유저 → 가입유형 선택 필요
+        // (프론트에서 roleId 선택 후 /api/auth/oauth2/signup 호출)
+        response.sendRedirect(
+                "http://localhost:5173/auth/signup/oauth2"
+        );
     }
 }

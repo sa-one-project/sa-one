@@ -1,6 +1,6 @@
 package com.korit.sa_one_back.security;
 
-import com.korit.sa_one_back.entity.User;
+import com.korit.sa_one_back.entity.UserEntity;
 import lombok.Getter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,9 +13,9 @@ import java.util.Map;
 @Getter
 public class PrincipalUser extends DefaultOAuth2User {
 
-    private User user;
+    private UserEntity user;
 
-    public PrincipalUser(Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, User user) {
+    public PrincipalUser(Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes, String nameAttributeKey, UserEntity user) {
         super(authorities, attributes, nameAttributeKey);
         this.user = user;
     }

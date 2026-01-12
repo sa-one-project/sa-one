@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.UserMapper">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_tb
+        values (
+            default,
+            #{username},
+            #{password},
+            #{oauth2Id},
+            #{provider},
+            #{name},
+            #{phone},
+            #{email},
+            #{imgUrl},
+            #{imgPath},
+            #{roleId},
+            now(),
+            now()
+        )
+    </insert>
+
+    <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
+        from
+            user_tb
+        where
+            user_id = #{userId}
+    </select>
+
+    <select id="findByUsername" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
+        from
+            user_tb
+        where
+            username = #{username}
+    </select>
+
+    <select id="findByOauth2IdAndProvider" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
+        from
+            user_tb
+        where
+            oauth2_id = #{oauth2Id}
+        and
+            provider = #{provider}
+    </select>
+
+</mapper>
