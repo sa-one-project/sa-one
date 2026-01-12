@@ -5,19 +5,63 @@
 
 <mapper namespace="com.korit.sa_one_back.mapper.UserMapper">
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
-        insert into user_tb
-        values (
+    <insert id="insertLocalUser" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_tb(
+            user_id,
+            username,
+            password,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            oauth2_id,
+            provider,
+            role_id,
+            created_at,
+            updated_at
+        ) values (
             default,
             #{username},
             #{password},
-            #{oauth2Id},
-            #{provider},
             #{name},
             #{phone},
             #{email},
             #{imgUrl},
             #{imgPath},
+            #{oauth2Id},
+            #{provider},
+            #{roleId},
+            now(),
+            now()
+        )
+    </insert>
+    <insert id="insertOauth2User" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_tb(
+            user_id,
+            username,
+            password,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            oauth2_id,
+            provider,
+            role_id,
+            created_at,
+            updated_at
+        ) values (
+            default,
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{email},
+            #{imgUrl},
+            #{imgPath},
+            #{oauth2Id},
+            #{provider},
             #{roleId},
             now(),
             now()
@@ -26,19 +70,7 @@
 
     <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
-            user_id,
-            username,
-            password,
-            oauth2_id,
-            provider,
-            name,
-            phone,
-            email,
-            img_url,
-            img_path,
-            role_id,
-            created_at,
-            updated_at,
+            *
         from
             user_tb
         where
@@ -66,21 +98,18 @@
             username = #{username}
     </select>
 
+    <select id="findByEmail" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            *
+        from
+            user_tb
+        where
+            email = #{email}
+    </select>
+
     <select id="findByOauth2IdAndProvider" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
-            user_id,
-            username,
-            password,
-            oauth2_id,
-            provider,
-            name,
-            phone,
-            email,
-            img_url,
-            img_path,
-            role_id,
-            created_at,
-            updated_at,
+            *
         from
             user_tb
         where

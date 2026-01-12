@@ -55,18 +55,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String role = foundUser.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+//        String role = foundUser.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
 
-
-        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+//        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
 
         // oauth2Id null 방지
         String oauth2Id = foundUser.getOauth2Id() == null ? "" : foundUser.getOauth2Id();
 
-        PrincipalUser principalUser = new PrincipalUser(authorities, Map.of("id", oauth2Id), "id", foundUser);
+        String provider = foundUser.getProvider() == null ? "" : foundUser.getProvider();
+        String email = foundUser.getEmail() == null ? "" : foundUser.getEmail();
+        String name = foundUser.getName() == null ? "" : foundUser.getName();
+
+        PrincipalUser principalUser = new PrincipalUser(
+                Map.of("id", oauth2Id),
+                oauth2Id,
+                provider,
+                email,
+                name,
+                foundUser
+        );
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(principalUser, "", authorities);
+                new UsernamePasswordAuthenticationToken(principalUser, "", principalUser.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // 필터 연결
