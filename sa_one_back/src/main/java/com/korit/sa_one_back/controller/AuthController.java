@@ -3,12 +3,15 @@ package com.korit.sa_one_back.controller;
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
 import com.korit.sa_one_back.dto.request.SignInReqDto;
 import com.korit.sa_one_back.dto.request.SignUpReqDto;
+import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
 import com.korit.sa_one_back.mapper.UserMapper;
 import com.korit.sa_one_back.security.PrincipalUser;
 import com.korit.sa_one_back.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +31,13 @@ public class AuthController {
     public ResponseEntity<?> signUp(@RequestBody SignUpReqDto dto) {
         userService.createLocalUser(dto);
         // 가입 후 JWT 발급
-        String token = jwtTokenProvider.createToken(userMapper.findByUsername(dto.getUsername()));
-        return ResponseEntity.ok().body(token);
+        UserEntity user = userMapper.findUserByUsername(dto.getUsername());
+        if (user != null) {
+            String token = jwtTokenProvider.createToken(user);
+            return ResponseEntity.ok().body(token);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 후 사용자 조회 실패");
+        }
     }
 
     @PostMapping("/oauth2/signup")
@@ -49,9 +57,10 @@ public class AuthController {
         return ResponseEntity.ok().body(token);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@Valid @RequestParam SignInReqDto dto) {
+    @PostMapping("/local/signin")
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInReqDto dto) {
         String accessToken = userService.signin(dto);
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
+
 }

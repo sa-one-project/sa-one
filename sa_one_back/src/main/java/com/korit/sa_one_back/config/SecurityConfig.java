@@ -61,13 +61,12 @@ public class SecurityConfig {
                 .successHandler(oAuth2SuccessHandler));
 
         // 특정 필터(UsernamePasswordAuthenticationFilter) 전에 직접 만든 필터(jwtAuthenticationFilter) 추가
-//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         // 모든 요청(URL)에 대해 인증 없이 누구나 접근할 수 있도록 허용하는 설정
         http.authorizeHttpRequests(auth -> {
             // permission 전체 허용 -> 이 요청 url은 열어주라고 명령하는것
             auth.requestMatchers("/api/auth/**").permitAll();
-            http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
             auth.requestMatchers("/v3/api-docs/**").permitAll();
             auth.requestMatchers("/swagger-ui/**").permitAll();
             auth.requestMatchers("/swagger-ui.html").permitAll();

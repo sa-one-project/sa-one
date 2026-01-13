@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class OAuth2SignUpReqDto {
 
@@ -20,6 +22,9 @@ public class OAuth2SignUpReqDto {
 
     private String tempToken;
     private int roleId;
+    private String gender;
+    private Date birthDate;
+    private boolean isDeleted;
 
     public UserEntity toOauth2Entity() {
         return UserEntity.builder()
@@ -33,6 +38,9 @@ public class OAuth2SignUpReqDto {
                 .imgPath(imgPath)
                 .oauth2Id(oauth2Id)
                 .provider(provider)
+                .gender(gender)
+                .birthDate(birthDate)
+                .isDeleted(false)
                 .build();
     }
 }

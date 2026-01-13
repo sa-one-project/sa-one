@@ -10,30 +10,34 @@
             user_id,
             username,
             password,
+            oauth2_id,
+            provider,
             name,
             phone,
             email,
             img_url,
             img_path,
-            oauth2_id,
-            provider,
             role_id,
             created_at,
-            updated_at
+            updated_at,
+            gender,
+            birth_date
         ) values (
             default,
             #{username},
             #{password},
+            #{oauth2Id},
+            #{provider},
             #{name},
             #{phone},
             #{email},
             #{imgUrl},
             #{imgPath},
-            #{oauth2Id},
-            #{provider},
             #{roleId},
             now(),
-            now()
+            now(),
+            #{gender},
+            #{birthDate}
         )
     </insert>
     <insert id="insertOauth2User" useGeneratedKeys="true" keyProperty="userId">
@@ -41,16 +45,18 @@
             user_id,
             username,
             password,
+            oauth2_id,
+            provider,
             name,
             phone,
             email,
             img_url,
             img_path,
-            oauth2_id,
-            provider,
             role_id,
             created_at,
-            updated_at
+            updated_at,
+            gender,
+            birth_date
         ) values (
             default,
             #{username},
@@ -64,9 +70,21 @@
             #{provider},
             #{roleId},
             now(),
-            now()
+            now(),
+            #{gender},
+            #{birthDate}
         )
     </insert>
+
+    <update id="softDelete">
+        UPDATE
+            user_tb
+        SET
+            is_deleted = TRUE,
+            deleted_at = NOW()
+        WHERE
+            user_id = #{userId}
+    </update>
 
     <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
@@ -75,9 +93,34 @@
             user_tb
         where
             user_id = #{userId}
+        and
+            is_deleted = false
     </select>
 
-    <select id="findByUsername" resultType="com.korit.sa_one_back.entity.UserEntity">
+    <select id="findByEmail" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            *
+        from
+            user_tb
+        where
+            email = #{email}
+        and
+            is_deleted = false
+    </select>
+
+    <select id="findByOauth2IdAndProvider" resultType="com.korit.sa_one_back.entity.UserEntity">
+        select
+            *
+        from
+            user_tb
+        where
+            oauth2_id = #{oauth2Id}
+        and
+            provider = #{provider}
+        and
+            is_deleted = false
+    </select>
+    <select id="findUserByUsername" resultType="com.korit.sa_one_back.entity.UserEntity">
         select
             user_id,
             username,
@@ -92,30 +135,14 @@
             role_id,
             created_at,
             updated_at,
+            gender,
+            birth_date
         from
             user_tb
         where
             username = #{username}
-    </select>
-
-    <select id="findByEmail" resultType="com.korit.sa_one_back.entity.UserEntity">
-        select
-            *
-        from
-            user_tb
-        where
-            email = #{email}
-    </select>
-
-    <select id="findByOauth2IdAndProvider" resultType="com.korit.sa_one_back.entity.UserEntity">
-        select
-            *
-        from
-            user_tb
-        where
-            oauth2_id = #{oauth2Id}
         and
-            provider = #{provider}
+            is_deleted = false
     </select>
 
 </mapper>

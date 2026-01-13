@@ -16,6 +16,7 @@ import java.util.Map;
 public class PrincipalUser implements OAuth2User {
 
     private final Map<String, Object> attributes;
+    private final Long userId;
     private final String oauth2Id;
     private final String provider;
     private final String email;
@@ -29,7 +30,9 @@ public class PrincipalUser implements OAuth2User {
                          String email,
                          String name,
                          UserEntity user) {
+
         this.attributes = attributes;
+        this.userId = user != null ? user.getUserId() : null;
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;

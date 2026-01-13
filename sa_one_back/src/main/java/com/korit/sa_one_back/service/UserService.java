@@ -73,5 +73,15 @@ public class UserService extends DefaultOAuth2UserService {
 
         return accessToken;
     }
+
+    public void delete(long userId) throws IllegalAccessException {
+        UserEntity user = userMapper.findByUserId(userId);
+
+        if (user == null || user.isDeleted()) {
+            throw new IllegalAccessException("이미 탈퇴한 사용자 입니다.");
+        }
+
+        userMapper.softDelete(userId);
+    }
 }
 

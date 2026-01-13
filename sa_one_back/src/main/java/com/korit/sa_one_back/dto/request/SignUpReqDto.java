@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Date;
+
 @Data
 public class SignUpReqDto {
 
@@ -24,6 +26,9 @@ public class SignUpReqDto {
     private String email;
     private String imgUrl;
     private String imgPath;
+    private String gender;
+    private Date birthDate;
+    private boolean isDeleted;
 
     public UserEntity toLocalEntity(BCryptPasswordEncoder passwordEncoder) {
         return UserEntity.builder()
@@ -37,6 +42,9 @@ public class SignUpReqDto {
                 .imgPath(imgPath)
                 .oauth2Id(null)
                 .provider(null)
+                .gender(gender)
+                .birthDate(birthDate)
+                .isDeleted(false)
                 .build();
     }
 

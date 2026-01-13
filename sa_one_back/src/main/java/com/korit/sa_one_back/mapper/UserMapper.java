@@ -28,13 +28,13 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
-    int insert(UserEntity user);
     int insertLocalUser(UserEntity user);
     int insertOauth2User(UserEntity user);
 
-    UserEntity findByUserId(int userId);
-    UserEntity findByUsername(String username);
+    UserEntity findByUserId(long userId);
+    UserEntity findUserByUsername(String username);
     UserEntity findByOauth2IdAndProvider(String provider, String oauth2Id);
 
-    UserEntity findUserByUsername(String username);
+    int softDelete(long userId);
+
 }
