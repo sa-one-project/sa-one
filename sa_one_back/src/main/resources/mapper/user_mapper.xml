@@ -145,4 +145,15 @@
             is_deleted = false
     </select>
 
+    <select id="findRoleNameByUserId" resultType="string">
+        select
+            rt.role_name
+        from
+            user_tb ut
+        join
+            role_tb rt on rt.role_id = ut.role_id
+        where
+            ut.user_id = #{userId}
+    </select>
+
 </mapper>
