@@ -1,42 +1,63 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
-    // 데이터 공간
+    // 사용자 입력값 관리를 위한 state
     const [id, setId] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
 
-    const navigate = useNavigate(); // *이동 기능
-
-    // 로그인 버튼 클릭하면 실행
+    // 로그인 로직 처리
     const handleLogin = () => {
-        // 아이디 or 비밀번호 공란 체크
+        // 유효성 검사: 아이디/비밀번호 빈값 체크
         if (id === "" || password === "") {
-            alert("아이디와 비밀번호를 모두 입력해주세요.")
+            alert("아이디와 비밀번호를 모두 입력해주세요.");
             return;
         }
 
-        // 공란이 아니며 성공적으로 로그인 되었을 시에 띄울 알람
-        alert("로그인 성공")
-        navigate("/") // *성공 알람 클릭 시 메인 화면으로 이동
+        /**
+         * TODO: 백엔드 API 연결 후 실제 인증 로직으로 교체 예정
+         * 현재는 메인 페이지(Home) 진입 확인을 위해 임시 토큰 발행 처리함
+         */
+        localStorage.setItem("AccessToken", "temp-token-1234");
+        
+        alert("로그인 성공");
+        
+        /**
+         * navigate("/") 대신 replace를 사용하여 히스토리를 남기지 않고 메인으로 이동
+         * 로그인 성공 후 뒤로가기 방지 및 전체 인증 상태 갱신을 위해 window.location 사용
+         */
+        window.location.replace("/");
     };
 
     return (
-        <div>
+        <div style={{ padding: "20px" }}>
             <h2>로그인</h2>
-            <input
-                type="text"
+            {/* 아이디 입력부 */}
+            <input 
+                type="text" 
                 placeholder="아이디" 
-                onChange={(e) => setId(e.target.value)}  
+                value={id}
+                onChange={(e) => setId(e.target.value)} 
             />
-            <div>
+            
+            <div style={{ marginTop: "10px" }}>
+                {/* 비밀번호 입력부 */}
                 <input 
-                    type="password"
-                    placeholder="비밀번호"
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="password" 
+                    placeholder="비밀번호" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)} 
                 />
             </div>
-            <button onClick={handleLogin}>로그인</button>
+
+            {/* 로그인 실행 버튼 */}
+            <button 
+                onClick={handleLogin} 
+                style={{ marginTop: "10px", cursor: "pointer" }}
+            >
+                로그인
+            </button>
         </div>
     );
 }
