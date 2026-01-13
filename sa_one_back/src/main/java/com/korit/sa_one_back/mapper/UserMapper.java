@@ -1,6 +1,7 @@
 package com.korit.sa_one_back.mapper;
 
 import com.korit.sa_one_back.entity.UserEntity;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -27,11 +28,13 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
-    int insert(UserEntity user);
+    int insertLocalUser(UserEntity user);
+    int insertOauth2User(UserEntity user);
 
-    UserEntity findByUserId(int userId);
-    UserEntity findByUsername(String username);
-    UserEntity findByOauth2IdAndProvider(UserEntity user);
+    UserEntity findByUserId(long userId);
+    UserEntity findUserByUsername(String username);
+    UserEntity findByOauth2IdAndProvider(String provider, String oauth2Id);
 
+    int softDelete(long userId);
 
 }
