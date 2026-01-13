@@ -3,6 +3,7 @@ package com.korit.sa_one_back.service;
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
 import com.korit.sa_one_back.dto.request.SignInReqDto;
 import com.korit.sa_one_back.dto.request.SignUpReqDto;
+import com.korit.sa_one_back.dto.request.UpdateMyPageReqDto;
 import com.korit.sa_one_back.dto.response.UserMeRespDto;
 import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
@@ -90,9 +91,7 @@ public class UserService extends DefaultOAuth2UserService {
     }
 
     /**
-     * ✅ 마이페이지 정보 조회 (사장 / 직원 공통)
-     * <p>
-     * 개발자 사고 흐름:
+     * 마이페이지 정보 조회 (사장 / 직원 공통)
      * 1) userId로 user_tb 조회 (공통 정보)
      * 2) role_tb join해서 role_name 조회
      * 3) role에 따라 필요한 정보만 추가 조회
@@ -160,6 +159,31 @@ public class UserService extends DefaultOAuth2UserService {
                 .employeeInfo(employeeInfo)
                 .ownerInfo(ownerInfo)
                 .build();
+    }
+
+    /**
+     * ✅ 마이페이지 수정
+
+     * 1) 로그인 userId를 서버에서 확정한다 (프론트가 바꾸게 두면 안 됨)
+     * 2) PATCH이므로 넘어온 값만 Entity에 담는다
+     * 3) mapper update 실행
+     * 4) 반영된 row가 0이면 예외(유저 없음 등)
+     */
+    public void updateMyPage(Long userId, UpdateMyPageReqDto dto) {
+
+        UserEntity user = new UserEntity();
+        user.setUserId(userId);
+
+        // PATCH: null/빈문자면 수정하지 않도록 mapper에서 if 처리함
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setImgUrl(dto.getImgUrl());
+
+        int result = userMapper.updateMyPage(user);
+
+        if (result == 0) {
+            throw new RuntimeException("회원 정보 수정에 실패했습니다.");
+        }
     }
 }
 

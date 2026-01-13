@@ -37,6 +37,8 @@ public interface UserMapper {
 
     String findRoleNameByUserId(Long userId);
 
+    int updateMyPage(UserEntity user);
+
     int softDelete(long userId);
 
 }
