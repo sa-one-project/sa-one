@@ -56,7 +56,7 @@ function AuthRoute() {
     // 로그인 성공했을 때 보여줄 라우트 (메인 페이지 등)
     return (
         <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/*" element={<Home />} />
             {/* 이상한 주소로 들어오면 일단 홈으로 던짐 */}
             <Route path="*" element={<Home />} />
         </Routes>

@@ -47,7 +47,7 @@ function AuthRoute() {
     return (
         <Routes>
             {/* 기본 루트 경로를 Home 컴포넌트에 연결 */}
-            <Route path="/" element={<Home />} />
+            <Route path="/*" element={<Home />} />
             {/* 정의되지 않은 경로 접근 시 홈으로 이동 */}
             <Route path="*" element={<Home />} />
         </Routes>
