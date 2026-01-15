@@ -6,6 +6,7 @@ import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/SignUp";
 import OwnerMain from "./pages/owner/OwnerMain";
 import EmployeeMain from "./pages/employee/EmployeeMain";
+import MyPage from "./pages/MyPage";
 
 
 function App() {
@@ -25,6 +26,9 @@ function App() {
                 {/* 사장님, 직원 전용 메인 */}
                 <Route path="/owner" element={<OwnerMain />} />
                 <Route path="/employee" element={<EmployeeMain />} />
+
+                {/* 사장님, 직원 공용 기능 */}
+                <Route path="/mypage" element={<MyPage />} />
             </Routes>
         </BrowserRouter>
     );

@@ -6,7 +6,7 @@ import { useAuthStore } from "../stores/useAuthStore";
 function Home() {
     const navigate = useNavigate();
     // 로그인 여부, 역할 가져옴
-    const { isLoggedIn, userRole } = useAuthStore();
+    const { isLoggedIn, role } = useAuthStore();
 
     // 로그인을 하지 않은 상태
     if (!isLoggedIn) {
@@ -24,7 +24,7 @@ function Home() {
 
     return (
         <div>
-            {userRole === "OWNER" ? (
+            {role === "OWNER" ? (
                 <OwnerMain /> // 사장님 메인
             ) : (
                 <EmployeeMain /> // 직원 메인
