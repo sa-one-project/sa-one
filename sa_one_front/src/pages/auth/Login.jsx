@@ -31,17 +31,27 @@ function Login() {
 
                 // ★ 임의 추가
                 const { accessToken, user } = response.data;
-                let role = "EMPLOYEE";
-                
-                if (user && user.roleId) {
-                    role = user.roleId === 1 ? "OWNER" : "EMPLOYEE";
-                } else if (loginData.username === "test5555") {
+                // ★ test5555이면 무조건 OWNER로 설정하여 테스트
+                let role = "EMPLOYEE"; 
+                if (loginData.username === "test5555") {
+                    role = "OWNER"; 
+                } else if (user && user.roleId === 1) {
                     role = "OWNER";
                 }
+
+                console.log("지금 저장될 역할은?:", role);
 
                 // login(token, role);
                 login(accessToken, role);
                 alert("로그인 성공");
+
+                // ★ [페이지 이동] 역할에 맞는 경로로 강제 이동시킵니다.
+                if (role === "OWNER") {
+                    navigate("/owner"); // 또는 사장님용 메인 경로
+                } else {
+                    navigate("/employee");
+                }
+
 
                 // if (role === "OWNER") {
                 //     navigate("/owner")
