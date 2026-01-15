@@ -1,63 +1,60 @@
+import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-    // 사용자 입력값 관리를 위한 state
-    const [id, setId] = useState('');
-    const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const [loginData, setLoginData] = useState({
+        username: "", // SignInReqDto 필드명
+        password: ""
+    });
 
-    // 로그인 로직 처리
-    const handleLogin = () => {
-        // 유효성 검사: 아이디/비밀번호 빈값 체크
-        if (id === "" || password === "") {
-            alert("아이디와 비밀번호를 모두 입력해주세요.");
-            return;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setLoginData({...loginData, [name]: value});
+    };
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post("http://localhost:8080/api/auth/local/signin", loginData);
+
+            if (response.status === 200) {
+                const token = response.data.accessToken;
+                localStorage.setItem("AccessToken", token);
+
+                alert("로그인 성공");
+                navigate("/"); // 로그인 성공 시 메인 화면으로 다시 돌아감. (대신 로그인 하지 않은 사람과 다르게 사이드바 메뉴가 활성화 됨.)
+            }
+            // if 에서 토큰이 확인되지 않으면 아래의 캐치로 넘어가서 에러 메세지를 띄움.
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || "로그인 실패";
+            alert(errorMsg);
         }
-
-        /**
-         * TODO: 백엔드 API 연결 후 실제 인증 로직으로 교체 예정
-         * 현재는 메인 페이지(Home) 진입 확인을 위해 임시 토큰 발행 처리함
-         */
-        localStorage.setItem("AccessToken", "temp-token-1234");
-        
-        alert("로그인 성공");
-        
-        /**
-         * navigate("/") 대신 replace를 사용하여 히스토리를 남기지 않고 메인으로 이동
-         * 로그인 성공 후 뒤로가기 방지 및 전체 인증 상태 갱신을 위해 window.location 사용
-         */
-        window.location.replace("/");
     };
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div>
             <h2>로그인</h2>
-            {/* 아이디 입력부 */}
-            <input 
-                type="text" 
-                placeholder="아이디" 
-                value={id}
-                onChange={(e) => setId(e.target.value)} 
-            />
-            
-            <div style={{ marginTop: "10px" }}>
-                {/* 비밀번호 입력부 */}
-                <input 
-                    type="password" 
-                    placeholder="비밀번호" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)} 
+            <div>
+                {/* 사용자 입력칸 */}
+                <input
+                    name="username"
+                    type="text"
+                    placeholder="아이디"
+                    onChange={handleChange}
                 />
             </div>
-
-            {/* 로그인 실행 버튼 */}
-            <button 
-                onClick={handleLogin} 
-                style={{ marginTop: "10px", cursor: "pointer" }}
-            >
-                로그인
-            </button>
+            <div>
+                <input 
+                    name="password"
+                    type="password"
+                    placeholder="비밀번호"    
+                    onChange={handleChange}
+                />
+            </div>
+            <div>
+                <button onClick={handleLogin}>로그인</button>
+            </div>
         </div>
     );
 }
