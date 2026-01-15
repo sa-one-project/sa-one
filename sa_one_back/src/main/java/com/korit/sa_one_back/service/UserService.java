@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class UserService extends DefaultOAuth2UserService {
@@ -47,13 +49,15 @@ public class UserService extends DefaultOAuth2UserService {
     // Local 회원 생성
     public void createLocalUser(SignUpReqDto dto) {
         UserEntity user = dto.toLocalEntity(passwordEncoder);
-        userMapper.insertLocalUser(user);
+        userMapper.insertUser(user);
     }
 
     // OAuth2 회원 생성
     public void createOauth2User(OAuth2SignUpReqDto dto) {
-        UserEntity user = dto.toOauth2Entity();
-        userMapper.insertOauth2User(user);
+        String password = UUID.randomUUID().toString();
+        String encodedPassword = passwordEncoder.encode(password);
+        UserEntity user = dto.toOauth2Entity(encodedPassword);
+        userMapper.insertUser(user);
     }
 
     public String signin(SignInReqDto dto) {
