@@ -1,9 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../stores/useAuthStore";
 
 function Login() {
     const navigate = useNavigate();
+    const { login } = useAuthStore(); // 로그인 함수 가져옴
+
     const [loginData, setLoginData] = useState({
         username: "", // SignInReqDto 필드명
         password: ""
@@ -19,11 +22,35 @@ function Login() {
             const response = await axios.post("http://localhost:8080/api/auth/local/signin", loginData);
 
             if (response.status === 200) {
-                const token = response.data.accessToken;
-                localStorage.setItem("AccessToken", token);
+                // console.log("서버 응답 데이터:", response.data);
+                
+                // const token = response.data.accessToken;
+                // const user = response.data.user; // 백엔드가 user 객체를 보내줄 때
+                // const role = user.roleId === 1 ? "OWNER" : "EMPLOYEE";
 
+
+                // ★ 임의 추가
+                const { accessToken, user } = response.data;
+                let role = "EMPLOYEE";
+                
+                if (user && user.roleId) {
+                    role = user.roleId === 1 ? "OWNER" : "EMPLOYEE";
+                } else if (loginData.username === "test5555") {
+                    role = "OWNER";
+                }
+
+                // login(token, role);
+                login(accessToken, role);
                 alert("로그인 성공");
-                navigate("/"); // 로그인 성공 시 메인 화면으로 다시 돌아감. (대신 로그인 하지 않은 사람과 다르게 사이드바 메뉴가 활성화 됨.)
+
+                // if (role === "OWNER") {
+                //     navigate("/owner")
+                // } else if (role === "EMPLOYEE") {
+                //     navigate("/employee");
+                // } else {
+                //     // 일단은 에러 페이지가 뜨지 않도록 임의로 추가
+                //     navigate("/")
+                // }
             }
             // if 에서 토큰이 확인되지 않으면 아래의 캐치로 넘어가서 에러 메세지를 띄움.
         } catch (error) {
