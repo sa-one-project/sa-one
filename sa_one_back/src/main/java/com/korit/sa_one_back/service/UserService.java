@@ -3,8 +3,10 @@ package com.korit.sa_one_back.service;
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
 import com.korit.sa_one_back.dto.request.SignInReqDto;
 import com.korit.sa_one_back.dto.request.SignUpReqDto;
+import com.korit.sa_one_back.dto.response.UserMeRespDto;
 import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
+import com.korit.sa_one_back.mapper.MyPageMapper;
 import com.korit.sa_one_back.mapper.UserMapper;
 import com.korit.sa_one_back.security.PrincipalUser;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,6 +29,7 @@ public class UserService extends DefaultOAuth2UserService {
     private final UserMapper userMapper;
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final MyPageMapper myPageMapper;
 
 //    public void createOauth2User(OAuth2SignUpReqDto dto) {
 //        UserEntity user = UserEntity.builder()
@@ -49,7 +53,7 @@ public class UserService extends DefaultOAuth2UserService {
     // Local 회원 생성
     public void createLocalUser(SignUpReqDto dto) {
         UserEntity user = dto.toLocalEntity(passwordEncoder);
-        userMapper.insertUser(user);
+        userMapper.insertLocalUser(user);
     }
 
     // OAuth2 회원 생성
@@ -57,7 +61,7 @@ public class UserService extends DefaultOAuth2UserService {
         String password = UUID.randomUUID().toString();
         String encodedPassword = passwordEncoder.encode(password);
         UserEntity user = dto.toOauth2Entity(encodedPassword);
-        userMapper.insertUser(user);
+        userMapper.insertOauth2User(user);
     }
 
     public String signin(SignInReqDto dto) {
@@ -86,6 +90,77 @@ public class UserService extends DefaultOAuth2UserService {
         }
 
         userMapper.softDelete(userId);
+    }
+    /**
+     * ✅ 마이페이지 정보 조회 (사장 / 직원 공통)
+     * <p>
+     * 개발자 사고 흐름:
+     * 1) userId로 user_tb 조회 (공통 정보)
+     * 2) role_tb join해서 role_name 조회
+     * 3) role에 따라 필요한 정보만 추가 조회
+     * - EMPLOYEE → employeeInfo
+     * - OWNER / MANAGER → ownerInfo (매장 목록 + 선택 매장)
+     * 4) 하나의 Response DTO로 조립해서 반환
+     */
+    public UserMeRespDto getMyPage(Long userId, Long storeId) {
+
+        // 공통 유저 정보
+        UserEntity user = userMapper.findByUserId(userId);
+
+        // role 이름 (OWNER / MANAGER / EMPLOYEE)
+        String roleName = userMapper.findRoleNameByUserId(userId);
+
+        // role별 추가 정보 (기본 null)
+        UserMeRespDto.EmployeeInfo employeeInfo = null;
+        UserMeRespDto.OwnerInfo ownerInfo = null;
+
+        // 직원인 경우
+        if ("EMPLOYEE".equals(roleName)) {
+            employeeInfo = myPageMapper.findEmployeeInfoByUserId(userId);
+
+            // 사장 / 매니저인 경우
+        } else if ("OWNER".equals(roleName) || "MANAGER".equals(roleName)) {
+
+            // (1) 내 사업장 목록
+            List<UserMeRespDto.StoreInfo> storeList =
+                    myPageMapper.findMyStoreList(userId);
+
+            // (2) 선택된 storeId 결정
+            // - 프론트에서 storeId 안 주면 첫 번째 매장 자동 선택
+            Long resolvedStoreId = storeId;
+            if (resolvedStoreId == null) {
+                resolvedStoreId = myPageMapper.findFirstStoreId(userId);
+            }
+
+            // (3) 선택된 사업장 상세
+            UserMeRespDto.StoreInfo selectedStore = null;
+            if (resolvedStoreId != null) {
+                selectedStore =
+                        myPageMapper.findMyStoreDetail(userId, resolvedStoreId);
+            }
+
+            ownerInfo = UserMeRespDto.OwnerInfo.builder()
+                    .storeList(storeList)
+                    .selectedStore(selectedStore)
+                    .build();
+        }
+        // 최종 응답 DTO 조립
+        return UserMeRespDto.builder()
+                .userId(user.getUserId())
+                .role(roleName)
+                .username(user.getUsername())
+
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .imgUrl(user.getImgUrl())
+
+                .name(user.getName())
+                .gender(user.getGender())
+                .birthDate(user.getBirthDate())
+
+                .employeeInfo(employeeInfo)
+                .ownerInfo(ownerInfo)
+                .build();
     }
 }
 
