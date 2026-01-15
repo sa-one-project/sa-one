@@ -1,51 +1,79 @@
+import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom"; 
 
 function SignUp() {
-    // 데이터 공간
-    const [id, setId] = useState('');
-    const [password, setPassword] = useState('');
-    const [msg, setMsg] = useState('');
+    const navigate = useNavigate(); // 이게 선언 되어야 회원가입 성공 시 로그인창X 바로 메인 화면이 뜸.
+    
+    // SignUpReqDto 기반으로 이름을 맞춤
+    const [signUpData, setSignUpData] = useState({
+        username: "",
+        password: "",
+        name: "",
+        email: "",
+        phone: "",
+        gender: "남",
+        birthDate: "",
+        roleId: 1 // 일반 사용자 역할 번호 임의 부여
+    });
 
-    const navigate = useNavigate();
+    const [errorMsg, setErrorMsg] = useState("");
 
-    // 아이디, 비밀번호 검사 로직
-    const checkSignUp = () => {
-        const reg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+    // 입력값이 바뀔 때마다 실행되는 함수
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setSignUpData({
+            ...signUpData,
+            [name]: value
+        });
+    };
 
-        if (id === "") {
-            setMsg("아이디를 입력해주세요.");
-            return;
-        }
+    // 데이터를 백엔드로 전송함. AuthController 주소 기반
+    const handleSignUp = async () => {
+        try {
+            const response = await axios.post("http://localhost:8080/api/auth/local/signup", signUpData);
 
-        if (reg.test(password)) {
-            alert("성공적으로 회원가입 되었습니다.");
-            navigate("/login"); // 성공 알람 창 닫으면 로그인 페이지로 화면 전환
-        } else {
-            setMsg("비밀번호 형식이 틀렸습니다.");
+            if (response.status === 200) {
+                // 백엔드가 준 토큰 꺼내고
+                const token = response.data;
+
+                // localStorage 에 토큰을 저장함. 인증된 사용자라 증명할 수 있음!!
+                localStorage.setItem("accessToken", token);
+                alert("회원가입 성공!")
+
+                // 한 번 더 로그인을 하는 게 아니라 바로 메인 페이지로 이동.
+                navigate("/");
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                setErrorMsg(String(error.response.data));
+            }
         }
     };
 
-    // 2. 이 함수(SignUp)의 바로 아래에 return을 둡니다.
     return (
         <div>
-            <h2>회원가입</h2>
-            <input 
-                type="text" 
-                placeholder="아이디" 
-                onChange={(e) => setId(e.target.value)} 
-            />
-            <div>
-                <input 
-                    type="password" 
-                    placeholder="비밀번호" 
-                    onChange={(e) => setPassword(e.target.value)} 
-                />
-            </div>
-            <button onClick={checkSignUp}>가입하기</button>
-            <p style={{ color: 'red' }}>{msg}</p>
-        </div>
+        <h2>회원가입</h2>
+        
+        <input name="username" placeholder="아이디" onChange={handleChange} />
+        <input name="password" type="password" placeholder="비밀번호" onChange={handleChange} />
+        <input name="name" placeholder="이름" onChange={handleChange} />
+        <input name="email" type="email" placeholder="이메일" onChange={handleChange} />
+        <input name="phone" placeholder="전화번호" onChange={handleChange} />
+
+        <select name="gender" onChange={handleChange}>
+            {/* DB 참고 */}
+            <option value="남">남성</option>
+            <option value="여">여성</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <input name="birthDate" type="date" onChange={handleChange} />
+
+        <button onClick={handleSignUp}>가입하기</button>
+
+        <p>{errorMsg}</p>
+    </div>
     );
 }
 
