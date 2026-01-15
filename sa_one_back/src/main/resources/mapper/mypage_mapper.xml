@@ -27,7 +27,7 @@
         join store_tb st on st.store_id = se.store_id
         where se.user_id = #{userId}
         order by se.store_employee_id desc
-        limit 1
+        limit 1c
 
     </select>
 
@@ -38,8 +38,8 @@
             resultType="com.korit.sa_one_back.dto.response.UserMeRespDto$StoreInfo">
 
         select distinct
-        st.store_id,
-        st.store_name
+            st.store_id,
+            st.store_name
         from store_employee_tb se
         join store_tb st on st.store_id = se.store_id
         where se.user_id = #{userId}
@@ -73,12 +73,17 @@
             st.store_phone,
             st.address,
 
-            st.company_type,
-            it.industry_name,
-            st.industry_code
+            sbi.company_type,
+            sbi.industry_code,
+
+            it.industry_name
+
         from store_tb st
         join store_employee_tb se on se.store_id = st.store_id
-        left join industry_tb it on it.industry_code = st.industry_code
+
+        left join store_business_info_tb sbi on sbi.store_id = st.store_id
+        left join industry_tb it on it.industry_code = sbi.industry_code
+
         where se.user_id = #{userId}
             and st.store_id = #{storeId}
         limit 1
