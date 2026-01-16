@@ -145,4 +145,31 @@
             is_deleted = false
     </select>
 
+    <select id="findRoleNameByUserId" resultType="string">
+        select
+            rt.role_name
+        from
+            user_tb ut
+        join
+            role_tb rt on rt.role_id = ut.role_id
+        where
+            ut.user_id = #{userId}
+    </select>
+
+    <update id="updateMyPage">
+        update user_tb
+        <set>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url = #{imgUrl},
+            </if>
+        </set>
+        where user_id = #{userId}
+    </update>
+
 </mapper>

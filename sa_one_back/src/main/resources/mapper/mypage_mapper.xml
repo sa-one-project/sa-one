@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.MyPageMapper">
+
+    <!-- =========================================================
+         [직원] 마이페이지 조회
+         - 고용형태: pay_tb.pay_type
+         ========================================================= -->
+    <select id="findEmployeeInfoByUserId"
+            resultType="com.korit.sa_one_back.dto.response.UserMeRespDto$EmployeeInfo">
+
+        select
+        se.store_employee_id,
+        st.store_name,
+        se.employee_no,
+        (
+        select p.pay_type
+        from pay_tb p
+        where p.store_employee_id = se.store_employee_id
+        order by p.start_date desc, p.pay_id desc
+        limit 1
+        ) pay_type
+        from store_employee_tb se
+        join store_tb st on st.store_id = se.store_id
+        where se.user_id = #{userId}
+        order by se.store_employee_id desc
+        limit 1c
+
+    </select>
+
+    <!-- =========================================================
+         [사장/매니저] 내 사업장 목록
+         ========================================================= -->
+    <select id="findMyStoreList"
+            resultType="com.korit.sa_one_back.dto.response.UserMeRespDto$StoreInfo">
+
+        select distinct
+            st.store_id,
+            st.store_name
+        from store_employee_tb se
+        join store_tb st on st.store_id = se.store_id
+        where se.user_id = #{userId}
+        order by st.store_id asc
+
+    </select>
+
+    <!-- 첫 번째 사업장 id -->
+    <select id="findFirstStoreId" resultType="long">
+
+        select
+        st.store_id
+        from store_employee_tb se
+        join store_tb st on st.store_id = se.store_id
+        where se.user_id = #{userId}
+        order by st.store_id asc
+        limit 1
+
+    </select>
+
+    <!-- =========================================================
+         [사장/매니저] 선택된 사업장 상세
+         ========================================================= -->
+    <select id="findMyStoreDetail"
+            resultType="com.korit.sa_one_back.dto.response.UserMeRespDto$StoreInfo">
+
+        select
+            st.store_id,
+            st.store_name,
+            st.business_number,
+            st.store_phone,
+            st.address,
+
+            sbi.company_type,
+            sbi.industry_code,
+
+            it.industry_name
+
+        from store_tb st
+        join store_employee_tb se on se.store_id = st.store_id
+
+        left join store_business_info_tb sbi on sbi.store_id = st.store_id
+        left join industry_tb it on it.industry_code = sbi.industry_code
+
+        where se.user_id = #{userId}
+            and st.store_id = #{storeId}
+        limit 1
+
+    </select>
+
+</mapper>

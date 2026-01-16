@@ -36,6 +36,10 @@ public interface UserMapper {
     UserEntity findUserByUsername(String username);
     UserEntity findByOauth2IdAndProvider(String provider, String oauth2Id);
 
+    String findRoleNameByUserId(Long userId);
+
+    int updateMyPage(UserEntity user);
+
     int softDelete(long userId);
 
 }
