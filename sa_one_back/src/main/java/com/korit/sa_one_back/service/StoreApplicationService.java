@@ -16,6 +16,13 @@ public class StoreApplicationService {
     private final StoreMapper storeMapper;
 
     // 유저용
+    public void postMyApplication(StoreApplicationReqDto dto, Long userId) {
+        StoreApplicationEntity storeApplicationEntity = dto.toStoreApplicationEntity(userId);
+
+        storeMapper.insertStoreApplication(storeApplicationEntity);
+    }
+
+
     public StoreApplicationEntity getMyApplication (Long storeId, Long storeApplicationId) throws IllegalAccessException {
         StoreApplicationEntity storeApplication = storeMapper.selectByUserIdAndStoreApplicationId(storeId, storeApplicationId);
 

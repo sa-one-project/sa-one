@@ -20,4 +20,5 @@ public class StoreEntity {
     private String storePhone;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long userId;
 }

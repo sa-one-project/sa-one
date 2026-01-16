@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class StoreApplicationEntity {
     private Long storeApplicationId;
     private String storeName;
+    private String address;
     private String businessNumber;
     private String ownerName;
     private String storePhone;
@@ -21,4 +22,5 @@ public class StoreApplicationEntity {
     private String rejectReason;
     private LocalDateTime reviewedAt;
     private LocalDateTime createdAt;
+    private Long userId;
 }

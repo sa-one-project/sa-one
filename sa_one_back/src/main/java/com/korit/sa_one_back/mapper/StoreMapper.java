@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @Mapper
 public interface StoreMapper {
 
+    int insertStoreApplication(StoreApplicationEntity entity);
+
     StoreApplicationEntity selectByUserIdAndStoreApplicationId(@Param("storeApplicationId") Long storeApplicationId,
                                           @Param("userId") Long userId);
     StoreApplicationEntity selectByApplicationIdForAdmin(@Param("storeApplicationId") Long storeApplicationId);

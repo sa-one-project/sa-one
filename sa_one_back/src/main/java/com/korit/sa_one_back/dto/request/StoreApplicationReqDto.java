@@ -1,5 +1,6 @@
 package com.korit.sa_one_back.dto.request;
 
+import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
 import lombok.Data;
 
@@ -19,6 +20,18 @@ public class StoreApplicationReqDto {
     private LocalDateTime reviewedAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long userId;
+
+    public StoreApplicationEntity toStoreApplicationEntity(Long userId) {
+        return StoreApplicationEntity.builder()
+                .storeName(storeName)
+                .address(address)
+                .businessNumber(businessNumber)
+                .ownerName(ownerName)
+                .storePhone(storePhone)
+                .userId(userId)
+                .build();
+    }
 
     public StoreEntity toStoreEntity() {
         return StoreEntity.builder()
@@ -27,6 +40,7 @@ public class StoreApplicationReqDto {
                 .businessNumber(businessNumber)
                 .ownerName(ownerName)
                 .storePhone(storePhone)
+                .userId(userId)
                 .build();
     }
 }
