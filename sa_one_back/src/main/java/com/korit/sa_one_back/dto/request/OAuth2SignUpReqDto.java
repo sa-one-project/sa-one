@@ -4,12 +4,16 @@ import com.korit.sa_one_back.entity.UserEntity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Date;
 
 @Data
 public class OAuth2SignUpReqDto {
 
+    private int roleId;
+    private String username;
+    private String password;
     private String oauth2Id;
     private String provider;
     private String name;
@@ -21,16 +25,15 @@ public class OAuth2SignUpReqDto {
     private String imgPath;
 
     private String tempToken;
-    private int roleId;
     private String gender;
     private Date birthDate;
     private boolean isDeleted;
 
-    public UserEntity toOauth2Entity() {
+    public UserEntity toOauth2Entity(String password) {
         return UserEntity.builder()
                 .roleId(roleId)
-                .username(null)
-                .password(null)
+                .username(provider + "_" + oauth2Id.substring(0, 12))
+                .password(password)
                 .name(name)
                 .phone(phone)
                 .email(email)

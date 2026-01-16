@@ -22,7 +22,7 @@ public class PrincipalUser implements OAuth2User {
     private final String email;
     private final String name;
 
-    private final UserEntity user; // null 가능
+    private final UserEntity user;
 
     public PrincipalUser(Map<String, Object> attributes,
                          String oauth2Id,
