@@ -6,7 +6,7 @@ function Header() {
     const navigate = useNavigate();
 
     // Store 에서 로그인상태, 로그아웃 기능만 빼옴
-    const { isLoggedIn, role, logout } = useAuthStore();
+    const { isLoggedIn, roleId, logout } = useAuthStore();
 
     // 로그아웃 버튼용. (토큰 지우고 비로그인 메인으로 전송)
     const handleLogout = () => {
@@ -24,7 +24,7 @@ function Header() {
                 {isLoggedIn ? (
                     <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
                         {/* 사장님 전용 메뉴 */}
-                        {role === "OWNER" && (
+                        {roleId === 1 && (
                             <Link to="/signup/employee" style={{ fontWeight: "bold", color: "blue" }}>
                                 직원 추가
                             </Link>

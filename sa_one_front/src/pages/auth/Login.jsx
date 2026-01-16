@@ -22,45 +22,21 @@ function Login() {
             const response = await axios.post("http://localhost:8080/api/auth/local/signin", loginData);
 
             if (response.status === 200) {
-                // console.log("서버 응답 데이터:", response.data);
-                
-                // const token = response.data.accessToken;
-                // const user = response.data.user; // 백엔드가 user 객체를 보내줄 때
-                // const role = user.roleId === 1 ? "OWNER" : "EMPLOYEE";
 
-
-                // ★ 임의 추가
+                // 백엔드에 응답해서 토큰과 유저 정보를 가져옴
                 const { accessToken, user } = response.data;
-                // ★ test5555이면 무조건 OWNER로 설정하여 테스트
-                let role = "EMPLOYEE"; 
-                if (loginData.username === "test5555") {
-                    role = "OWNER"; 
-                } else if (user && user.roleId === 1) {
-                    role = "OWNER";
-                }
+                const roleId = user.roleId;
 
-                console.log("지금 저장될 역할은?:", role);
+                console.log("로그인한 사용자의 roleId:", roleId);
 
-                // login(token, role);
-                login(accessToken, role);
+                login(accessToken, roleId);
                 alert("로그인 성공");
 
-                // ★ [페이지 이동] 역할에 맞는 경로로 강제 이동시킵니다.
-                if (role === "OWNER") {
-                    navigate("/owner"); // 또는 사장님용 메인 경로
+                if (roleId === 1) {
+                    navigate("/owner")
                 } else {
-                    navigate("/employee");
+                    navigate("/employee")
                 }
-
-
-                // if (role === "OWNER") {
-                //     navigate("/owner")
-                // } else if (role === "EMPLOYEE") {
-                //     navigate("/employee");
-                // } else {
-                //     // 일단은 에러 페이지가 뜨지 않도록 임의로 추가
-                //     navigate("/")
-                // }
             }
             // if 에서 토큰이 확인되지 않으면 아래의 캐치로 넘어가서 에러 메세지를 띄움.
         } catch (error) {
