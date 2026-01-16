@@ -7,6 +7,7 @@ import SignUp from "./pages/auth/SignUp";
 import OwnerMain from "./pages/owner/OwnerMain";
 import EmployeeMain from "./pages/employee/EmployeeMain";
 import MyPage from "./pages/MyPage";
+import EmployeeAdd from "./pages/auth/EmployeeAdd";
 
 
 function App() {
@@ -29,6 +30,10 @@ function App() {
 
                 {/* 사장님, 직원 공용 기능 */}
                 <Route path="/mypage" element={<MyPage />} />
+
+                {/* 사장님 전용 기능 (직원 추가) */}
+                <Route path="employee-add" element={<EmployeeAdd />} />
+
             </Routes>
         </BrowserRouter>
     );
