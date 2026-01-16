@@ -20,5 +20,4 @@ public class StoreApplicationEntity {
     private String rejectReason;
     private LocalDateTime reviewedAt;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
