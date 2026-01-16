@@ -1,10 +1,13 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
+import { useAuthStore } from "../../stores/useAuthStore";
 
 function SignUp() {
     const navigate = useNavigate(); // 이게 선언 되어야 회원가입 성공 시 로그인창X 바로 메인 화면이 뜸.
     
+    const { login } = useAuthStore();
+
     // SignUpReqDto 기반으로 이름을 맞춤
     const [signUpData, setSignUpData] = useState({
         username: "",
@@ -37,8 +40,9 @@ function SignUp() {
                 // 백엔드가 준 토큰 꺼내고
                 const token = response.data;
 
-                // localStorage 에 토큰을 저장함. 인증된 사용자라 증명할 수 있음!!
-                localStorage.setItem("accessToken", token);
+                // localStorage 에 토큰을 저장함. 인증된 사용자라 증명할 수 있음!! => 직접 저장하는 코드X
+                // localStorage.setItem("accessToken", token);
+                login(token);
                 alert("회원가입 성공!")
 
                 // 한 번 더 로그인을 하는 게 아니라 바로 메인 페이지로 이동.
