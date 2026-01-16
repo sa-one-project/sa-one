@@ -91,17 +91,7 @@ public class UserService extends DefaultOAuth2UserService {
 
         userMapper.softDelete(userId);
     }
-    /**
-     * ✅ 마이페이지 정보 조회 (사장 / 직원 공통)
-     * <p>
-     * 개발자 사고 흐름:
-     * 1) userId로 user_tb 조회 (공통 정보)
-     * 2) role_tb join해서 role_name 조회
-     * 3) role에 따라 필요한 정보만 추가 조회
-     * - EMPLOYEE → employeeInfo
-     * - OWNER / MANAGER → ownerInfo (매장 목록 + 선택 매장)
-     * 4) 하나의 Response DTO로 조립해서 반환
-     */
+
     public UserMeRespDto getMyPage(Long userId, Long storeId) {
 
         // 공통 유저 정보
