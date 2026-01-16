@@ -40,7 +40,8 @@ function Header() {
                 ) : (
                     <div style={{ display: "flex", gap: "15px" }}>
                         <Link to="/login">로그인</Link>
-                        <Link to="/signup">시작하기</Link>
+                        {/* 시작하기 버튼의 경로를 /singup => /start (StartPage) 로 변경 */}
+                        <Link to="/start">시작하기</Link>
                     </div>
                 )}
             </nav>
