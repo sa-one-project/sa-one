@@ -16,6 +16,7 @@
             se.store_employee_id,
             st.store_name,
             se.employee_no,
+            se.pay_type
             (
             select p.pay_type
             from pay_tb p

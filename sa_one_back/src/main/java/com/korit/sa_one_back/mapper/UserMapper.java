@@ -39,4 +39,6 @@ public interface UserMapper {
 
     int softDelete(long userId);
 
+    int updateMyPage(UserEntity user);
+
 }

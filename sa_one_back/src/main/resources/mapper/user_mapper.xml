@@ -147,14 +147,31 @@
 
     <select id="findRoleNameByUserId" resultType="string">
         select
-        rt.role_name
+            rt.role_name
         from
-        user_tb ut
+            user_tb ut
         join
-        role_tb rt on rt.role_id = ut.role_id
+            role_tb rt on rt.role_id = ut.role_id
         where
-        ut.user_id = #{userId}
+            ut.user_id = #{userId}
     </select>
+
+    <update id="updateMyPage" parameterType="com.korit.sa_one_back.entity.UserEntity">
+        update user_tb
+        <set>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url = #{imgUrl},
+            </if>
+                updated_at = now()
+        </set>
+        where user_id = #{userId}
+    </update>
 
 
 </mapper>

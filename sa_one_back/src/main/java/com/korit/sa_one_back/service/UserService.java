@@ -3,6 +3,7 @@ package com.korit.sa_one_back.service;
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
 import com.korit.sa_one_back.dto.request.SignInReqDto;
 import com.korit.sa_one_back.dto.request.SignUpReqDto;
+import com.korit.sa_one_back.dto.request.UpdateMyPageReqDto;
 import com.korit.sa_one_back.dto.response.UserMeRespDto;
 import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
@@ -151,6 +152,26 @@ public class UserService extends DefaultOAuth2UserService {
                 .employeeInfo(employeeInfo)
                 .ownerInfo(ownerInfo)
                 .build();
+    }
+
+    // 마이페이지 수정
+
+    public void updateMyPage(Long userId, UpdateMyPageReqDto updateMyPageReqDto) {
+
+        UserEntity user = userMapper.findByUserId(userId);
+
+        if (user == null) {
+            throw new RuntimeException("존재하지 않는 사용자 입니다");
+
+        }
+
+        UserEntity updateUser = updateMyPageReqDto.toEntity(user);
+
+        int result = userMapper.updateMyPage(updateUser);
+
+        if(result == 0 ) {
+            throw new RuntimeException("회원 정보 수정 실패");
+        }
     }
 }
 
