@@ -17,6 +17,7 @@ public class StoreApplicationEntity {
     private String businessNumber;
     private String ownerName;
     private String storePhone;
+    private String status;
     private String rejectReason;
     private LocalDateTime reviewedAt;
     private LocalDateTime createdAt;

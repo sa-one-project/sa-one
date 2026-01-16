@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class StoreEntity {
     private Long storeId;
     private String storeName;
+    private String address;
     private String businessNumber;
     private String ownerName;
     private String storePhone;

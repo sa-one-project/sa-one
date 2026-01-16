@@ -40,7 +40,7 @@
         where
             store_application_id = ${storeApplicationId}
     </update>
-    <select id="selectByUserId" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
+    <select id="selectByUserIdAndStoreApplicationId" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
         select
             *
         from
