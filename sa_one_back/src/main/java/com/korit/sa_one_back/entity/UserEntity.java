@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -28,7 +29,7 @@ public class UserEntity {
     private LocalDateTime createdAt; // NN
     private LocalDateTime updatedAt; // NN
     private String gender;
-    private Date birthDate;
+    private LocalDate birthDate;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
 }

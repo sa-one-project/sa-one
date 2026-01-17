@@ -172,4 +172,41 @@
         where user_id = #{userId}
     </update>
 
+    <select id="findUserIdByEmail" resultType="long">
+        select
+            user_id
+        from
+            user_tb
+        where
+            email = #{email}
+        and
+            is_deleted = false
+        limit 1
+    </select>
+
+    <update id="updateEmployeeProfile">
+        update user_tb
+        <set>
+            <if test="dto.name != null and dto.name != ''">
+                name = #{dto.name},
+            </if>
+            <if test="dto.phone != null and dto.phone != ''">
+                phone = #{dto.phone},
+            </if>
+            <if test="dto.imgUrl != null and dto.imgUrl != ''">
+                img_url = #{dto.imgUrl},
+            </if>
+            <if test="dto.imgPath != null and dto.imgPath != ''">
+                img_path = #{dto.imgPath},
+            </if>
+            <if test="dto.birthDate != null">
+                birth_date = #{dto.birthDate},
+            </if>
+        </set>
+        where
+            user_id = #{userId}
+        and
+            is_deleted = false
+    </update>
+
 </mapper>

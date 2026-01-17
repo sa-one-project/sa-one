@@ -26,7 +26,7 @@ public class UserMeRespDto {
 
     private String name;
     private String gender;
-    private Date birthDate;
+    private LocalDate birthDate;
 
     private String imgUrl;
 

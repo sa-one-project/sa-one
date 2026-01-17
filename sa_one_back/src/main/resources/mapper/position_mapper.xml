@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.PositionMapper">
+
+    <select id="findPositionIdByName" resultType="long">
+        select position_id
+        from position_tb
+        where position_name = #{positionName}
+        limit 1
+    </select>
+
+</mapper>
