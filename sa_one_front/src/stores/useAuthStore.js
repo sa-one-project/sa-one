@@ -6,25 +6,25 @@ export const useAuthStore = create((set) => ({
     isLoggedIn: !!localStorage.getItem("accessToken"),
 
     // 역할(role) 상태 추가 (새로고침을 해도 역할을 읽어서 각자의 메뉴를 유지할 수 있게.)
-    role: localStorage.getItem("userRole") || null,
+    roleId: localStorage.getItem("roleId") || null,
 
     // 로그인 상태로 변경 => 토큰과 역할을 함께 받기
-    login: (token, role) => {
+    login: (token, roleId) => {
         localStorage.setItem("accessToken", token);
-        localStorage.setItem("userRole", role); // 역할 저장
+        localStorage.setItem("roleId", roleId); // 역할 저장
         set({
             isLoggedIn: true,
-            role: role
+            roleId: roleId
         });
     },
 
     // 반대로 로그아웃 상태로 변경 => 역할 정보 삭제
     logout: () => {
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("userRole");
+        localStorage.removeItem("roleId");
         set({ 
             isLoggedIn: false,
-            role: null
+            roleId: null
         });
     },
 }));
