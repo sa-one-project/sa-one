@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 @RequiredArgsConstructor
 public class UserService extends DefaultOAuth2UserService {
@@ -93,6 +94,15 @@ public class UserService extends DefaultOAuth2UserService {
         userMapper.softDelete(userId);
     }
 
+    /**
+     * 마이페이지 정보 조회 (사장 / 직원 공통)
+     * 1) userId로 user_tb 조회 (공통 정보)
+     * 2) role_tb join해서 role_name 조회
+     * 3) role에 따라 필요한 정보만 추가 조회
+     * - EMPLOYEE → employeeInfo
+     * - OWNER / MANAGER → ownerInfo (매장 목록 + 선택 매장)
+     * 4) 하나의 Response DTO로 조립해서 반환
+     */
     public UserMeRespDto getMyPage(Long userId, Long storeId) {
 
         // 공통 유저 정보
@@ -135,6 +145,7 @@ public class UserService extends DefaultOAuth2UserService {
                     .selectedStore(selectedStore)
                     .build();
         }
+
         // 최종 응답 DTO 조립
         return UserMeRespDto.builder()
                 .userId(user.getUserId())
@@ -154,23 +165,28 @@ public class UserService extends DefaultOAuth2UserService {
                 .build();
     }
 
-    // 마이페이지 수정
+    /**
+     * ✅ 마이페이지 수정
 
-    public void updateMyPage(Long userId, UpdateMyPageReqDto updateMyPageReqDto) {
+     * 1) 로그인 userId를 서버에서 확정한다 (프론트가 바꾸게 두면 안 됨)
+     * 2) PATCH이므로 넘어온 값만 Entity에 담는다
+     * 3) mapper update 실행
+     * 4) 반영된 row가 0이면 예외(유저 없음 등)
+     */
+    public void updateMyPage(Long userId, UpdateMyPageReqDto dto) {
 
-        UserEntity user = userMapper.findByUserId(userId);
+        UserEntity user = new UserEntity();
+        user.setUserId(userId);
 
-        if (user == null) {
-            throw new RuntimeException("존재하지 않는 사용자 입니다");
+        // PATCH: null/빈문자면 수정하지 않도록 mapper에서 if 처리함
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setImgUrl(dto.getImgUrl());
 
-        }
+        int result = userMapper.updateMyPage(user);
 
-        UserEntity updateUser = updateMyPageReqDto.toEntity(user);
-
-        int result = userMapper.updateMyPage(updateUser);
-
-        if(result == 0 ) {
-            throw new RuntimeException("회원 정보 수정 실패");
+        if (result == 0) {
+            throw new RuntimeException("회원 정보 수정에 실패했습니다.");
         }
     }
 }

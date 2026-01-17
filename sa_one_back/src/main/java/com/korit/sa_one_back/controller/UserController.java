@@ -24,7 +24,6 @@ public class UserController {
 //
 //        return ResponseEntity.ok(principalUser.getUser());
 //    }
-
     @GetMapping("/me")
     public ResponseEntity<UserMeRespDto> getMyPage(
             Authentication authentication,
@@ -39,16 +38,14 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<?> updateMyPage(
+    public ResponseEntity<Void> updateMyPage(
             Authentication authentication,
-            @RequestBody UpdateMyPageReqDto updateMyPageReqDto
-            ) {
+            @RequestBody UpdateMyPageReqDto dto
+    ) {
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
         Long userId = principalUser.getUser().getUserId();
-
-        userService.updateMyPage(userId, updateMyPageReqDto);
-        return ResponseEntity.ok().body("회원정보 수정 완료");
-
+        userService.updateMyPage(userId, dto);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/delete/me")

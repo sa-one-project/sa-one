@@ -17,5 +17,5 @@ public interface MyPageMapper {
     Long findFirstStoreId(Long userId);
 
     UserMeRespDto.StoreInfo findMyStoreDetail(@Param("userId") Long userId,
-                                              @Param("storeId") Long storeId);
+                                                  @Param("storeId") Long storeId);
 }

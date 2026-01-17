@@ -156,22 +156,20 @@
             ut.user_id = #{userId}
     </select>
 
-    <update id="updateMyPage" parameterType="com.korit.sa_one_back.entity.UserEntity">
+    <update id="updateMyPage">
         update user_tb
         <set>
-            <if test="phone != null and phone != ''">
-                phone = #{phone},
-            </if>
             <if test="email != null and email != ''">
                 email = #{email},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
             </if>
             <if test="imgUrl != null and imgUrl != ''">
                 img_url = #{imgUrl},
             </if>
-                updated_at = now()
         </set>
         where user_id = #{userId}
     </update>
-
 
 </mapper>
