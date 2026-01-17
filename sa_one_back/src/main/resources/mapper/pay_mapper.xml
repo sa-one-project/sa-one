@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.PayMapper">
+
+    <insert id="insertPay" useGeneratedKeys="true" keyProperty="payId">
+        insert into pay_tb (
+            pay_id,
+            store_employee_id,
+            pay_type,
+            hourly_rate,
+            monthly_salary,
+            start_date,
+            end_date,
+            created_at,
+            updated_at
+        ) values (
+            default,
+            #{storeEmployeeId},
+            #{payType},
+            #{hourlyRate},
+            #{monthlySalary},
+            #{startDate},
+            #{endDate},
+            now(),
+            now()
+        )
+    </insert>
+
+    <!-- 퇴사 처리 시 현재 유효 급여 종료 -->
+    <update id="closeCurrentPayByEmployee">
+        update pay_tb
+        set
+        end_date = #{today},
+        updated_at = now()
+        where store_employee_id = #{storeEmployeeId}
+        and not (start_date > #{today})
+        and (end_date is null or end_date >= #{today})
+    </update>
+
+
+</mapper>

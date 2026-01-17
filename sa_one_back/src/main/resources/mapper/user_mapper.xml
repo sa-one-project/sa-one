@@ -40,41 +40,41 @@
             #{birthDate}
         )
     </insert>
-<!--    <insert id="insertOauth2User" useGeneratedKeys="true" keyProperty="userId">-->
-<!--        insert into user_tb(-->
-<!--            user_id,-->
-<!--            username,-->
-<!--            password,-->
-<!--            oauth2_id,-->
-<!--            provider,-->
-<!--            name,-->
-<!--            phone,-->
-<!--            email,-->
-<!--            img_url,-->
-<!--            img_path,-->
-<!--            role_id,-->
-<!--            created_at,-->
-<!--            updated_at,-->
-<!--            gender,-->
-<!--            birth_date-->
-<!--        ) values (-->
-<!--            default,-->
-<!--            #{username},-->
-<!--            #{password},-->
-<!--            #{name},-->
-<!--            #{phone},-->
-<!--            #{email},-->
-<!--            #{imgUrl},-->
-<!--            #{imgPath},-->
-<!--            #{oauth2Id},-->
-<!--            #{provider},-->
-<!--            #{roleId},-->
-<!--            now(),-->
-<!--            now(),-->
-<!--            #{gender},-->
-<!--            #{birthDate}-->
-<!--        )-->
-<!--    </insert>-->
+    <insert id="insertOauth2User" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_tb(
+            user_id,
+            username,
+            password,
+            oauth2_id,
+            provider,
+            name,
+            phone,
+            email,
+            img_url,
+            img_path,
+            role_id,
+            created_at,
+            updated_at,
+            gender,
+            birth_date
+        ) values (
+            default,
+            #{username},
+            #{password},
+            #{name},
+            #{phone},
+            #{email},
+            #{imgUrl},
+            #{imgPath},
+            #{oauth2Id},
+            #{provider},
+            #{roleId},
+            now(),
+            now(),
+            #{gender},
+            #{birthDate}
+        )
+    </insert>
 
     <update id="softDelete">
         UPDATE
@@ -170,6 +170,43 @@
             </if>
         </set>
         where user_id = #{userId}
+    </update>
+
+    <select id="findUserIdByEmail" resultType="long">
+        select
+            user_id
+        from
+            user_tb
+        where
+            email = #{email}
+        and
+            is_deleted = false
+        limit 1
+    </select>
+
+    <update id="updateEmployeeProfile">
+        update user_tb
+        <set>
+            <if test="dto.name != null and dto.name != ''">
+                name = #{dto.name},
+            </if>
+            <if test="dto.phone != null and dto.phone != ''">
+                phone = #{dto.phone},
+            </if>
+            <if test="dto.imgUrl != null and dto.imgUrl != ''">
+                img_url = #{dto.imgUrl},
+            </if>
+            <if test="dto.imgPath != null and dto.imgPath != ''">
+                img_path = #{dto.imgPath},
+            </if>
+            <if test="dto.birthDate != null">
+                birth_date = #{dto.birthDate},
+            </if>
+        </set>
+        where
+            user_id = #{userId}
+        and
+            is_deleted = false
     </update>
 
 </mapper>

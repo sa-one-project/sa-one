@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.StoreMapper">
+
+    <select id="countByStoreId" resultType="int">
+        select count(*)
+        from store_tb
+        where store_id = #{storeId}
+    </select>
+
+    <select id="findOwnerUserId" resultType="long">
+        select user_id
+        from store_tb
+        where store_id = #{storeId}
+        limit 1
+    </select>
+
+</mapper>
