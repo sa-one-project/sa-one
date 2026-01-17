@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/common/Header";
 import Home from "./home/Home";
 import Login from "./pages/auth/Login";
@@ -7,18 +7,38 @@ import SignUp from "./pages/auth/SignUp";
 import OwnerMain from "./pages/owner/OwnerMain";
 import EmployeeMain from "./pages/employee/EmployeeMain";
 import MyPage from "./pages/MyPage";
+import EmployeeAdd from "./pages/auth/EmployeeAdd";
+import StartPage from "./pages/auth/StartPage";
+
+// 헤더 노출 여부를 제어하는 별도의 컴포넌트
+function HeaderWrapper() {
+    const location = useLocation();
+    
+    // 헤더를 지우고 싶은 경로를 여기에 등록
+    const hideHeaderPaths = ["/start"]; 
+    
+    // 현재 경로가 숨김 리스트에 포함되어 있으면 null을 반환해서 안 보이게 함
+    if (hideHeaderPaths.includes(location.pathname)) {
+        return null;
+    }
+
+    return <Header />;
+}
 
 
 function App() {
     return (
         <BrowserRouter>
             {/* 페이지 상단 */}
-            <Header />
+            <HeaderWrapper />
 
             <Routes>
                 {/* 로그인 하지 않은 사용자도 볼 수 있는 메인 */}
                 <Route path="/" element={<Home />} />
 
+                {/* 시작하기 버튼을 눌렀을 때의 선택 페이지 (헤더 숨김) */}
+                <Route path="/start" element={<StartPage />} />
+ 
                 {/* 로그인, 회원가입 페이지 */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
@@ -29,6 +49,10 @@ function App() {
 
                 {/* 사장님, 직원 공용 기능 */}
                 <Route path="/mypage" element={<MyPage />} />
+
+                {/* 사장님 전용 기능 (직원 추가) */}
+                <Route path="employee-add" element={<EmployeeAdd />} />
+
             </Routes>
         </BrowserRouter>
     );

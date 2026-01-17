@@ -30,8 +30,7 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
-    int insertUser(UserEntity user);
-//    int insertLocalUser(UserEntity user);
+    int insertLocalUser(UserEntity user);
     int insertOauth2User(UserEntity user);
 
     UserEntity findByUserId(long userId);
@@ -45,7 +44,6 @@ public interface UserMapper {
 
     int softDelete(long userId);
 
-    int updateEmployeeProfile(@Param("userId") Long userId,
-                              @Param("dto") CreateEmployeeReqDto dto);
+    int updateMyPage(UserEntity user);
 
 }

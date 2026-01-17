@@ -56,28 +56,67 @@ function SignUp() {
     };
 
     return (
-        <div>
-        <h2>회원가입</h2>
-        
-        <input name="username" placeholder="아이디" onChange={handleChange} />
-        <input name="password" type="password" placeholder="비밀번호" onChange={handleChange} />
-        <input name="name" placeholder="이름" onChange={handleChange} />
-        <input name="email" type="email" placeholder="이메일" onChange={handleChange} />
-        <input name="phone" placeholder="전화번호" onChange={handleChange} />
+        <div style={{ padding: "40px" }}>
+            <h2>회원가입</h2>
+            <hr />
 
-        <select name="gender" onChange={handleChange}>
-            {/* DB 참고 */}
-            <option value="남">남성</option>
-            <option value="여">여성</option>
-            <option value="기타">기타</option>
-        </select>
+            <div style={{ display: "flex", gap: "50px", marginTop: "20px" }}>
+                {/* 왼쪽: 이미지 업로드 영역 (뼈대) */}
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ width: "150px", height: "180px", border: "1px solid #ccc", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px" }}>
+                        사진
+                    </div>
+                    <button type="button">사진 등록</button>
+                </div>
 
-        <input name="birthDate" type="date" onChange={handleChange} />
+                {/* 오른쪽: 입력 폼 영역 (뼈대) */}
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", flex: 1 }}>
+                    <div>
+                        <label>아이디: </label>
+                        <input name="username" placeholder="아이디" onChange={handleChange} style={{ width: "200px" }} />
+                    </div>
 
-        <button onClick={handleSignUp}>가입하기</button>
+                    <div>
+                        <label>비밀번호: </label>
+                        <input name="password" type="password" placeholder="비밀번호" onChange={handleChange} style={{ width: "200px" }} />
+                    </div>
 
-        <p>{errorMsg}</p>
-    </div>
+                    <div>
+                        <label>이름: </label>
+                        <input name="name" placeholder="이름" onChange={handleChange} style={{ width: "100px" }} />
+                        
+                        <label style={{ marginLeft: "20px" }}>성별: </label>
+                        <select name="gender" onChange={handleChange}>
+                            {/* DB 참고 */}
+                            <option value="남">남성</option>
+                            <option value="여">여성</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>생년월일: </label>
+                        <input name="birthDate" type="date" onChange={handleChange} />
+                    </div>
+
+                    <div>
+                        <label>전화번호: </label>
+                        <input name="phone" placeholder="전화번호" onChange={handleChange} style={{ width: "200px" }} />
+                    </div>
+
+                    <div>
+                        <label>이메일: </label>
+                        <input name="email" type="email" placeholder="이메일" onChange={handleChange} style={{ width: "200px" }} />
+                    </div>
+
+                    {/* 가입 버튼 영역 */}
+                    <div style={{ marginTop: "20px" }}>
+                        <button onClick={handleSignUp} style={{ padding: "10px 20px" }}>가입하기</button>
+                        <p style={{ color: "red" }}>{errorMsg}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
 

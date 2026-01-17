@@ -24,7 +24,8 @@ function Home() {
 
     return (
         <div>
-            {role === "OWNER" ? (
+            {/* roleId 가 1 이면 사장님 그 외 2... 는 직원으로 판별 */}
+            {roleId === 1 ? (
                 <OwnerMain /> // 사장님 메인
             ) : (
                 <EmployeeMain /> // 직원 메인
