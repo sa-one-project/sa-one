@@ -28,7 +28,6 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
-    int insertUser(UserEntity user);
     int insertLocalUser(UserEntity user);
     int insertOauth2User(UserEntity user);
 
@@ -41,5 +40,7 @@ public interface UserMapper {
     int updateMyPage(UserEntity user);
 
     int softDelete(long userId);
+
+    int updateMyPage(UserEntity user);
 
 }

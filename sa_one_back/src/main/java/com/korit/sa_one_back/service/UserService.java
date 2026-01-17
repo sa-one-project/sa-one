@@ -55,7 +55,7 @@ public class UserService extends DefaultOAuth2UserService {
     // Local 회원 생성
     public void createLocalUser(SignUpReqDto dto) {
         UserEntity user = dto.toLocalEntity(passwordEncoder);
-        userMapper.insertUser(user);
+        userMapper.insertLocalUser(user);
     }
 
     // OAuth2 회원 생성
@@ -63,7 +63,7 @@ public class UserService extends DefaultOAuth2UserService {
         String password = UUID.randomUUID().toString();
         String encodedPassword = passwordEncoder.encode(password);
         UserEntity user = dto.toOauth2Entity(encodedPassword);
-        userMapper.insertUser(user);
+        userMapper.insertOauth2User(user);
     }
 
     public String signin(SignInReqDto dto) {
