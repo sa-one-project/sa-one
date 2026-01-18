@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -26,7 +28,7 @@ public class OAuth2SignUpReqDto {
 
     private String tempToken;
     private String gender;
-    private Date birthDate;
+    private LocalDate birthDate;
     private boolean isDeleted;
 
     public UserEntity toOauth2Entity(String password) {

@@ -23,4 +23,7 @@ public interface StoreMapper {
                                 @Param("status") String status,
                                 @Param("reviewedAt") LocalDateTime reviewedAt,
                                 @Param("rejectReason") String rejectReason);
+  
+    int countByStoreId(@Param("storeId") Long storeId);
+    Long findOwnerUserId(@Param("storeId") Long storeId);
 }
