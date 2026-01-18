@@ -1,9 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.korit.sa_one_back.mapper.StoreMapper">
+
+    <insert id="insertStore" useGeneratedKeys="true" keyProperty="storeId">
+        insert into store_tb (
+            store_id,
+            store_name,
+            address,
+            business_number,
+            owner_name,
+            store_phone,
+            created_at,
+            updated_at,
+            user_id
+        )
+        values(
+            default,
+            #{storeName},
+            #{address},
+            #{businessNumber},
+            #{ownerName},
+            #{storePhone},
+            now(),
+            now(),
+            #{userId}
+        )
+    </insert>
+  
+    <insert id="insertStoreApplication">
+        insert into store_application_tb (
+            store_application_id,
+            store_name,
+            address,
+            business_number,
+            owner_name,
+            store_phone,
+            status,
+            reject_reason,
+            reviewed_at,
+            created_at,
+            user_id
+        ) values (
+            default,
+            #{storeName},
+            #{address},
+            #{businessNumber},
+            #{ownerName},
+            #{storePhone},
+            default,
+            null,
+            null,
+            now(),
+            #{userId}
+        )
+
+    </insert>
+  
+    <update id="updateApplicationStatus">
+        update
+            store_application_tb
+        set
+            status = #{status},
+            reviewed_at = #{reviewedAt},
+            reject_reason = #{rejectReason},
+            updated_at = now()
+        where
+            store_application_id = #{storeApplicationId}
+    </update>
+  
+    <select id="selectByUserIdAndStoreApplicationId" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
+        select
+            *
+        from
+            store_application_tb
+        where
+            store_application_id = #{storeApplicationId}
+        and
+            user_id = #{userId}
+    </select>
+
+    <select id="selectByApplicationIdForAdmin" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
+        select
+            *
+        from
+            store_application_tb
+        where
+            store_application_id = #{storeApplicationId}
+    </select>
 
     <select id="countByStoreId" resultType="int">
         select count(*)
