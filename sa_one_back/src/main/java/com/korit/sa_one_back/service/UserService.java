@@ -1,9 +1,6 @@
 package com.korit.sa_one_back.service;
 
-import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
-import com.korit.sa_one_back.dto.request.SignInReqDto;
-import com.korit.sa_one_back.dto.request.SignUpReqDto;
-import com.korit.sa_one_back.dto.request.UpdateMyPageReqDto;
+import com.korit.sa_one_back.dto.request.*;
 import com.korit.sa_one_back.dto.response.UserMeRespDto;
 import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
@@ -32,6 +29,7 @@ public class UserService extends DefaultOAuth2UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
     private final MyPageMapper myPageMapper;
+    private final MailService mailService;
 
 //    public void createOauth2User(OAuth2SignUpReqDto dto) {
 //        UserEntity user = UserEntity.builder()
@@ -188,6 +186,23 @@ public class UserService extends DefaultOAuth2UserService {
         if (result == 0) {
             throw new RuntimeException("회원 정보 수정에 실패했습니다.");
         }
+    }
+
+    public void findUsernameAndSendMail(FindUsernameReqDto dto) {
+        String username = userMapper.findUsernameByNameAndEmail(dto.getName(), dto.getEmail());
+
+        if (username == null || username.isBlank()) return;
+
+        String masked = maskUsername(username);
+        mailService.sendMarkedUsername(dto.getEmail(), masked);
+    }
+
+    private String maskUsername(String username) {
+        int n = username.length();
+        if (n <= 1) return "*";
+        if (n == 2) return username.charAt(0) + "*";
+        if (n <= 4) return username.substring(0, 1) + "**" + username.substring(n - 1);
+        return username.substring(0,2) + "***" + username.substring(n - 2);
     }
 }
 

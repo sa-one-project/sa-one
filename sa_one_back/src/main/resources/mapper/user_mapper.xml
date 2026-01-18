@@ -209,4 +209,18 @@
             is_deleted = false
     </update>
 
+    <select id="findUsernameByNameAndEmail" resultType="string">
+        select
+            username
+        from
+            user_tb
+        where
+            name = #{name}
+        and
+            email = #{email}
+        and
+            is_deleted = 0
+        limit 1
+    </select>
+
 </mapper>
