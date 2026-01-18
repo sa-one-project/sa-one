@@ -1,6 +1,7 @@
 package com.korit.sa_one_back.controller;
 
 import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.service.StoreApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class StoreController {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
-    @GetMapping("")
-    public void getMyApplication() {
-        storeService.getMyApplication()
+    @GetMapping("/my_application")
+    public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal UserEntity user) {
+        return storeService.getMyApplication(user.getUserId());
     }
 }

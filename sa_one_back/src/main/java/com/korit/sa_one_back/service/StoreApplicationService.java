@@ -3,6 +3,7 @@ package com.korit.sa_one_back.service;
 import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
+import com.korit.sa_one_back.exception.StoreApplicationException;
 import com.korit.sa_one_back.mapper.StoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,11 @@ public class StoreApplicationService {
     }
 
 
-    public StoreApplicationEntity getMyApplication (Long storeId, Long storeApplicationId) throws IllegalAccessException {
-        StoreApplicationEntity storeApplication = storeMapper.selectByUserIdAndStoreApplicationId(storeId, storeApplicationId);
+    public StoreApplicationEntity getMyApplication (Long userId) {
+        StoreApplicationEntity storeApplication = storeMapper.selectByUserId(userId);
 
         if (storeApplication == null) {
-            throw new IllegalAccessException("요청하신 신청 정보를 찾을 수 없습니다.");
+            throw new StoreApplicationException();
         }
 
         return storeApplication;

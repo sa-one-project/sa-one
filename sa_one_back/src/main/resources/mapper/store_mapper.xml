@@ -71,14 +71,12 @@
             store_application_id = #{storeApplicationId}
     </update>
   
-    <select id="selectByUserIdAndStoreApplicationId" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
+    <select id="selectByUserId" resultType="com.korit.sa_one_back.entity.StoreApplicationEntity">
         select
             *
         from
             store_application_tb
         where
-            store_application_id = #{storeApplicationId}
-        and
             user_id = #{userId}
     </select>
 
