@@ -13,21 +13,22 @@
             resultType="com.korit.sa_one_back.dto.response.UserMeRespDto$EmployeeInfo">
 
         select
-        se.store_employee_id,
-        st.store_name,
-        se.employee_no,
-        (
-        select p.pay_type
-        from pay_tb p
-        where p.store_employee_id = se.store_employee_id
-        order by p.start_date desc, p.pay_id desc
-        limit 1
-        ) pay_type
+            se.store_employee_id,
+            st.store_name,
+            se.employee_no,
+            se.join_date,
+            se.work_status,
+            p.pay_type,
+            p.hourly_rate,
+            p.monthly_salary
         from store_employee_tb se
-        join store_tb st on st.store_id = se.store_id
+        join store_tb st
+            on st.store_id = se.store_id
+        left join pay_tb p
+            on p.store_employee_id = se.store_employee_id
         where se.user_id = #{userId}
-        order by se.store_employee_id desc
-        limit 1c
+        order by p.start_date desc
+        limit 1
 
     </select>
 

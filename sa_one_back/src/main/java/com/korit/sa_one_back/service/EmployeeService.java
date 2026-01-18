@@ -74,7 +74,7 @@ public class EmployeeService {
                     .birthDate(dto.getBirthDate())
                     .build();
 
-            userMapper.insertUser(user); // useGeneratedKeys로 userId 채움
+            userMapper.insertLocalUser(user); // useGeneratedKeys로 userId 채움
             employeeUserId = user.getUserId();
         } else {
             // 기존 유저면 프로필 갱신(선택)

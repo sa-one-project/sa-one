@@ -3,6 +3,7 @@ package com.korit.sa_one_back.mapper;
 import com.korit.sa_one_back.dto.request.CreateEmployeeReqDto;
 import com.korit.sa_one_back.entity.UserEntity;
 import jakarta.validation.constraints.NotBlank;
+import org.apache.catalina.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,6 +31,7 @@ public interface UserMapper {
 //                     @Param("roleId") long roleId);
 
 
+
     int insertLocalUser(UserEntity user);
     int insertOauth2User(UserEntity user);
 
@@ -43,7 +45,8 @@ public interface UserMapper {
     int updateMyPage(UserEntity user);
 
     int softDelete(long userId);
-
-    int updateMyPage(UserEntity user);
+    int updateEmployeeProfile(
+            @Param("userId") Long userId,
+            @Param("dto") CreateEmployeeReqDto dto);
 
 }
