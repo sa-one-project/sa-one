@@ -45,7 +45,11 @@ public class UserMeRespDto {
         private Long storeEmployeeId;
         private String storeName;
         private String employeeNo;
+        private Date joinDate;
+        private String workState;
         private String payType;
+        private int hourlyRate;
+        private int monthlySalary;
 
     }
 
