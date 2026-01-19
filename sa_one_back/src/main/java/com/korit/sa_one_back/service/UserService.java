@@ -193,11 +193,11 @@ public class UserService extends DefaultOAuth2UserService {
 
         if (username == null || username.isBlank()) return;
 
-        String masked = maskUsername(username);
+        String masked = maskingUsername(username);
         mailService.sendMarkedUsername(dto.getEmail(), masked);
     }
 
-    private String maskUsername(String username) {
+    private String maskingUsername(String username) {
         int n = username.length();
         if (n <= 1) return "*";
         if (n == 2) return username.charAt(0) + "*";

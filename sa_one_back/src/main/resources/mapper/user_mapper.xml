@@ -234,4 +234,16 @@
         limit 1
     </select>
 
+    <update id="updatePassword">
+        update
+            user_tb
+        set
+            password = #{password},
+            updated_at = now()
+        where
+            user_id = #{userId}
+        and
+            is_deleted = false
+    </update>
+
 </mapper>

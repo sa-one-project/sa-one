@@ -50,4 +50,6 @@ public interface UserMapper {
             @Param("dto") CreateEmployeeReqDto dto);
 
     String findUsernameByNameAndEmail(String name, String email);
+
+    int updatePassword(@Param("userId") Long userId, @Param("password") String password);
 }
