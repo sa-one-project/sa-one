@@ -1,6 +1,9 @@
 package com.korit.sa_one_back.controller;
 
 import com.korit.sa_one_back.dto.request.FindUsernameReqDto;
+import com.korit.sa_one_back.dto.request.PasswordResetConfirmReqDto;
+import com.korit.sa_one_back.dto.request.PasswordResetReqDto;
+import com.korit.sa_one_back.service.PasswordResetService;
 import com.korit.sa_one_back.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +20,29 @@ import java.util.Map;
 public class AccountController {
 
     private final UserService userService;
+    private final PasswordResetService resetService;
 
     @PostMapping("/find-username")
     public ResponseEntity<?> findUsername(@RequestBody FindUsernameReqDto dto) {
         userService.findUsernameAndSendMail(dto);
 
         return ResponseEntity.ok(Map.of(
-                "message", "입력하신 정보와 일치하는 계정이 있으면 이메일을 보냈습니다."
+                "message", "입력하신 정보와 일치하는 계정이 있으면 이메일을 전송했습니다."
         ));
     }
+
+    @PostMapping("/password/reset-request")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetReqDto dto) {
+        resetService.requestPasswordReset(dto.getEmail());
+        return ResponseEntity.ok().body("입력하신 정보와 일치하는 계정이 있으면 이메일을 전송했습니다.");
+    }
+
+    @PostMapping("/password/reset")
+    public ResponseEntity<?> confirmPasswordReset(@RequestBody PasswordResetConfirmReqDto dto) {
+        resetService.confirmPasswordReset(dto.getToken(),
+                dto.getNewPassword(),
+                dto.getNewPasswordConfirm());
+        return ResponseEntity.ok().body("비밀번호를 변경하였습니다.");
+    }
+
 }

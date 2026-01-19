@@ -23,6 +23,8 @@ server:
   tomcat:
     max-swallow-size: -1  # 스프링 부트가 주는걸 다 기다리겠다
 
+app:
+  base-url: "http://localhost:8080"
 
 springdoc:
   swagger-ui:
