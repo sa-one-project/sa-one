@@ -21,7 +21,8 @@
             created_at,
             updated_at,
             gender,
-            birth_date
+            birth_date,
+            address
         ) values (
             default,
             #{username},
@@ -37,7 +38,8 @@
             now(),
             now(),
             #{gender},
-            #{birthDate}
+            #{birthDate},
+            #{address}
         )
     </insert>
     <insert id="insertOauth2User" useGeneratedKeys="true" keyProperty="userId">
@@ -56,7 +58,8 @@
             created_at,
             updated_at,
             gender,
-            birth_date
+            birth_date,
+            address
         ) values (
             default,
             #{username},
@@ -72,7 +75,8 @@
             now(),
             now(),
             #{gender},
-            #{birthDate}
+            #{birthDate},
+            #{address}
         )
     </insert>
 
@@ -136,7 +140,8 @@
             created_at,
             updated_at,
             gender,
-            birth_date
+            birth_date,
+            address
         from
             user_tb
         where
@@ -167,6 +172,9 @@
             </if>
             <if test="imgUrl != null and imgUrl != ''">
                 img_url = #{imgUrl},
+            </if>
+            <if test="dto.address != null and dto.address != ''">
+                address = #{dto.address},
             </if>
         </set>
         where user_id = #{userId}
@@ -201,6 +209,9 @@
             </if>
             <if test="dto.birthDate != null">
                 birth_date = #{dto.birthDate},
+            </if>
+            <if test="dto.address != null and dto.address != ''">
+                address = #{dto.address},
             </if>
         </set>
         where

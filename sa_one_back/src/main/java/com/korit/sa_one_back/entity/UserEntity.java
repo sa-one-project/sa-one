@@ -32,4 +32,5 @@ public class UserEntity {
     private LocalDate birthDate;
     private boolean isDeleted;
     private LocalDateTime deletedAt;
+    private String address;
 }
