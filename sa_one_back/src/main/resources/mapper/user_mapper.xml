@@ -180,7 +180,7 @@
         where user_id = #{userId}
     </update>
 
-    <select id="findUserIdByEmail" resultType="long">
+    <select id="findUserIdByEmail" resultType="java.lang.Long">
         select
             user_id
         from
