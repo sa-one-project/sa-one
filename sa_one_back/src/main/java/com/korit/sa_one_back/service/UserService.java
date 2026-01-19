@@ -31,25 +31,6 @@ public class UserService extends DefaultOAuth2UserService {
     private final MyPageMapper myPageMapper;
     private final MailService mailService;
 
-//    public void createOauth2User(OAuth2SignUpReqDto dto) {
-//        UserEntity user = UserEntity.builder()
-//                .oauth2Id(dto.getOauth2Id())
-//                .provider(dto.getProvider())
-//                .name(dto.getName())
-//                .email(dto.getEmail())
-//                .imgUrl(dto.getImgUrl())
-//                .imgPath(null)
-//                .roleId(dto.getRoleId()) // 사장/직원
-//                .build();
-//
-//        userMapper.insert(user);
-//    }
-//
-//    public void createLocalUser(SignUpReqDto dto) {
-//        UserEntity userEntity = dto.toEntity(passwordEncoder);
-//        userMapper.insert(userEntity);
-//    }
-
     // Local 회원 생성
     public void createLocalUser(SignUpReqDto dto) {
         UserEntity user = dto.toLocalEntity(passwordEncoder);
@@ -193,11 +174,11 @@ public class UserService extends DefaultOAuth2UserService {
 
         if (username == null || username.isBlank()) return;
 
-        String masked = maskUsername(username);
+        String masked = maskingUsername(username);
         mailService.sendMarkedUsername(dto.getEmail(), masked);
     }
 
-    private String maskUsername(String username) {
+    private String maskingUsername(String username) {
         int n = username.length();
         if (n <= 1) return "*";
         if (n == 2) return username.charAt(0) + "*";
