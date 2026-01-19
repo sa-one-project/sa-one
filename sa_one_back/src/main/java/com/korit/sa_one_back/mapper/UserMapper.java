@@ -49,4 +49,5 @@ public interface UserMapper {
             @Param("userId") Long userId,
             @Param("dto") CreateEmployeeReqDto dto);
 
+    String findUsernameByNameAndEmail(String name, String email);
 }

@@ -30,6 +30,7 @@ public class SignUpReqDto {
     private String gender;
     private LocalDate birthDate;
     private boolean isDeleted;
+    private String address;
 
     public UserEntity toLocalEntity(BCryptPasswordEncoder passwordEncoder) {
         return UserEntity.builder()
@@ -46,6 +47,7 @@ public class SignUpReqDto {
                 .gender(gender)
                 .birthDate(birthDate)
                 .isDeleted(false)
+                .address(address)
                 .build();
     }
 
