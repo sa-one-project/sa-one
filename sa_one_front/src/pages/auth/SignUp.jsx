@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { useAuthStore } from "../../stores/useAuthStore";
 
@@ -22,6 +22,12 @@ function SignUp() {
 
     const [errorMsg, setErrorMsg] = useState("");
 
+    // 사진 파일과 미리보기 URL 상태 추가
+    const [profileFile, setProfileFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+    const fileInputRef = useRef();
+    
+
     // 입력값이 바뀔 때마다 실행되는 함수
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,6 +35,32 @@ function SignUp() {
             ...signUpData,
             [name]: value
         });
+    };
+
+    // 사진 선택 시 미리보기 처리
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setProfileFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    }
+
+    // 아이디 중복 확인 요청
+    const handleCheckUsername = async () => {
+        if (!signUpData.username) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+        // ★ 백엔드에 해당 API가 없어 알림창만 띄우고 실제 호출은 주석 처리함
+        alert("현재 백엔드에 중복 확인 기능이 준비되지 않았습니다.");
+        /* try {
+            const response = await axios.get(`http://localhost:8080/api/auth/check-username?username=${signUpData.username}`);
+            // ... 생략
+        } catch (error) {
+            alert("중복 확인 중 오류가 발생했습니다.");
+        }
+        */
     };
 
     // 데이터를 백엔드로 전송함. AuthController 주소 기반
@@ -55,7 +87,7 @@ function SignUp() {
         }
     };
 
-    return (
+ return (
         <div style={{ padding: "40px" }}>
             <h2>회원가입</h2>
             <hr />
@@ -63,10 +95,18 @@ function SignUp() {
             <div style={{ display: "flex", gap: "50px", marginTop: "20px" }}>
                 {/* 왼쪽: 이미지 업로드 영역 (뼈대) */}
                 <div style={{ textAlign: "center" }}>
-                    <div style={{ width: "150px", height: "180px", border: "1px solid #ccc", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px" }}>
-                        사진
+                    <div style={{ width: "150px", height: "180px", border: "1px solid #ccc", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "10px", overflow: "hidden" }}>
+                        {/* 미리보기 이미지가 있으면 보여주고 없으면 "사진" 글자 표시 */}
+                        {previewUrl ? (
+                            <img src={previewUrl} alt="미리보기" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> // ★
+                        ) : (
+                            "사진"
+                        )}
                     </div>
-                    <button type="button">사진 등록</button>
+                    {/* 숨겨진 실제 input file 태그 */}
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: "none" }} accept="image/*" /> {/* ★ */}
+                    {/* 버튼 클릭 시 위의 input file이 클릭되도록 연결 */}
+                    <button type="button" onClick={() => fileInputRef.current.click()}>사진 등록</button> {/* ★ */}
                 </div>
 
                 {/* 오른쪽: 입력 폼 영역 (뼈대) */}
@@ -74,6 +114,8 @@ function SignUp() {
                     <div>
                         <label>아이디: </label>
                         <input name="username" placeholder="아이디" onChange={handleChange} style={{ width: "200px" }} />
+                        {/* 아이디 중복 확인 버튼 추가 */}
+                        <button type="button" onClick={handleCheckUsername} style={{ marginLeft: "10px" }}>중복 확인</button> {/* ★ */}
                     </div>
 
                     <div>
