@@ -33,6 +33,15 @@ function MyPage() {
         fetchUserData();
     }, [roleId]);
 
+    // 입력값이 바뀔 때 상태를 업데이트하는 함수
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUserInfo({
+            ...userInfo,
+            [name]: value
+        });
+    };
+
     if (!userInfo) return <div>사용자 정보를 불러오는 중...</div>;
 
     return (
@@ -51,12 +60,16 @@ function MyPage() {
 
                     <div>
                         <label>이름</label>
-                        <input type="text" value={userInfo.name || ""} readOnly />
+                        <input type="text" name="name" value={userInfo.name || ""} onChange={handleInputChange} />
                     </div>
                     <div>
                         <label>성별</label>
                         {/* DB gender ENUM('남','여','기타') 매핑 */}
-                        <input type="text" value={userInfo.gender || ""} readOnly />
+                        <select name="gender" value={userInfo.gender || "남"} onChange={handleInputChange}>
+                            <option value="남">남</option>
+                            <option value="여">여</option>
+                            <option value="기타">기타</option>
+                        </select>
                     </div>
                     <div>
                         <label>아이디</label>
@@ -69,16 +82,16 @@ function MyPage() {
                     <div>
                         <label>생년월일</label>
                         {/* DB birth_date 매핑 */}
-                        <input type="text" value={userInfo.birthDate || ""} readOnly />
+                        <input type="text" name="birthDate" value={userInfo.birthDate || ""} onChange={handleInputChange} />
                     </div>
                     <div>
                         <label>이메일 주소</label>
-                        <input type="text" value={userInfo.email || ""} readOnly />
+                        <input type="text" name="email" value={userInfo.email || ""} onChange={handleInputChange} />
                         <button>수정</button>
                     </div>
                     <div>
                         <label>연락처</label>
-                        <input type="text" value={userInfo.phone || ""} readOnly />
+                        <input type="text" name="phone" value={userInfo.phone || ""} onChange={handleInputChange} />
                         <button>변경</button>
                     </div>
                 </section>
@@ -100,11 +113,13 @@ function MyPage() {
                             <div>
                                 <label>상호명</label>
                                 {/* DB store_tb.store_name 매핑 */}
+                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.storeName || ""} readOnly />
                             </div>
                             <div>
                                 <label>사업자 등록번호</label>
                                 {/* DB store_tb.business_number 매핑 */}
+                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.businessNumber || ""} readOnly />
                             </div>
                         </section>
@@ -115,7 +130,8 @@ function MyPage() {
                             <div>
                                 <label>특례사항</label>
                                 {/* DB store_business_info_tb.company_type 매핑 */}
-                                <select value={selectedStore?.companyType || "없음"}>
+                                {/* ★ value 사용 시 onChange가 없으면 readOnly를 붙여야 함 */}
+                                <select value={selectedStore?.companyType || "NONE"} readOnly>
                                     <option value="NONE">없음</option>
                                     <option value="PRIORITY">우선지원대상 기업</option>
                                 </select>
@@ -123,6 +139,7 @@ function MyPage() {
                             <div>
                                 <label>업종명</label>
                                 {/* DB industry_tb.industry_name 매핑 */}
+                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.industryName || ""} readOnly />
                             </div>
                         </section>
