@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.PayrollMapper">
+
+    <select id="findMonthlySummary" resultType="com.korit.sa_one_back.entity.MonthlyAttendanceSummaryEntity">
+        select
+            summary_id as summaryId,
+            store_employee_id as storeEmployeeId,
+            payslip_year_month as payslipYearMonth,
+            work_days as workDays,
+            total_work_minutes as totalWorkMinutes,
+            total_overtime_minutes as totalOvertimeMinutes,
+            total_night_minutes as totalNightMinutes,
+            late_count as lateCount,
+            early_leave_count as earlyLeaveCount,
+            absent_count as absentCount,
+            leave_days as leaveDays,
+            created_at as createdAt
+        from
+            monthly_attendance_summary_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+        and
+            payslip_year_month = #{payslipYearMonth}
+            limit 1
+    </select>
+
+    <select id="findEffectivePay" resultType="com.korit.sa_one_back.entity.PayEntity">
+        select
+            pay_id as payId,
+            store_employee_id as storeEmployeeId,
+            pay_type as payType,
+            hourly_rate as hourlyRate,
+            monthly_salary as monthlySalary,
+            start_date as startDate,
+            end_date as endDate
+        from
+            pay_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+        and
+            start_date <= #{asOf}
+        and
+            (end_date is null or end_date >= #{asOf})
+        order by start_date desc
+        limit 1
+    </select>
+
+    <select id="findEffectivePolicy" resultType="com.korit.sa_one_back.entity.PayPolicyEntity">
+        select
+            pay_policy_id as payPolicyId,
+            store_id as storeId,
+            effective_from as effectiveFrom,
+            effective_to as effectiveTo,
+            is_active as isActive,
+            weekly_allowance_yn as weeklyAllowanceYn,
+            overtime_multiplier as overtimeMultiplier,
+            night_multiplier as nightMultiplier,
+            created_at as createdAt,
+            updated_at as updatedAt
+        from
+            pay_policy_tb
+        where
+            store_id = #{storeId}
+        and
+            effective_from = #{asOf}
+        and
+            effective_to is null or effective_to >= #{asOf})
+        and is_active = 1
+        order by effective_from desc
+        limit 1
+    </select>
+</mapper>
