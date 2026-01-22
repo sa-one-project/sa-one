@@ -45,4 +45,6 @@ public class PayrollEntity {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime issuedAt;
+    private LocalDateTime confirmedAt;
 }
