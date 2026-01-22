@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.korit.sa_one_back.mapper.PayrollMapper">
 
-    <select id="findMonthlySummary" resultType="com.korit.sa_one_back.entity.MonthlyAttendanceSummaryEntity">
+    <select id="findMonthlySummary" resultType="com.korit.sa_one_back.entity.payroll.MonthlyAttendanceSummaryEntity">
         select
             summary_id as summaryId,
             store_employee_id as storeEmployeeId,
@@ -22,9 +23,9 @@
             monthly_attendance_summary_tb
         where
             store_employee_id = #{storeEmployeeId}
-        and
-            payslip_year_month = #{payslipYearMonth}
-            limit 1
+            and
+                payslip_year_month = #{payslipYearMonth}
+        limit 1
     </select>
 
     <select id="findEffectivePay" resultType="com.korit.sa_one_back.entity.PayEntity">
@@ -40,15 +41,15 @@
             pay_tb
         where
             store_employee_id = #{storeEmployeeId}
-        and
-            start_date <= #{asOf}
-        and
-            (end_date is null or end_date >= #{asOf})
+            and
+                start_date &lt;= #{asOf}
+            and
+                (end_date is null or end_date &gt;= #{asOf})
         order by start_date desc
         limit 1
     </select>
 
-    <select id="findEffectivePolicy" resultType="com.korit.sa_one_back.entity.PayPolicyEntity">
+    <select id="findEffectivePolicy" resultType="com.korit.sa_one_back.entity.payroll.PayPolicyEntity">
         select
             pay_policy_id as payPolicyId,
             store_id as storeId,
@@ -64,12 +65,225 @@
             pay_policy_tb
         where
             store_id = #{storeId}
-        and
-            effective_from = #{asOf}
-        and
-            effective_to is null or effective_to >= #{asOf})
-        and is_active = 1
+            and
+                effective_from &lt;= #{asOf}
+            and
+                (effective_to is null or effective_to &gt;= #{asOf})
+            and
+                is_active = 1
         order by effective_from desc
         limit 1
     </select>
+    <select id="findTaxRate" resultType="com.korit.sa_one_back.entity.payroll.TaxRateEntity">
+        select
+            income_tax_rate as incomeTaxRate,
+            local_tax_rate as localTaxRate
+        from
+            tax_rate_tb
+        where
+            year = #{year}
+        limit 1
+    </select>
+    <select id="findNationalPensionLimit" resultType="com.korit.sa_one_back.entity.payroll.LimitEntity">
+        select
+            lower_limit as lowerLimit,
+            upper_limit as upperLimit
+        from
+            national_pension_limit_tb
+        where
+            year = #{year}
+        limit 1
+    </select>
+    <select id="findHealthInsuranceLimit" resultType="com.korit.sa_one_back.entity.payroll.LimitEntity">
+        select
+            lower_limit as lowerLimit,
+            upper_limit as upperLimit
+        from
+            health_insurance_limit_tb
+        where
+            year = #{year}
+        limit 1
+    </select>
+    <select id="findInsuranceRate" resultType="com.korit.sa_one_back.entity.payroll.InsuranceRateEntity">
+        select
+            ir.total_rate as totalRate,
+            ir.employee_rate as employeeRate,
+            ir.employer_rate as employerRate,
+            i.insurance_name as insuranceName
+        from
+            insurance_rate_tb as ir
+        join
+            insurance_tb as i
+            on i.insurance_id = ir.insurance_id
+        where
+            ir.year = #{year}
+            and
+                i.insurance_code = #{insuranceCode}
+        limit 1
+    </select>
+    <select id="findStoreBusinessInfo"
+            resultType="com.korit.sa_one_back.entity.payroll.StoreBusinessInfoEntity">
+        select
+            store_business_info_id as storeBusinessInfoId,
+            store_id as storeId,
+            company_type as companyType,
+            industry_code as industryCode,
+            business_number as businessNumber,
+            company_name as companyName,
+            created_at as createdAt,
+            updated_at as updatedAt
+        from
+            store_business_info_tb
+        where
+            store_id = #{storeId}
+        limit 1
+    </select>
+    <select id="sumWeeklyAllowanceAmountInMonth" resultType="java.lang.Integer">
+        select
+            coalesce(sum(wa.allowance_amount),0)
+        from
+            weekly_allowance_tb as wa
+        where
+            wa.store_employee_id = #{storeEmployeeId}
+            and
+                wa.is_eligible = 1
+            and
+                wa.week_start_date &lt;= #{monthEnd}
+            and
+                wa.week_end_date &gt;= #{monthStart}
+    </select>
+    <select id="findPayrollItemIdByCode" resultType="java.lang.Long">
+        select
+            payroll_item_id
+        from
+            payroll_item_tb
+        where
+            item_code = #{itemCode}
+        limit 1
+    </select>
+    <select id="findPayrollByYm" resultType="com.korit.sa_one_back.entity.payroll.PayrollEntity">
+        select
+            payroll_id as payrollId,
+            store_employee_id as storeEmployeeId,
+            payslip_year_month as payslipYearMonth,
+            period_start as periodStart,
+            period_end as periodEnd,
+            pay_date as payDate,
+            status as status,
+            issued_at as issuedAt,
+            confirmed_at as confirmedAt,
+
+            weekly_allowance_yn as weeklyAllowanceYn,
+            overtime_multiplier as overtimeMultiplier,
+            night_multiplier as nightMultiplier,
+
+            total_work_minutes as totalWorkMinutes,
+            total_overtime_minutes as totalOvertimeMinutes,
+            total_night_minutes as totalNightMinutes,
+
+            gross_pay as grossPay,
+            total_deduction as totalDeduction,
+            net_pay as netPay,
+
+            income_tax_rate as incomeTaxRate,
+            local_tax_rate as localTaxRate,
+            national_pension_rate as nationalPensionRate,
+            health_insurance_rate as healthInsuranceRate,
+            employment_insurance_rate as employmentInsuranceRate,
+
+            industrial_accident_insurance as industrialAccidentInsurance,
+
+            created_at as createdAt,
+            updated_at as updatedAt
+        from
+            payroll_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+            and
+                payslip_year_month = #{payslipYearMonth}
+        limit 1
+    </select>
+
+    <insert id="insertPayroll" useGeneratedKeys="true" keyProperty="payrollId">
+        insert into payroll_tb (
+            store_employee_id,
+            payslip_year_month,
+            period_start,
+            period_end,
+            pay_date,
+            status,
+            issued_at,
+            confirmed_at,
+            weekly_allowance_yn,
+            overtime_multiplier,
+            night_multiplier,
+            total_work_minutes,
+            total_overtime_minutes,
+            total_night_minutes,
+            gross_pay,
+            total_deduction,
+            net_pay,
+            income_tax_rate,
+            local_tax_rate,
+            national_pension_rate,
+            health_insurance_rate,
+            employment_insurance_rate,
+            industrial_accident_insurance,
+            created_at,
+            updated_at
+        ) values (
+            #{storeEmployeeId},
+            #{payslipYearMonth},
+            #{periodStart},
+            #{periodEnd},
+            #{payDate},
+            #{status},
+            #{issuedAt},
+            #{confirmedAt},
+            #{weeklyAllowanceYn},
+            #{overtimeMultiplier},
+            #{nightMultiplier},
+            #{totalWorkMinutes},
+            #{totalOvertimeMinutes},
+            #{totalNightMinutes},
+            #{grossPay},
+            #{totalDeduction},
+            #{netPay},
+            #{incomeTaxRate},
+            #{localTaxRate},
+            #{nationalPensionRate},
+            #{healthInsuranceRate},
+            #{employmentInsuranceRate},
+            #{industrialAccidentInsurance},
+            now(),
+            now()
+        )
+    </insert>
+    <insert id="insertPayrollDetails" parameterType="java.util.List">
+        insert into payroll_detail_tb (
+            payroll_id,
+            payroll_item_id,
+            amount,
+            minutes,
+            quantity,
+            unit_price,
+            multiplier,
+            memo,
+            updated_at
+        )
+        values
+        <foreach collection="list" item="d" separator=",">
+            (
+                #{d.payrollId},
+                #{d.payrollItemId},
+                #{d.amount},
+                #{d.minutes},
+                #{d.quantity},
+                #{d.unitPrice},
+                #{d.multiplier},
+                #{d.memo},
+                now()
+            )
+        </foreach>
+    </insert>
 </mapper>

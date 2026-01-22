@@ -23,7 +23,6 @@ public class StoreApplicationService {
         storeMapper.insertStoreApplication(storeApplicationEntity);
     }
 
-
     public StoreApplicationEntity getMyApplication (Long userId) {
         StoreApplicationEntity storeApplication = storeMapper.selectByUserId(userId);
 

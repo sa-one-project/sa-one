@@ -21,5 +21,4 @@ public class PayrollDetailEntity {
     private Integer unitPrice;
     private Double multiplier;
     private String memo;
-
 }
