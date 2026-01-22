@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,34 @@ public class PayrollService {
 
     private final PayrollMapper payrollMapper;
     private final PayrollFunctions payrollFunctions;
+
+    @Transactional
+    public Long generateMyPayroll(Long userId, Long storeId, String payslipYearMonth) {
+        Long storeEmployeeId = storeEmployeeId(userId, storeId);
+        return generatePayrollForEmployeeMonth(storeId, storeEmployeeId, payslipYearMonth);
+    }
+
+    public PayrollEntity getMyPayroll(Long userId, Long storeId, String payslipYearMonth) {
+        Long storeEmployeeId = payrollMapper.findStoreEmployeePayrollByUserIdAndStoreId(userId, storeId);
+        PayrollEntity payroll = payrollMapper.findPayrollByYm(storeEmployeeId, payslipYearMonth );
+        if (payroll == null) {
+            throw new IllegalStateException("급여 명세서가 없습니다. 날짜 :" + payslipYearMonth);
+        }
+        return payroll;
+    }
+
+    public List<PayrollDetailEntity> getMyPayrollDetails(Long userId, Long storeId, String payslipYearMonth) {
+        PayrollEntity payroll = getMyPayroll(userId, storeId, payslipYearMonth);
+        return payrollMapper.findPayrollDetailsByPayrollId(payroll.getPayrollId());
+    }
+
+    private Long storeEmployeeId(Long userId, Long storeId) {
+        Long storeEmployeeId = payrollMapper.findStoreEmployeePayrollByUserIdAndStoreId(userId, storeId);
+        if (storeEmployeeId == null) {
+            throw new IllegalStateException("해당 매장의 직원이 아닙니다.");
+        }
+        return storeEmployeeId;
+    }
 
     @Transactional
     public Long generatePayrollForEmployeeMonth(Long storeId,
@@ -127,30 +156,52 @@ public class PayrollService {
                 .industrialAccidentInsurance(industrialAccidentInsurance)
 
                 .build();
+
         PayrollEntity payroll = dto.toEntity();
 
         payrollMapper.insertPayroll(payroll);
         Long payrollId = payroll.getPayrollId();
 
+        Map<String, Long> itemIdMap = payrollFunctions.loadPayrollItemIdMap();
         List<PayrollDetailEntity> details = new ArrayList<>();
 
-        payrollFunctions.addDetail(details, payrollId, PayrollDetailDto.builder()
-                .itemCode("BASE")
-                .amount(basePay)
-                .minutes(totalWorkMinutes)
-                .unitPrice(hourlyRate)
-                .multiplier(1.0)
-                .memo("기본급")
-                .build());
+        payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("BASE").amount(basePay)
+                .minutes(totalWorkMinutes).unitPrice(hourlyRate).multiplier(1.0)
+                .memo("기본급").build());
 
-        payrollFunctions.addDetail(details, payrollId, PayrollDetailDto.builder()
-                .itemCode("OVERTIME_PREMIUM")
-                .amount(overtimePremium)
-                .minutes(totalOvertimeMinutes)
-                .unitPrice(hourlyRate)
-                .multiplier(overtimeMultiplier)
-                .memo("연장 프리미엄")
-                .build());
+        if (weeklyAllowanceAmount > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("WEEKLY_ALLOWANCE").amount(weeklyAllowanceAmount)
+                .memo("주휴수당").build());
+
+        if (overtimePremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("OVERTIME_PREMIUM").amount(overtimePremium)
+                .minutes(totalOvertimeMinutes).unitPrice(hourlyRate).multiplier(overtimeMultiplier)
+                .memo("연장 프리미엄").build());
+
+        if (nightPremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("NIGHT_PREMIUM").amount(nightPremium)
+                .minutes(totalNightMinutes).unitPrice(hourlyRate).multiplier(nightMultiplier)
+                .memo("야간 프리미엄").build());
+
+        if (incomeTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("INCOME_TAX").amount(incomeTax).memo("소득세").build());
+
+        if (localTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("LOCAL_TAX").amount(localTax).memo("지방소득세").build());
+
+        if (nationalPension > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("NATIONAL_PENSION").amount(nationalPension).memo("국민연금(근로자)").build());
+
+        if (healthInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("HEALTH_INSURANCE").amount(healthInsurance).memo("건강보험(근로자)").build());
+
+        if (employmentInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("EMPLOYMENT_INSURANCE").amount(employmentInsurance).memo("고용보험(근로자)").build());
+
+        if (!details.isEmpty()) {
+            payrollMapper.insertPayrollDetails(details);
+        }
 
         return payrollId;
     }

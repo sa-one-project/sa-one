@@ -55,7 +55,7 @@
             store_id as storeId,
             effective_from as effectiveFrom,
             effective_to as effectiveTo,
-            is_active as isActive,
+            is_active as active,
             weekly_allowance_yn as weeklyAllowanceYn,
             overtime_multiplier as overtimeMultiplier,
             night_multiplier as nightMultiplier,
@@ -286,4 +286,42 @@
             )
         </foreach>
     </insert>
+    <select id="findStoreEmployeePayrollByUserIdAndStoreId" resultType="com.korit.sa_one_back.entity.payroll.PayrollEntity">
+        select
+            store_employee_id
+        from
+            store_employee_tb
+        where
+            user_id = #{userId}
+            and
+                store_id = #{storeId}
+        limit 1
+    </select>
+
+    <select id="findPayrollDetailsByPayrollId" resultType="com.korit.sa_one_back.entity.payroll.PayrollDetailEntity">
+        select
+            payroll_detail_id as payrollDetailId,
+            payroll_id as payrollId,
+            payroll_item_id as payrollItemId,
+            amount,
+            minutes,
+            quantity,
+            unit_price as unitPrice,
+            multiplier,
+            memo,
+            updated_at as updatedAt
+        from
+            payroll_detail_tb
+        where
+            payroll_id = #{payrollId}
+        order by payroll_detail_id asc
+    </select>
+
+    <select id="findPayrollItemCodeIdList" resultType="map">
+        select
+            item_code as itemCode,
+            payroll_item_id as payrollItemId
+        from
+            payroll_item_tb
+    </select>
 </mapper>

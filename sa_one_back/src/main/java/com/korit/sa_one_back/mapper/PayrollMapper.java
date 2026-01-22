@@ -8,9 +8,27 @@ import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface PayrollMapper {
+    Long findStoreEmployeePayrollByUserIdAndStoreId(
+            @Param("userId") Long userId,
+            @Param("storeId") Long storeId
+    );
+
+    PayrollEntity findPayrollByYm (
+            @Param("storeEmployeeId") Long storeEmployeeId,
+            @Param("payslipYearMonth") String payslipYearMonth
+    );
+    void insertPayroll(PayrollEntity entity);
+
+    List<PayrollDetailEntity> findPayrollDetailsByPayrollId(Long payrollId);
+    int insertPayrollDetails(List<PayrollDetailEntity> details);
+
+    List<Map<String, Object>> findPayrollItemCodeIdList();
+    Long findPayrollItemIdByCode (String itemCode);
+
     MonthlyAttendanceSummaryEntity findMonthlySummary (
             @Param("storeEmployeeId") Long storeEmployeeId,
             @Param("payslipYearMonth") String payslipYearMonth
@@ -26,6 +44,12 @@ public interface PayrollMapper {
             @Param("asOf") LocalDate asOf
     );
 
+    Integer sumWeeklyAllowanceAmountInMonth (
+            @Param("storeEmployeeId") Long storeEmployeeId,
+            @Param("monthStart") LocalDate monthStart,
+            @Param("monthEnd") LocalDate monthEnd
+    );
+
     TaxRateEntity findTaxRate (int year);
 
     LimitEntity findNationalPensionLimit (int year);
@@ -37,22 +61,5 @@ public interface PayrollMapper {
     );
 
     StoreBusinessInfoEntity findStoreBusinessInfo (Long storeId);
-
-    Integer sumWeeklyAllowanceAmountInMonth (
-            @Param("storeEmployeeId") Long storeEmployeeId,
-            @Param("monthStart") LocalDate monthStart,
-            @Param("monthEnd") LocalDate monthEnd
-    );
-
-    Long findPayrollItemIdByCode (String itemCode);
-
-    PayrollEntity findPayrollByYm (
-            @Param("storeEmployeeId") Long storeEmployeeId,
-            @Param("payslipYearMonth") String payslipYearMonth
-    );
-
-    int insertPayroll(PayrollEntity entity);
-
-    int insertPayrollDetails(List<PayrollDetailEntity> details);
 }
 
