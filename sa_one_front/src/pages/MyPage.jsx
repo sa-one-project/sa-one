@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useAuthStore } from "../stores/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 function MyPage() {
+    const navigate = useNavigate();
+    const fileInputRef = useRef();
+    const [previewUrl, setPreviewUrl] = useState(null);
+
     const [userInfo, setUserInfo] = useState(null);
     // DB role_tb 기반 권한 확인 (1: 사장, 2: 직원)
     const { roleId } = useAuthStore();
@@ -33,13 +38,21 @@ function MyPage() {
         fetchUserData();
     }, [roleId]);
 
-    // 입력값이 바뀔 때 상태를 업데이트하는 함수
+    // 입력값이 바뀔 때마다 실행되는 함수
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setUserInfo({
             ...userInfo,
             [name]: value
         });
+    };
+
+    // 사진 선택 시 미리보기 처리 함수
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPreviewUrl(URL.createObjectURL(file));
+        }
     };
 
     if (!userInfo) return <div>사용자 정보를 불러오는 중...</div>;
@@ -54,8 +67,19 @@ function MyPage() {
                     <h2>기본 정보</h2>
                     <div>
                         {/* DB img_url 매핑 */}
-                        <img src={userInfo.imgUrl || "기본이미지경로"} alt="프로필" style={{ width: "100px", borderRadius: "50%" }} />
-                        <button>이미지 변경</button>
+                        <img 
+                            src={previewUrl || userInfo.imgUrl || "기본이미지경로"} 
+                            alt="프로필" 
+                            style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} 
+                        />
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            style={{ display: "none" }} 
+                            onChange={handleFileChange} 
+                            accept="image/*" 
+                        />
+                        <button type="button" onClick={() => fileInputRef.current.click()}>이미지 변경</button>
                     </div>
 
                     <div>
@@ -77,7 +101,8 @@ function MyPage() {
                     </div>
                     <div>
                         <label>비밀번호</label>
-                        <button>변경하기</button>
+                        {/* 기존 비밀번호를 확인하는 별도의 페이지로 이동하거나, 비밀번호 변경 페이지로 바로 이동 */}
+                        <button type="button" onClick={() => navigate("/change-password")}>변경하기</button>
                     </div>
                     <div>
                         <label>생년월일</label>
@@ -87,12 +112,12 @@ function MyPage() {
                     <div>
                         <label>이메일 주소</label>
                         <input type="text" name="email" value={userInfo.email || ""} onChange={handleInputChange} />
-                        <button>수정</button>
+                        <button type="button">수정</button>
                     </div>
                     <div>
                         <label>연락처</label>
                         <input type="text" name="phone" value={userInfo.phone || ""} onChange={handleInputChange} />
-                        <button>변경</button>
+                        <button type="button">변경</button>
                     </div>
                 </section>
 
@@ -113,13 +138,11 @@ function MyPage() {
                             <div>
                                 <label>상호명</label>
                                 {/* DB store_tb.store_name 매핑 */}
-                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.storeName || ""} readOnly />
                             </div>
                             <div>
                                 <label>사업자 등록번호</label>
                                 {/* DB store_tb.business_number 매핑 */}
-                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.businessNumber || ""} readOnly />
                             </div>
                         </section>
@@ -130,7 +153,6 @@ function MyPage() {
                             <div>
                                 <label>특례사항</label>
                                 {/* DB store_business_info_tb.company_type 매핑 */}
-                                {/* ★ value 사용 시 onChange가 없으면 readOnly를 붙여야 함 */}
                                 <select value={selectedStore?.companyType || "NONE"} readOnly>
                                     <option value="NONE">없음</option>
                                     <option value="PRIORITY">우선지원대상 기업</option>
@@ -139,38 +161,10 @@ function MyPage() {
                             <div>
                                 <label>업종명</label>
                                 {/* DB industry_tb.industry_name 매핑 */}
-                                {/* ★ 에러 방지를 위해 readOnly 명시 */}
                                 <input type="text" value={selectedStore?.industryName || ""} readOnly />
                             </div>
                         </section>
                     </>
-                )}
-
-                {/* [권한별 분기] 직원(Role 2)일 때 보이는 섹션 - 디자인 기반 추가 */}
-                {roleId === 2 && userInfo.employeeInfo && (
-                    <section style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", flex: "1", minWidth: "300px" }}>
-                        <h2>나의 근무 정보</h2>
-                        <div>
-                            <label>사번</label>
-                            {/* DB store_employee_tb.employee_no 매핑 */}
-                            <input type="text" value={userInfo.employeeInfo.employeeNo || ""} readOnly />
-                        </div>
-                        <div>
-                            <label>직급</label>
-                            {/* DB position_tb.position_name 매핑 */}
-                            <input type="text" value={userInfo.employeeInfo.positionName || ""} readOnly />
-                        </div>
-                        <div>
-                            <label>입사일</label>
-                            {/* DB store_employee_tb.join_date 매핑 */}
-                            <input type="text" value={userInfo.employeeInfo.joinDate || ""} readOnly />
-                        </div>
-                        <div>
-                            <label>현재 시급</label>
-                            {/* DB pay_tb.hourly_rate 매핑 */}
-                            <input type="text" value={`${userInfo.employeeInfo.hourlyRate?.toLocaleString()}원` || ""} readOnly />
-                        </div>
-                    </section>
                 )}
             </div>
 
