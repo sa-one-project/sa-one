@@ -6,7 +6,7 @@ function PasswordReset() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     
-    // 이메일 링크의 ?token=... 또는 로그에서 복사한 토큰을 읽습니다.
+    // 이메일 링크의 ?token=... 또는 로그에서 복사한 토큰 읽음.
     const tokenFromUrl = searchParams.get("token");
 
     const [email, setEmail] = useState(""); 
