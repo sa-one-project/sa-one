@@ -132,7 +132,7 @@ function Login() {
                     <button onClick={handleLogin} style={{ width: "275px", padding: "10px" }}>로그인</button>
                 </div>
 
-                {/* 소셜 로그인 버튼 (뼈대) */}
+                {/* 소셜 로그인 버튼 */}
                 <div style={{ display: "flex", justifyContent: "center", gap: "15px", marginTop: "20px" }}>
                     <button type="button">카카오</button>
                     <button type="button">네이버</button>
