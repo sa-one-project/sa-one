@@ -102,4 +102,22 @@
         limit 1
     </select>
 
+    <select id="findMyStoresByUserId" parameterType="long" resultType="com.korit.sa_one_back.entity.MyStoreEntity">
+        select distinct
+            s.store_id as storeId,
+            s.store_name as storeName,
+            s.address as address
+        from
+            store_employee_tb se
+        join
+            store_tb s
+        on
+            s.store_id = se.store_id
+        where
+            se.user_id = #{userId}
+            and
+                se.work_status = 'WORKING'
+        order by s.store_id asc
+    </select>
+
 </mapper>
