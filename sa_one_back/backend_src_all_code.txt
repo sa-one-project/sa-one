@@ -490,19 +490,81 @@ public class EmployeeController {
 
 
 ==================================================
+FILE: src/main/java/com/korit/sa_one_back/controller/PayrollController.java
+==================================================
+
+package com.korit.sa_one_back.controller;
+
+import com.korit.sa_one_back.dto.response.PayrollIdRespDto;
+import com.korit.sa_one_back.entity.payroll.PayrollDetailEntity;
+import com.korit.sa_one_back.entity.payroll.PayrollEntity;
+import com.korit.sa_one_back.security.PrincipalUser;
+import com.korit.sa_one_back.service.payroll.PayrollService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/payrolls")
+public class PayrollController {
+
+    private final PayrollService payrollService;
+
+    @GetMapping("/me")
+    public ResponseEntity<PayrollEntity> getMyPayroll(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestParam Long storeId,
+            @RequestParam("ym") String payslipYearMonth
+    ) {
+        Long userId = principalUser.getUserId();
+        return ResponseEntity.ok(payrollService.getMyPayroll(userId, storeId, payslipYearMonth));
+    }
+
+    @PostMapping("/me")
+    public ResponseEntity<PayrollIdRespDto> generateMyPayroll(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestParam Long storeId,
+            @RequestParam("ym") String payslipYearMonth
+    ) {
+        Long userId = principalUser.getUserId();
+        Long payrollId = payrollService.generateMyPayroll(userId, storeId, payslipYearMonth);
+        return ResponseEntity.ok(new PayrollIdRespDto(payrollId));
+    }
+
+    @GetMapping("/me/details")
+    public ResponseEntity<List<PayrollDetailEntity>> getMyPayrollDetails(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestParam Long storeId,
+            @RequestParam("ym") String payslipYearMonth
+    ) {
+        Long userId = principalUser.getUserId();
+        return ResponseEntity.ok(payrollService.getMyPayrollDetails(userId, storeId, payslipYearMonth));
+    }
+}
+
+==================================================
 FILE: src/main/java/com/korit/sa_one_back/controller/StoreController.java
 ==================================================
 
 package com.korit.sa_one_back.controller;
 
 import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.dto.response.MyStoreRespDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.UserEntity;
+import com.korit.sa_one_back.security.PrincipalUser;
 import com.korit.sa_one_back.service.StoreApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/stores")
@@ -512,14 +574,22 @@ public class StoreController {
     private final StoreApplicationService storeService;
 
     @PostMapping("")
-    public void postStoreInformationByOwner(@RequestBody StoreApplicationReqDto dto,
-                                            @AuthenticationPrincipal UserEntity user) {
+    public void postStoreInformationByOwner(
+            @RequestBody StoreApplicationReqDto dto,
+            @AuthenticationPrincipal UserEntity user
+    ) {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
     @GetMapping("/my_application")
     public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal UserEntity user) {
         return storeService.getMyApplication(user.getUserId());
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<MyStoreRespDto>> getMyStores(@AuthenticationPrincipal PrincipalUser principalUser) {
+        Long userId = principalUser.getUserId();;
+        return ResponseEntity.ok(storeService.getMyStores(userId));
     }
 }
 
@@ -751,89 +821,6 @@ public class PasswordResetReqDto {
 
 
 ==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/EffectivePayDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class EffectivePayDto {
-    private String patType;
-    private Integer hourlyRate;
-    private Integer monthlySalary;
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/InsuranceRateDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class InsuranceRateDto {
-    private double employeeRate;
-    private double employerRate;
-    private double totalRate;
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/LimitDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class LimitDto {
-    private int lowerLimit;
-    private int upperLimit;
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/MonthlyAttendanceSummaryDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class MonthlyAttendanceSummaryDto {
-    private Long storeEmployeeId;
-    private String payslipYearMonth;
-
-    private int workDays;
-    private int totalWorkMinutes;
-    private int totalOvertimeMinutes;
-    private int totalNightMinutes;
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/PayPolicyDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class PayPolicyDto {
-    private boolean weeklyAllowanceYn;
-    private double overtimeMultiplier;
-    private double nightMultiplier;
-}
-
-
-==================================================
 FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/PayrollDetailDto.java
 ==================================================
 
@@ -952,36 +939,6 @@ public class PayrollDto {
                 .confirmedAt(confirmedAt)
                 .build();
     }
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/StoreBusinessInfoDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class StoreBusinessInfoDto {
-    private String companyType;
-    private String industryCode;
-}
-
-
-==================================================
-FILE: src/main/java/com/korit/sa_one_back/dto/request/payroll/TaxRateDto.java
-==================================================
-
-package com.korit.sa_one_back.dto.request.payroll;
-
-import lombok.Data;
-
-@Data
-public class TaxRateDto {
-    private double incomeTaxRate;
-    private double localTaxRate;
 }
 
 
@@ -1182,6 +1139,53 @@ public class EmployeeListRespDto {
 
 
 ==================================================
+FILE: src/main/java/com/korit/sa_one_back/dto/response/MyStoreRespDto.java
+==================================================
+
+package com.korit.sa_one_back.dto.response;
+
+import com.korit.sa_one_back.entity.MyStoreEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MyStoreRespDto {
+    private Long storeId;
+    private String storeName;
+    private String address;
+
+    public static MyStoreRespDto fromEntity(MyStoreEntity entity) {
+        return MyStoreRespDto.builder()
+                .storeId(entity.getStoreId())
+                .storeName(entity.getStoreName())
+                .address(entity.getAddress())
+                .build();
+    }
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/dto/response/PayrollIdRespDto.java
+==================================================
+
+package com.korit.sa_one_back.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class PayrollIdRespDto {
+    private Long payrollId;
+}
+
+
+==================================================
 FILE: src/main/java/com/korit/sa_one_back/dto/response/TokenRespDto.java
 ==================================================
 
@@ -1296,6 +1300,28 @@ public class UserMeRespDto {
 
 }
 
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/entity/MyStoreEntity.java
+==================================================
+
+package com.korit.sa_one_back.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MyStoreEntity {
+    private Long storeId;
+    private String storeName;
+    private String address;
+}
 
 
 ==================================================
@@ -2017,9 +2043,27 @@ import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface PayrollMapper {
+    Long findStoreEmployeePayrollByUserIdAndStoreId(
+            @Param("userId") Long userId,
+            @Param("storeId") Long storeId
+    );
+
+    PayrollEntity findPayrollByYm (
+            @Param("storeEmployeeId") Long storeEmployeeId,
+            @Param("payslipYearMonth") String payslipYearMonth
+    );
+    void insertPayroll(PayrollEntity entity);
+
+    List<PayrollDetailEntity> findPayrollDetailsByPayrollId(Long payrollId);
+    int insertPayrollDetails(List<PayrollDetailEntity> details);
+
+    List<Map<String, Object>> findPayrollItemCodeIdList();
+    Long findPayrollItemIdByCode (String itemCode);
+
     MonthlyAttendanceSummaryEntity findMonthlySummary (
             @Param("storeEmployeeId") Long storeEmployeeId,
             @Param("payslipYearMonth") String payslipYearMonth
@@ -2035,6 +2079,12 @@ public interface PayrollMapper {
             @Param("asOf") LocalDate asOf
     );
 
+    Integer sumWeeklyAllowanceAmountInMonth (
+            @Param("storeEmployeeId") Long storeEmployeeId,
+            @Param("monthStart") LocalDate monthStart,
+            @Param("monthEnd") LocalDate monthEnd
+    );
+
     TaxRateEntity findTaxRate (int year);
 
     LimitEntity findNationalPensionLimit (int year);
@@ -2046,23 +2096,6 @@ public interface PayrollMapper {
     );
 
     StoreBusinessInfoEntity findStoreBusinessInfo (Long storeId);
-
-    Integer sumWeeklyAllowanceAmountInMonth (
-            @Param("storeEmployeeId") Long storeEmployeeId,
-            @Param("monthStart") LocalDate monthStart,
-            @Param("monthEnd") LocalDate monthEnd
-    );
-
-    Long findPayrollItemIdByCode (String itemCode);
-
-    PayrollEntity findPayrollByYm (
-            @Param("storeEmployeeId") Long storeEmployeeId,
-            @Param("payslipYearMonth") String payslipYearMonth
-    );
-
-    int insertPayroll(PayrollEntity entity);
-
-    int insertPayrollDetails(List<PayrollDetailEntity> details);
 }
 
 
@@ -2088,12 +2121,14 @@ FILE: src/main/java/com/korit/sa_one_back/mapper/StoreMapper.java
 
 package com.korit.sa_one_back.mapper;
 
+import com.korit.sa_one_back.entity.MyStoreEntity;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper
 public interface StoreMapper {
@@ -2113,6 +2148,8 @@ public interface StoreMapper {
   
     int countByStoreId(@Param("storeId") Long storeId);
     Long findOwnerUserId(@Param("storeId") Long storeId);
+
+    List<MyStoreEntity> findMyStoresByUserId(Long userId);
 }
 
 ==================================================
@@ -2739,7 +2776,6 @@ FILE: src/main/java/com/korit/sa_one_back/service/payroll/PayrollFunctions.java
 package com.korit.sa_one_back.service.payroll;
 
 import com.korit.sa_one_back.dto.request.payroll.PayrollDetailDto;
-import com.korit.sa_one_back.entity.PayEntity;
 import com.korit.sa_one_back.entity.payroll.InsuranceRateEntity;
 import com.korit.sa_one_back.entity.payroll.LimitEntity;
 import com.korit.sa_one_back.entity.payroll.PayrollDetailEntity;
@@ -2749,9 +2785,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Year;
 import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -2827,12 +2864,13 @@ public class PayrollFunctions {
     }
 
     public void addDetail(List<PayrollDetailEntity> details,
-                           Long payrollId,
-                           PayrollDetailDto dto) {
-        Long itemId = payrollMapper.findPayrollItemIdByCode(dto.getItemCode());
+                          Long payrollId,
+                          Map<String, Long> itemIdMap,
+                          PayrollDetailDto dto) {
+        Long itemId = itemIdMap.get(dto.getItemCode());
 
         if (itemId == null) {
-            throw new IllegalStateException("급여명세서 테이블에 item_code가 없습니다." + dto.getItemCode());
+            throw new IllegalStateException("payroll_item_id에 item_code가 없습니다." + dto.getItemCode());
         }
 
         details.add(dto.toEntity(payrollId, itemId));
@@ -2842,6 +2880,18 @@ public class PayrollFunctions {
         if (entity == null) return null;
         double rate = entity.getEmployeeRate();
         return (rate <= 0) ? null : rate;
+    }
+
+    public Map<String, Long> loadPayrollItemIdMap() {
+        List<Map<String, Object>> rows = payrollMapper.findPayrollItemCodeIdList();
+        Map<String, Long> map = new HashMap<>();
+        for (Map<String, Object> r : rows) {
+            String code = (String) r.get("itemCode");
+            Object idObj = r.get("payrollItemId");
+            if (code == null || idObj == null) continue;
+            map.put(code, ((Number) idObj).longValue());
+        }
+        return map;
     }
 }
 
@@ -2865,6 +2915,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -2872,6 +2923,34 @@ public class PayrollService {
 
     private final PayrollMapper payrollMapper;
     private final PayrollFunctions payrollFunctions;
+
+    @Transactional
+    public Long generateMyPayroll(Long userId, Long storeId, String payslipYearMonth) {
+        Long storeEmployeeId = storeEmployeeId(userId, storeId);
+        return generatePayrollForEmployeeMonth(storeId, storeEmployeeId, payslipYearMonth);
+    }
+
+    public PayrollEntity getMyPayroll(Long userId, Long storeId, String payslipYearMonth) {
+        Long storeEmployeeId = payrollMapper.findStoreEmployeePayrollByUserIdAndStoreId(userId, storeId);
+        PayrollEntity payroll = payrollMapper.findPayrollByYm(storeEmployeeId, payslipYearMonth );
+        if (payroll == null) {
+            throw new IllegalStateException("급여 명세서가 없습니다. 날짜 :" + payslipYearMonth);
+        }
+        return payroll;
+    }
+
+    public List<PayrollDetailEntity> getMyPayrollDetails(Long userId, Long storeId, String payslipYearMonth) {
+        PayrollEntity payroll = getMyPayroll(userId, storeId, payslipYearMonth);
+        return payrollMapper.findPayrollDetailsByPayrollId(payroll.getPayrollId());
+    }
+
+    private Long storeEmployeeId(Long userId, Long storeId) {
+        Long storeEmployeeId = payrollMapper.findStoreEmployeePayrollByUserIdAndStoreId(userId, storeId);
+        if (storeEmployeeId == null) {
+            throw new IllegalStateException("해당 매장의 직원이 아닙니다.");
+        }
+        return storeEmployeeId;
+    }
 
     @Transactional
     public Long generatePayrollForEmployeeMonth(Long storeId,
@@ -2979,30 +3058,52 @@ public class PayrollService {
                 .industrialAccidentInsurance(industrialAccidentInsurance)
 
                 .build();
+
         PayrollEntity payroll = dto.toEntity();
 
         payrollMapper.insertPayroll(payroll);
         Long payrollId = payroll.getPayrollId();
 
+        Map<String, Long> itemIdMap = payrollFunctions.loadPayrollItemIdMap();
         List<PayrollDetailEntity> details = new ArrayList<>();
 
-        payrollFunctions.addDetail(details, payrollId, PayrollDetailDto.builder()
-                .itemCode("BASE")
-                .amount(basePay)
-                .minutes(totalWorkMinutes)
-                .unitPrice(hourlyRate)
-                .multiplier(1.0)
-                .memo("기본급")
-                .build());
+        payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("BASE").amount(basePay)
+                .minutes(totalWorkMinutes).unitPrice(hourlyRate).multiplier(1.0)
+                .memo("기본급").build());
 
-        payrollFunctions.addDetail(details, payrollId, PayrollDetailDto.builder()
-                .itemCode("OVERTIME_PREMIUM")
-                .amount(overtimePremium)
-                .minutes(totalOvertimeMinutes)
-                .unitPrice(hourlyRate)
-                .multiplier(overtimeMultiplier)
-                .memo("연장 프리미엄")
-                .build());
+        if (weeklyAllowanceAmount > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("WEEKLY_ALLOWANCE").amount(weeklyAllowanceAmount)
+                .memo("주휴수당").build());
+
+        if (overtimePremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("OVERTIME_PREMIUM").amount(overtimePremium)
+                .minutes(totalOvertimeMinutes).unitPrice(hourlyRate).multiplier(overtimeMultiplier)
+                .memo("연장 프리미엄").build());
+
+        if (nightPremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("NIGHT_PREMIUM").amount(nightPremium)
+                .minutes(totalNightMinutes).unitPrice(hourlyRate).multiplier(nightMultiplier)
+                .memo("야간 프리미엄").build());
+
+        if (incomeTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("INCOME_TAX").amount(incomeTax).memo("소득세").build());
+
+        if (localTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("LOCAL_TAX").amount(localTax).memo("지방소득세").build());
+
+        if (nationalPension > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("NATIONAL_PENSION").amount(nationalPension).memo("국민연금(근로자)").build());
+
+        if (healthInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("HEALTH_INSURANCE").amount(healthInsurance).memo("건강보험(근로자)").build());
+
+        if (employmentInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
+                .itemCode("EMPLOYMENT_INSURANCE").amount(employmentInsurance).memo("고용보험(근로자)").build());
+
+        if (!details.isEmpty()) {
+            payrollMapper.insertPayrollDetails(details);
+        }
 
         return payrollId;
     }
@@ -3017,6 +3118,7 @@ FILE: src/main/java/com/korit/sa_one_back/service/StoreApplicationService.java
 package com.korit.sa_one_back.service;
 
 import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.dto.response.MyStoreRespDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
 import com.korit.sa_one_back.exception.StoreApplicationException;
@@ -3026,6 +3128,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -3047,6 +3151,13 @@ public class StoreApplicationService {
         }
 
         return storeApplication;
+    }
+
+    public List<MyStoreRespDto> getMyStores(Long userId) {
+        return storeMapper.findMyStoresByUserId(userId)
+                .stream()
+                .map(MyStoreRespDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // 어드민용
@@ -3288,7 +3399,7 @@ spring:
       on-profile: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://34.11.250.12:3306/post_project_db
+    url: jdbc:mysql://34.11.250.12:3306/saone_project_db
     username: root
     password: 1q2w3e4r!
   security:
@@ -3637,7 +3748,7 @@ FILE: src/main/resources/mapper/payroll_mapper.xml
             store_id as storeId,
             effective_from as effectiveFrom,
             effective_to as effectiveTo,
-            is_active as isActive,
+            is_active as active,
             weekly_allowance_yn as weeklyAllowanceYn,
             overtime_multiplier as overtimeMultiplier,
             night_multiplier as nightMultiplier,
@@ -3868,6 +3979,44 @@ FILE: src/main/resources/mapper/payroll_mapper.xml
             )
         </foreach>
     </insert>
+    <select id="findStoreEmployeePayrollByUserIdAndStoreId" resultType="com.korit.sa_one_back.entity.payroll.PayrollEntity">
+        select
+            store_employee_id
+        from
+            store_employee_tb
+        where
+            user_id = #{userId}
+            and
+                store_id = #{storeId}
+        limit 1
+    </select>
+
+    <select id="findPayrollDetailsByPayrollId" resultType="com.korit.sa_one_back.entity.payroll.PayrollDetailEntity">
+        select
+            payroll_detail_id as payrollDetailId,
+            payroll_id as payrollId,
+            payroll_item_id as payrollItemId,
+            amount,
+            minutes,
+            quantity,
+            unit_price as unitPrice,
+            multiplier,
+            memo,
+            updated_at as updatedAt
+        from
+            payroll_detail_tb
+        where
+            payroll_id = #{payrollId}
+        order by payroll_detail_id asc
+    </select>
+
+    <select id="findPayrollItemCodeIdList" resultType="map">
+        select
+            item_code as itemCode,
+            payroll_item_id as payrollItemId
+        from
+            payroll_item_tb
+    </select>
 </mapper>
 
 ==================================================
@@ -4046,6 +4195,24 @@ FILE: src/main/resources/mapper/store_mapper.xml
         from store_tb
         where store_id = #{storeId}
         limit 1
+    </select>
+
+    <select id="findMyStoresByUserId" parameterType="long" resultType="com.korit.sa_one_back.entity.MyStoreEntity">
+        select distinct
+            s.store_id as storeId,
+            s.store_name as storeName,
+            s.address as address
+        from
+            store_employee_tb se
+        join
+            store_tb s
+        on
+            s.store_id = se.store_id
+        where
+            se.user_id = #{userId}
+            and
+                se.work_status = 'WORKING'
+        order by s.store_id asc
     </select>
 
 </mapper>
