@@ -6,7 +6,8 @@ import { useAuthStore } from "../stores/useAuthStore";
 function Home() {
     const navigate = useNavigate();
     // 로그인 여부, 역할 가져옴
-    const { isLoggedIn, role } = useAuthStore();
+    // ★ roleId를 가져올 때 Number()를 사용하여 숫자로 확실히 바꿉니다.
+    const { isLoggedIn, roleId } = useAuthStore();
 
     // 로그인을 하지 않은 상태
     if (!isLoggedIn) {
@@ -25,7 +26,8 @@ function Home() {
     return (
         <div>
             {/* roleId 가 1 이면 사장님 그 외 2... 는 직원으로 판별 */}
-            {roleId === 1 ? (
+            {/* ★ 여기서 Number(roleId)를 해주면 문자열 "1"도 숫자 1로 인식되어 사장님 페이지가 뜸. */}
+            {Number(roleId) === 1 ? (
                 <OwnerMain /> // 사장님 메인
             ) : (
                 <EmployeeMain /> // 직원 메인

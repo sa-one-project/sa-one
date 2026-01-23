@@ -6,7 +6,8 @@ export const useAuthStore = create((set) => ({
     isLoggedIn: !!localStorage.getItem("accessToken"),
 
     // 역할(role) 상태 추가 (새로고침을 해도 역할을 읽어서 각자의 메뉴를 유지할 수 있게.)
-    roleId: localStorage.getItem("roleId") || null,
+    // ★ getItem으로 가져온 문자열 "1"을 숫자 1로 강제 변환합니다.
+    roleId: localStorage.getItem("roleId") ? Number(localStorage.getItem("roleId")) : null,
 
     // 로그인 상태로 변경 => 토큰과 역할을 함께 받기
     login: (token, roleId) => {
@@ -14,7 +15,7 @@ export const useAuthStore = create((set) => ({
         localStorage.setItem("roleId", roleId); // 역할 저장
         set({
             isLoggedIn: true,
-            roleId: roleId
+            roleId: Number(roleId) // ★ 저장할 때도 숫자로 확실히 저장
         });
     },
 
