@@ -33,8 +33,11 @@ function Login() {
 
                 // 백엔드에 응답해서 토큰과 유저 정보를 가져옴
                 const { accessToken, user } = response.data;
-                const roleId = user.roleId;
-
+                
+                // 만약 백엔드에서 user 객체를 안 주면 선택된 라디오 버튼에 따라 임시 roleId 부여
+                const roleId = user ? user.roleId : (selectedRole === "owner" ? 1 : 2);
+                
+                // Test용... 콘솔 체크
                 console.log("로그인한 사용자의 roleId:", roleId);
 
                 // 선택한 로그인 버튼 유형과 실제 DB의 roleId 가 맞는지 체크함.
@@ -73,13 +76,31 @@ function Login() {
             {/* 1. 왼쪽: 로그인 유형 선택 영역 (피그마 디자인) */}
             <div style={{ display: "flex", flexDirection: "column", gap: "20px", justifyContent: "center" }}>
                 <label>
-                    <input type="radio" name="loginType" defaultChecked /> 사장 로그인
+                    <input 
+                        type="radio" 
+                        name="loginType" 
+                        value="owner" 
+                        onChange={handleRoleChange} 
+                        checked={selectedRole === "owner"} 
+                    /> 사장 로그인
                 </label>
                 <label>
-                    <input type="radio" name="loginType" /> 직원 로그인
+                    <input 
+                        type="radio" 
+                        name="loginType" 
+                        value="employee" 
+                        onChange={handleRoleChange} 
+                        checked={selectedRole === "employee"} 
+                    /> 직원 로그인
                 </label>
                 <label>
-                    <input type="radio" name="loginType" /> 관리자 로그인
+                    <input 
+                        type="radio" 
+                        name="loginType" 
+                        value="admin" 
+                        onChange={handleRoleChange} 
+                        checked={selectedRole === "admin"} 
+                    /> 관리자 로그인
                 </label>
             </div>
 
@@ -111,7 +132,7 @@ function Login() {
                     <button onClick={handleLogin} style={{ width: "275px", padding: "10px" }}>로그인</button>
                 </div>
 
-                {/* 소셜 로그인 버튼 (뼈대) */}
+                {/* 소셜 로그인 버튼 */}
                 <div style={{ display: "flex", justifyContent: "center", gap: "15px", marginTop: "20px" }}>
                     <button type="button">카카오</button>
                     <button type="button">네이버</button>
