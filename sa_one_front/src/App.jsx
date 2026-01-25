@@ -10,6 +10,7 @@ import MyPage from "./pages/MyPage";
 import EmployeeAdd from "./pages/auth/EmployeeAdd";
 import StartPage from "./pages/auth/StartPage";
 import AttendancePage from "./pages/employee/AttendancePage";
+import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -56,6 +57,9 @@ function App() {
 
                 {/* 직원 전용 기능 (출근 페이지) */}
                 <Route path="/status" element={<AttendancePage />} />
+
+                {/* 직원 전용 기능 (캘린더 페이지) 추가 */}
+                <Route path="/employee/calendar" element={<EmployeeCalendarPage />} />
 
             </Routes>
         </BrowserRouter>
