@@ -9,6 +9,7 @@ import EmployeeMain from "./pages/employee/EmployeeMain";
 import MyPage from "./pages/MyPage";
 import EmployeeAdd from "./pages/auth/EmployeeAdd";
 import StartPage from "./pages/auth/StartPage";
+import AttendancePage from "./pages/employee/AttendancePage";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -52,6 +53,9 @@ function App() {
 
                 {/* 사장님 전용 기능 (직원 추가) */}
                 <Route path="employee-add" element={<EmployeeAdd />} />
+
+                {/* 직원 전용 기능 (출근 페이지) */}
+                <Route path="/status" element={<AttendancePage />} />
 
             </Routes>
         </BrowserRouter>

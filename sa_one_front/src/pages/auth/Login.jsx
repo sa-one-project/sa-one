@@ -70,7 +70,6 @@ function Login() {
     return (
         <div style={{ display: "flex", justifyContent: "center", marginTop: "100px", gap: "100px" }}>
             
-            {/* 1. 왼쪽: 로그인 유형 선택 영역 (피그마 디자인) */}
             <div style={{ display: "flex", flexDirection: "column", gap: "20px", justifyContent: "center" }}>
                 <label>
                     <input type="radio" name="loginType" defaultChecked /> 사장 로그인
@@ -83,7 +82,6 @@ function Login() {
                 </label>
             </div>
 
-            {/* 2. 오른쪽: 실제 입력 및 로직 영역 */}
             <div style={{ textAlign: "center" }}>
                 <h2>SA : ONE</h2>
                 
