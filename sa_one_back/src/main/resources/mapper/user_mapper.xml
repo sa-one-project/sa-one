@@ -250,4 +250,13 @@
             is_deleted = false
     </update>
 
+    <select id="findRoleIdByUserId" resultType="int">
+        select
+        role_id
+        from
+        user_tb
+        where
+        user_id = #{userId}
+    </select>
+
 </mapper>

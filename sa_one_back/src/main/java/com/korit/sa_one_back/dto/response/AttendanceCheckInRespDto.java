@@ -13,8 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AttendanceCheckInRespDto {
 
-    private long attendanceId;
-    private long storeId;
+    private Long attendanceId;
+    private Long storeId;
+    private Long storeEmployeeId;
+    private String employeeName;
     private LocalDateTime checkInTime;
 
 }

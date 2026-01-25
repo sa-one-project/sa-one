@@ -8,10 +8,13 @@ import java.time.LocalDateTime;
 @Data
 public class AttendanceCheckInReqDto {
     private Long storeId;
+    private String storeEmployeeName;
+    private String employeeNo;
+
     private LocalDateTime checkInTime;
     private String checkInImgUrl;
 
-    public com.korit.sa_one_back.entity.AttendanceEntity toEntity(Long storeEmployeeId) {
+    public AttendanceEntity toEntity(Long storeEmployeeId) {
         return AttendanceEntity.builder()
                 .storeEmployeeId(storeEmployeeId)
                 .workDate(checkInTime.toLocalDate())

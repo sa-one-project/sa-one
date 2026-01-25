@@ -161,4 +161,56 @@
         where
             store_id = #{storeId}
     </select>
+
+    <select id="countOwnerStore" resultType="int">
+        select
+        count(*)
+        from
+        store_tb
+        where
+        store_id = #{storeId}
+        and user_id = #{userId}
+
+    </select>
+
+
+    <select id="findStoreEmployeeIdByNoAndName" resultType="java.lang.Long">
+        select
+        se.store_employee_id
+        from
+        store_employee_tb se
+        join user_tb u on u.user_id = se.user_id
+        where
+        se.store_id = #{storeId}
+        and
+        se.employee_no = #{employeeNo}
+        and
+        u.name = #{storeEmployeeName}
+        and
+        se.work_status = 'ACTIVE'
+        limit 1
+    </select>
+
+    <select id="countActiveEmployee" resultType="int">
+        select
+        count(*)
+        from
+        store_employee_tb
+        where
+        store_id = #{storeId}
+        and
+        user_id = #{userId}
+        and
+        work_status = 'ACTIVE'
+    </select>
+
+    <select id="findEmployeeName" resultType="java.lang.String">
+        select
+        u.name
+        from
+        store_employee_tb se
+        join user_tb u on u.user_id = se.user_id
+        where
+        se.store_employee_id = #{storeEmployeeId}
+    </select>
 </mapper>

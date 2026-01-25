@@ -49,14 +49,37 @@ public class PrincipalUser implements OAuth2User {
         return attributes;
     }
 
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        if (isRegistered()) {
+//            String role = user.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+//            return java.util.List.of((GrantedAuthority) () -> role);
+//        }
+//        return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");
+//    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (isRegistered()) {
-            String role = user.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
-            return java.util.List.of((GrantedAuthority) () -> role);
+        if (!isRegistered()) {
+            // 가입 안 된 OAuth2 사용자면 권한 없음 → SecurityConfig에서 막힘
+            return List.of();
         }
-        return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");
+
+        String role;
+        if (user.getRoleId() == 1) {
+            role = "ROLE_OWNER";
+        } else if (user.getRoleId() == 2) {
+            role = "ROLE_EMPLOYEE";
+        } else if (user.getRoleId() == 3) {
+            role = "ROLE_ADMIN";
+        } else {
+            // 시스템상 존재하면 안 되는 값 → 권한 없음 처리
+            return List.of();
+        }
+
+        return List.of((GrantedAuthority) () -> role);
     }
+
 
     @Override
     public String getName() {

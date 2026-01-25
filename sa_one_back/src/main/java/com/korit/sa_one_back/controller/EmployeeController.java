@@ -7,6 +7,7 @@ import com.korit.sa_one_back.security.PrincipalUser;
 import com.korit.sa_one_back.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,10 +31,14 @@ public class EmployeeController {
             @PathVariable Long storeId,
             @RequestBody CreateEmployeeReqDto dto,
             @AuthenticationPrincipal PrincipalUser principalUser
+
     ) {
+
         employeeService.createEmployee(storeId, principalUser.getUserId(), dto);
         return ResponseEntity.ok().build();
+
     }
+
 
     /**
      * 직원 목록 조회
@@ -44,6 +49,12 @@ public class EmployeeController {
             @PathVariable Long workplaceId,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
+        System.out.println(
+                principalUser.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList()
+        );
         return ResponseEntity.ok(employeeService.getEmployees(workplaceId, principalUser.getUserId()));
     }
 

@@ -15,6 +15,8 @@ public class AttendanceCheckOutRespDto {
 
     private Long attendanceId;
     private Long storeId;
+    private Long storeEmployeeId;
+    private String employeeName;
     private LocalDateTime checkOutTime;
     private Integer workedMinutes;
 }
