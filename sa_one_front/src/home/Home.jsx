@@ -4,6 +4,7 @@ import EmployeeMain from "../pages/employee/EmployeeMain";
 import { useAuthStore } from "../stores/useAuthStore";
 
 function Home() {
+
     const navigate = useNavigate();
     // 로그인 여부, 역할 가져옴
     const { isLoggedIn, role } = useAuthStore();

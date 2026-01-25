@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuthStore } from "../stores/useAuthStore";
+// [추가] 회원탈퇴 기능을 관리하는 도구 가져오기
+import { useDeleteUserMutation } from "../react-query/mutations/userMutations";
 
 function MyPage() {
     const [userInfo, setUserInfo] = useState(null);
     // DB role_tb 기반 권한 확인 (1: 사장, 2: 직원)
-    const { roleId } = useAuthStore();
+    const { roleId, clearAuth } = useAuthStore(); // [수정] 로그아웃 기능을 위해 clearAuth 추가
     // 사장님용) 선택된 사업장 ID 상태 (기본값: 1호점 가정)
     // 매장 다중 선택 지원을 위한 코드...
     const [selectedStore, setSelectedStore] = useState(null);
+
+    // [추가] 회원탈퇴 실행 함수 정의
+    const { mutate: deleteAccount } = useDeleteUserMutation();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -32,6 +37,20 @@ function MyPage() {
 
         fetchUserData();
     }, [roleId]);
+
+    // [추가] 탈퇴 버튼을 눌렀을 때 실행될 함수
+    const handleDeleteClick = () => {
+        if (window.confirm("정말 탈퇴하시겠습니까? 모든 정보가 사라집니다.")) {
+            deleteAccount(undefined, {
+                onSuccess: () => {
+                    alert("탈퇴 처리가 완료되었습니다.");
+                    clearAuth(); // 로그인 정보 지우기
+                    localStorage.removeItem("accessToken"); // 토큰 지우기
+                    window.location.href = "/"; // 첫 화면으로 이동
+                }
+            });
+        }
+    };
 
     if (!userInfo) return <div>사용자 정보를 불러오는 중...</div>;
 
@@ -157,7 +176,17 @@ function MyPage() {
                 )}
             </div>
 
-            <button onClick={() => window.history.back()} style={{ marginTop: "20px" }}>닫기</button>
+            <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>
+                <button onClick={() => window.history.back()}>닫기</button>
+                
+                {/* [추가] 회원 탈퇴 버튼 */}
+                <button 
+                    onClick={handleDeleteClick}
+                    style={{ color: "red", cursor: "pointer", border: "none", background: "none", textDecoration: "underline" }}
+                >
+                    회원 탈퇴하기
+                </button>
+            </div>
         </div>
     );
 }
