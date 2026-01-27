@@ -345,6 +345,16 @@ public class AccountController {
 
 
 ==================================================
+FILE: src/main/java/com/korit/sa_one_back/controller/AdminController.java
+==================================================
+
+package com.korit.sa_one_back.controller;
+
+public class AdminController {
+}
+
+
+==================================================
 FILE: src/main/java/com/korit/sa_one_back/controller/AuthController.java
 ==================================================
 
@@ -1950,6 +1960,42 @@ public class JwtTokenProvider {
 
 
 ==================================================
+FILE: src/main/java/com/korit/sa_one_back/mapper/admin/AdminDashboardMapper.java
+==================================================
+
+package com.korit.sa_one_back.mapper.admin;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminDashboardMapper {
+    int countStoreApplicationsByStatus();
+
+    int existMinimumWage(int year);
+    int existTaxRate(int year);
+    int existInsuranceRate(int year);
+    int existNationalPensionRateLimit(int year);
+    int existHealthInsuranceRateLimit(int year);
+    int existEmploymentCompanyRate(int year);
+    int existIndustrialAccidentRate(int year);
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/mapper/admin/AdminPolicyMapper.java
+==================================================
+
+package com.korit.sa_one_back.mapper.admin;
+
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface AdminPolicyMapper {
+
+}
+
+
+==================================================
 FILE: src/main/java/com/korit/sa_one_back/mapper/EmployeeMapper.java
 ==================================================
 
@@ -2375,6 +2421,93 @@ public class RoleResolver {
         if (roleId == 3) return "ROLE_STAFF"; // 직원
         return "ROLE_GUEST"; // 기본값 (예: role_id가 0이거나 비정상일 때)
     }
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/service/admin/AdminDashboardService.java
+==================================================
+
+package com.korit.sa_one_back.service.admin;
+
+import com.korit.sa_one_back.mapper.admin.AdminDashboardMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@Service
+@RequiredArgsConstructor
+public class AdminDashboardService {
+
+    private final AdminDashboardMapper adminDashboardMapper;
+
+    public static final class PolicyKey {
+        public static final String MINIMUM_WAGE = "MINIMUM_WAGE";
+        public static final String TAX_RATE = "TAX_RATE";
+        public static final String INSURANCE_RATE = "INSURANCE_RATE";
+        public static final String NATIONAL_PENSION_LIMIT = "NATIONAL_PENSION_LIMIT";
+        public static final String HEALTH_INSURANCE_LIMIT = "HEALTH_INSURANCE_LIMIT";
+        public static final String EMPLOYMENT_COMPANY_RATE = "EMPLOYMENT_COMPANY_RATE";
+        public static final String INDUSTRIAL_ACCIDENT_RATE = "INDUSTRIAL_ACCIDENT_RATE";
+    }
+
+    public int countPendingApplication() {
+        return adminDashboardMapper.countStoreApplicationsByStatus();
+    }
+
+    public Map<String, Boolean> getPolicyAlertsIfDue() {
+        int targetYear = LocalDate.now().getYear() + 1;
+
+        LocalDate now = LocalDate.now();
+        LocalDate dueStartDate = LocalDate.of(targetYear, 1, 1).minusMonths(1);
+
+        if (now.isBefore(dueStartDate)) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, Boolean> statusMap = countPolicyAlert(targetYear);
+
+        Map<String, Boolean> alerts = new LinkedHashMap<>();
+
+        for (Map.Entry<String, Boolean> e : statusMap.entrySet()) {
+            if (!e.getValue()) {
+                alerts.put(e.getKey(), false);
+            }
+        }
+        return alerts;
+    }
+
+    private Map<String, Boolean> countPolicyAlert(int year) {
+        Map<String, Boolean> result = new LinkedHashMap<>();
+
+        result.put(PolicyKey.MINIMUM_WAGE,
+                adminDashboardMapper.existMinimumWage(year) == 1);
+
+        result.put(PolicyKey.TAX_RATE,
+                adminDashboardMapper.existTaxRate(year) == 1);
+
+        result.put(PolicyKey.INSURANCE_RATE,
+                adminDashboardMapper.existInsuranceRate(year) == 1);
+
+        result.put(PolicyKey.NATIONAL_PENSION_LIMIT,
+                adminDashboardMapper.existNationalPensionRateLimit(year) == 1);
+
+        result.put(PolicyKey.HEALTH_INSURANCE_LIMIT,
+                adminDashboardMapper.existHealthInsuranceRateLimit(year) == 1);
+
+        result.put(PolicyKey.EMPLOYMENT_COMPANY_RATE,
+                adminDashboardMapper.existEmploymentCompanyRate(year) == 1);
+
+        result.put(PolicyKey.INDUSTRIAL_ACCIDENT_RATE,
+                adminDashboardMapper.existIndustrialAccidentRate(year) == 1);
+
+        return result;
+    }
+
 }
 
 
@@ -3067,39 +3200,86 @@ public class PayrollService {
         Map<String, Long> itemIdMap = payrollFunctions.loadPayrollItemIdMap();
         List<PayrollDetailEntity> details = new ArrayList<>();
 
-        payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("BASE").amount(basePay)
-                .minutes(totalWorkMinutes).unitPrice(hourlyRate).multiplier(1.0)
-                .memo("기본급").build());
+        payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("BASE")
+                                .amount(basePay)
+                                .minutes(totalWorkMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(1.0)
+                                .memo("기본급")
+                                .build());
 
-        if (weeklyAllowanceAmount > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("WEEKLY_ALLOWANCE").amount(weeklyAllowanceAmount)
-                .memo("주휴수당").build());
+        if (weeklyAllowanceAmount > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("WEEKLY_ALLOWANCE")
+                                .amount(weeklyAllowanceAmount)
+                                .memo("주휴수당")
+                                .build());
 
-        if (overtimePremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("OVERTIME_PREMIUM").amount(overtimePremium)
-                .minutes(totalOvertimeMinutes).unitPrice(hourlyRate).multiplier(overtimeMultiplier)
-                .memo("연장 프리미엄").build());
+        if (overtimePremium > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("OVERTIME_PREMIUM")
+                                .amount(overtimePremium)
+                                .minutes(totalOvertimeMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(overtimeMultiplier)
+                                .memo("연장 프리미엄")
+                                .build());
 
-        if (nightPremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("NIGHT_PREMIUM").amount(nightPremium)
-                .minutes(totalNightMinutes).unitPrice(hourlyRate).multiplier(nightMultiplier)
-                .memo("야간 프리미엄").build());
+        if (nightPremium > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("NIGHT_PREMIUM")
+                                .amount(nightPremium)
+                                .minutes(totalNightMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(nightMultiplier)
+                                .memo("야간 프리미엄")
+                                .build());
 
-        if (incomeTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("INCOME_TAX").amount(incomeTax).memo("소득세").build());
+        if (incomeTax > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("INCOME_TAX")
+                                .amount(incomeTax)
+                                .memo("소득세")
+                                .build());
 
-        if (localTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("LOCAL_TAX").amount(localTax).memo("지방소득세").build());
+        if (localTax > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("LOCAL_TAX")
+                                .amount(localTax)
+                                .memo("지방소득세")
+                                .build());
 
-        if (nationalPension > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("NATIONAL_PENSION").amount(nationalPension).memo("국민연금(근로자)").build());
+        if (nationalPension > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("NATIONAL_PENSION")
+                                .amount(nationalPension)
+                                .memo("국민연금(근로자)")
+                                .build());
 
-        if (healthInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("HEALTH_INSURANCE").amount(healthInsurance).memo("건강보험(근로자)").build());
+        if (healthInsurance > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("HEALTH_INSURANCE")
+                                .amount(healthInsurance)
+                                .memo("건강보험(근로자)")
+                                .build());
 
-        if (employmentInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("EMPLOYMENT_INSURANCE").amount(employmentInsurance).memo("고용보험(근로자)").build());
+        if (employmentInsurance > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("EMPLOYMENT_INSURANCE")
+                                .amount(employmentInsurance)
+                                .memo("고용보험(근로자)")
+                                .build());
 
         if (!details.isEmpty()) {
             payrollMapper.insertPayrollDetails(details);
@@ -3401,7 +3581,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://34.11.250.12:3306/saone_project_db
     username: root
-    password: 1q2w3e4r!
+    password: d#a21@!!kuen^^7f)eaccp2(
   security:
     oauth2:
       client:
@@ -3476,6 +3656,97 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
   type-aliases-package: com.korit.sa_one_back.entity
+
+==================================================
+FILE: src/main/resources/mapper/admin/admin_mapper.xml
+==================================================
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminDashboardMapper">
+
+    <select id="countStoreApplicationsByStatus" resultType="java.lang.Integer">
+        select count
+            (*)
+        from
+            store_application_tb
+        where
+            status = 'PENDING'
+    </select>
+    <select id="existMinimumWage" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                minimum_wage_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existTaxRate" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                tax_rate_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existInsuranceRate" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                insurance_rate_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existNationalPensionRateLimit" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                national_pension_limit_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existHealthInsuranceRateLimit" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                health_insurance_limit_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existEmploymentCompanyRate" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                employment_company_rate_tb
+            where
+                year = #{year}
+        )
+    </select>
+    <select id="existIndustrialAccidentRate" resultType="java.lang.Integer">
+        select exists(
+            select
+                1
+            from
+                industrial_accident_rate_tb
+            where
+                year = #{year}
+        )
+    </select>
+</mapper>
 
 ==================================================
 FILE: src/main/resources/mapper/employee_mapper.xml
