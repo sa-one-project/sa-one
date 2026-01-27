@@ -83,4 +83,38 @@
                 year = #{year}
         )
     </select>
+    <select id="countPendingInquiry" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            inquiry_tb
+        where
+            status = 'OPEN'
+    </select>
+    <select id="countInProgressInquiry" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            inquiry_tb
+        where
+            status = 'IN_PROGRESS'
+    </select>
+    <select id="selectInquiry" resultType="java.lang.Integer">
+        select
+            *
+        from
+            inquiry_tb
+        where
+            inquiry_id = #{inquiry_id}
+    </select>
+    <update id="updateInquiryStatus">
+        update
+            inquiry_tb
+        set
+            status = 'IN_PROGRESS',
+            reviewed_at = now()
+        where
+            inquiry_id = #{inquiryId}
+            and status = 'OPEN'
+    </update>
 </mapper>

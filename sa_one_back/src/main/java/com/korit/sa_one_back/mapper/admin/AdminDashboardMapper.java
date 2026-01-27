@@ -6,6 +6,11 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AdminDashboardMapper {
     int countStoreApplicationsByStatus();
 
+    int countPendingInquiry();
+    int countInProgressInquiry();
+    int updateInquiryStatus(Long inquiryId);
+    int selectInquiry(Long inquiryId);
+
     int existMinimumWage(int year);
     int existTaxRate(int year);
     int existInsuranceRate(int year);

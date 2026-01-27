@@ -16,6 +16,7 @@ public class PrincipalUser implements OAuth2User {
     private final String oauth2Id;
     private final String provider;
     private final String email;
+    private final String name;
 
     private final UserEntity user;
 
@@ -23,6 +24,7 @@ public class PrincipalUser implements OAuth2User {
                          String oauth2Id,
                          String provider,
                          String email,
+                         String name,
                          UserEntity user) {
 
         this.attributes = attributes;
@@ -30,6 +32,7 @@ public class PrincipalUser implements OAuth2User {
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;
+        this.name = name;
         this.user = user;
     }
 
@@ -45,7 +48,7 @@ public class PrincipalUser implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (isRegistered()) {
-            String role = RoleType.fromId(user.getRoleId());
+            String role = RoleType.fromId(user.getRoleId()).getRoleName();
             return java.util.List.of((GrantedAuthority) () -> role);
         }
         return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");
