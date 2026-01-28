@@ -7,7 +7,8 @@ function Home() {
 
     const navigate = useNavigate();
     // 로그인 여부, 역할 가져옴
-    const { isLoggedIn, role } = useAuthStore();
+    // role을 가져와서 아래에서 쓰는 roleId와 이름을 맞춤
+    const { isLoggedIn, role: roleId } = useAuthStore();
 
     // 로그인을 하지 않은 상태
     if (!isLoggedIn) {
@@ -34,6 +35,5 @@ function Home() {
         </div>
     );
 }
-
 
 export default Home;
