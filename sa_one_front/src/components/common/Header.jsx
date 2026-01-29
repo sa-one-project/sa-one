@@ -31,6 +31,7 @@ function Header() {
                         )}
                         
                         {/* 공통 메뉴 */}
+                        <Link to="/employee/calendar">직원 캘린더</Link> 
                         <Link to="/calendar">직원 캘린더</Link>
                         <Link to="/status">출근 현황</Link>
                         <Link to="/salary">급여명세서</Link>
