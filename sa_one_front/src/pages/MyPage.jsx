@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useAuthStore } from "../stores/useAuthStore";
+<<<<<<< HEAD
 import { useDeleteUserMutation } from "../react-query/mutations/userMutations";
 import DeleteAccountModal from "../components/DeleteAccountModal";
+=======
+import { useNavigate } from "react-router-dom";
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
 
 function MyPage() {
+    const navigate = useNavigate();
+    const fileInputRef = useRef();
+    const [previewUrl, setPreviewUrl] = useState(null);
+
     const [userInfo, setUserInfo] = useState(null);
     // DB role_tb 기반 권한 확인 (1: 사장, 2: 직원)
     const { roleId, clearAuth } = useAuthStore(); // 로그아웃 기능을 위해 clearAuth 추가
@@ -41,6 +49,7 @@ function MyPage() {
         fetchUserData();
     }, [roleId]);
 
+<<<<<<< HEAD
     const handleDeleteClick = () => {
         setIsModalOpen(true);
     };
@@ -56,6 +65,23 @@ function MyPage() {
             }
         });
         setIsModalOpen(false);
+=======
+    // 입력값이 바뀔 때마다 실행되는 함수
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setUserInfo({
+            ...userInfo,
+            [name]: value
+        });
+    };
+
+    // 사진 선택 시 미리보기 처리 함수
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
     };
 
     if (!userInfo) return <div>사용자 정보를 불러오는 중...</div>;
@@ -68,17 +94,43 @@ function MyPage() {
                 <section style={{ border: "1px solid #ccc", padding: "15px", borderRadius: "8px", flex: "1", minWidth: "300px" }}>
                     <h2>기본 정보</h2>
                     <div>
+<<<<<<< HEAD
                         <img src={userInfo.imgUrl || "기본이미지경로"} alt="프로필" style={{ width: "100px", borderRadius: "50%" }} />
                         <button>이미지 변경</button>
+=======
+                        {/* DB img_url 매핑 */}
+                        <img 
+                            src={previewUrl || userInfo.imgUrl || "기본이미지경로"} 
+                            alt="프로필" 
+                            style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} 
+                        />
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            style={{ display: "none" }} 
+                            onChange={handleFileChange} 
+                            accept="image/*" 
+                        />
+                        <button type="button" onClick={() => fileInputRef.current.click()}>이미지 변경</button>
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
                     </div>
 
                     <div>
                         <label>이름</label>
-                        <input type="text" value={userInfo.name || ""} readOnly />
+                        <input type="text" name="name" value={userInfo.name || ""} onChange={handleInputChange} />
                     </div>
                     <div>
                         <label>성별</label>
+<<<<<<< HEAD
                         <input type="text" value={userInfo.gender || ""} readOnly />
+=======
+                        {/* DB gender ENUM('남','여','기타') 매핑 */}
+                        <select name="gender" value={userInfo.gender || "남"} onChange={handleInputChange}>
+                            <option value="남">남</option>
+                            <option value="여">여</option>
+                            <option value="기타">기타</option>
+                        </select>
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
                     </div>
                     <div>
                         <label>아이디</label>
@@ -86,21 +138,27 @@ function MyPage() {
                     </div>
                     <div>
                         <label>비밀번호</label>
-                        <button>변경하기</button>
+                        {/* 기존 비밀번호를 확인하는 별도의 페이지로 이동하거나, 비밀번호 변경 페이지로 바로 이동 */}
+                        <button type="button" onClick={() => navigate("/change-password")}>변경하기</button>
                     </div>
                     <div>
                         <label>생년월일</label>
+<<<<<<< HEAD
                         <input type="text" value={userInfo.birthDate || ""} readOnly />
+=======
+                        {/* DB birth_date 매핑 */}
+                        <input type="text" name="birthDate" value={userInfo.birthDate || ""} onChange={handleInputChange} />
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
                     </div>
                     <div>
                         <label>이메일 주소</label>
-                        <input type="text" value={userInfo.email || ""} readOnly />
-                        <button>수정</button>
+                        <input type="text" name="email" value={userInfo.email || ""} onChange={handleInputChange} />
+                        <button type="button">수정</button>
                     </div>
                     <div>
                         <label>연락처</label>
-                        <input type="text" value={userInfo.phone || ""} readOnly />
-                        <button>변경</button>
+                        <input type="text" name="phone" value={userInfo.phone || ""} onChange={handleInputChange} />
+                        <button type="button">변경</button>
                     </div>
                 </section>
 
@@ -131,7 +189,12 @@ function MyPage() {
                             <h2>사업장 정보</h2>
                             <div>
                                 <label>특례사항</label>
+<<<<<<< HEAD
                                 <select value={selectedStore?.companyType || "없음"}>
+=======
+                                {/* DB store_business_info_tb.company_type 매핑 */}
+                                <select value={selectedStore?.companyType || "NONE"} readOnly>
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
                                     <option value="NONE">없음</option>
                                     <option value="PRIORITY">우선지원대상 기업</option>
                                 </select>
@@ -143,6 +206,7 @@ function MyPage() {
                         </section>
                     </>
                 )}
+<<<<<<< HEAD
 
                 {/* 직원(Role 2)일 때 */}
                 {roleId === 2 && userInfo.employeeInfo && (
@@ -166,6 +230,8 @@ function MyPage() {
                         </div>
                     </section>
                 )}
+=======
+>>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
             </div>
 
             <div style={{ marginTop: "20px", display: "flex", justifyContent: "space-between" }}>

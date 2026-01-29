@@ -11,6 +11,7 @@ import EmployeeAdd from "./pages/auth/EmployeeAdd";
 import StartPage from "./pages/auth/StartPage";
 import AttendancePage from "./pages/employee/AttendancePage";
 import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
+import PasswordReset from "./pages/auth/PasswordReset";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -51,6 +52,8 @@ function App() {
 
                 {/* 사장님, 직원 공용 기능 */}
                 <Route path="/mypage" element={<MyPage />} />
+                {/* ★ 비밀번호 변경 경로 추가 */}
+                <Route path="/change-password" element={<PasswordReset />} />
 
                 {/* 사장님 전용 기능 (직원 추가) */}
                 <Route path="employee-add" element={<EmployeeAdd />} />

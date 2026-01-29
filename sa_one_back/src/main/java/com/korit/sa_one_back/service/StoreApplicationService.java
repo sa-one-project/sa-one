@@ -1,6 +1,7 @@
 package com.korit.sa_one_back.service;
 
 import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.dto.response.MyStoreRespDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
 import com.korit.sa_one_back.exception.StoreApplicationException;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +26,6 @@ public class StoreApplicationService {
         storeMapper.insertStoreApplication(storeApplicationEntity);
     }
 
-
     public StoreApplicationEntity getMyApplication (Long userId) {
         StoreApplicationEntity storeApplication = storeMapper.selectByUserId(userId);
 
@@ -32,6 +34,13 @@ public class StoreApplicationService {
         }
 
         return storeApplication;
+    }
+
+    public List<MyStoreRespDto> getMyStores(Long userId) {
+        return storeMapper.findMyStoresByUserId(userId)
+                .stream()
+                .map(MyStoreRespDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // 어드민용

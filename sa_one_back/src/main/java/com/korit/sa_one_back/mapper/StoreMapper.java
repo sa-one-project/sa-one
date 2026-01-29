@@ -1,11 +1,13 @@
 package com.korit.sa_one_back.mapper;
 
+import com.korit.sa_one_back.entity.MyStoreEntity;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper
 public interface StoreMapper {
@@ -25,4 +27,6 @@ public interface StoreMapper {
   
     int countByStoreId(@Param("storeId") Long storeId);
     Long findOwnerUserId(@Param("storeId") Long storeId);
+
+    List<MyStoreEntity> findMyStoresByUserId(Long userId);
 }
