@@ -1,13 +1,11 @@
 package com.korit.sa_one_back.controller;
 
-import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.dto.request.admin.StoreApplicationReqDto;
 import com.korit.sa_one_back.dto.response.MyStoreRespDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
-import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.security.PrincipalUser;
 import com.korit.sa_one_back.service.StoreApplicationService;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.korit.sa_one_back.dto.request;
+package com.korit.sa_one_back.dto.request.admin;
 
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
 import com.korit.sa_one_back.entity.StoreEntity;

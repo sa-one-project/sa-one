@@ -1,4 +1,4 @@
-package com.korit.sa_one_back.controller;
+package com.korit.sa_one_back.controller.admin;
 
 import com.korit.sa_one_back.dto.response.AdminDashboardRespDto;
 import com.korit.sa_one_back.service.admin.AdminDashboardService;
