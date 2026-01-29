@@ -119,5 +119,33 @@
                 se.work_status = 'WORKING'
         order by s.store_id asc
     </select>
+    <select id="findOwnerStoresByUserId"
+            parameterType="long"
+            resultType="com.korit.sa_one_back.entity.MyStoreEntity">
+        select
+        store_id as storeId,
+        store_name as storeName,
+        address as address
+        from
+        store_tb
+        where
+        user_id = #{userId}
+        order by store_id asc
+    </select>
+
+    <select id="countEmployeeInStoreByUserId" resultType="int">
+        select count(*)
+        from store_employee_tb
+        where store_id = #{storeId}
+        and user_id = #{userId}
+        and work_status = 'WORKING'
+    </select>
+
+    <select id="findStoreName" resultType="string">
+        select store_name
+        from store_tb
+        where store_id = #{storeId}
+        limit 1
+    </select>
 
 </mapper>

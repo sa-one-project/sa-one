@@ -7,14 +7,13 @@ import java.time.LocalDateTime;
 
 @Data
 public class CreateEmployeeReqDto {
-    // user_tb - 사용자 정보
+
     private String name;
     private LocalDate birthDate;
     private String address;
     private String email;
     private String phone;
 
-    // user_tb 프로필 이미지
     private String imgUrl;
     private String imgPath;
 

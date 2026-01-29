@@ -52,7 +52,7 @@ public class PrincipalUser implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (isRegistered()) {
-            String role = user.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+            String role = user.getRoleId() == 1 ? "ROLE_ADMIN" : user.getRoleId() == 2 ? "ROLE_OWNER" : "ROLE_STAFF";
             return java.util.List.of((GrantedAuthority) () -> role);
         }
         return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");

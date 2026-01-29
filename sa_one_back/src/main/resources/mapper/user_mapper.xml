@@ -178,7 +178,7 @@
                 img_url = #{imgUrl},
             </if>
             <if test="dto.address != null and dto.address != ''">
-                address = #{dto.address},
+                address = #{address},
             </if>
         </set>
         where user_id = #{userId}

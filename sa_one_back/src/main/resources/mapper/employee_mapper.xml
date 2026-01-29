@@ -5,7 +5,7 @@
 
 <mapper namespace="com.korit.sa_one_back.mapper.EmployeeMapper">
 
-    <!-- ✅ storeId + userId가 ACTIVE 상태로 이미 등록돼있는지 체크 -->
+    <!-- storeId + userId가 ACTIVE 상태로 이미 등록돼있는지 체크 -->
     <select id="existsActiveEmployee" resultType="boolean">
         select exists(
         select 1
@@ -16,33 +16,30 @@
         )
     </select>
 
-    <!-- ✅ 직원 소속(store_employee) 추가 -->
+    <!-- 직원 소속(store_employee) 추가 -->
     <insert id="insertStoreEmployee" useGeneratedKeys="true" keyProperty="storeEmployeeId">
         insert into store_employee_tb (
-        store_employee_id,
-        store_id,
-        user_id,
-        employee_no,
-        employee_name,
-        position_id,
-        join_date,
-        work_status,
+            store_employee_id,
+            store_id,
+            user_id,
+            employee_no,
+            position_id,
+            join_date,
+            work_status,
         updated_at
         ) values (
-        default,
-        #{storeId},
-        #{userId},
-        #{employeeNo},
-        null,
-        #{positionId},
-        #{joinDate},
-        #{workStatus},
-        now()
+            default,
+            #{storeId},
+            #{userId},
+            #{employeeNo},
+            #{positionId},
+            #{joinDate},
+            #{workStatus},
+            now()
         )
     </insert>
 
-    <!-- ✅ 직원 목록 조회 (as 없음)
-         ⚠️ XML에서 '<=' 같은 기호는 CDATA로 감싸야 안전함 -->
+    <!--  직원 목록 조회 -->
     <select id="selectEmployees" resultType="com.korit.sa_one_back.dto.response.EmployeeListRespDto">
         <![CDATA[
         select
@@ -81,7 +78,7 @@
         ]]>
     </select>
 
-    <!-- ✅ 요청 ids가 해당 store 소속인지 검증 -->
+    <!-- 요청 ids가 해당 store 소속인지 검증 -->
     <select id="countBelonging" resultType="int">
         select count(*)
         from store_employee_tb
@@ -92,7 +89,7 @@
         </foreach>
     </select>
 
-    <!-- ✅ 퇴사 처리: work_status 변경 -->
+    <!-- 퇴사 처리: work_status 변경 -->
     <update id="updateWorkStatus">
         update store_employee_tb
         set

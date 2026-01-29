@@ -24,13 +24,13 @@ public class StoreController {
     @PostMapping("")
     public void postStoreInformationByOwner(
             @RequestBody StoreApplicationReqDto dto,
-            @AuthenticationPrincipal UserEntity user
+            @AuthenticationPrincipal PrincipalUser user
     ) {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
     @GetMapping("/my_application")
-    public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal UserEntity user) {
+    public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal PrincipalUser user) {
         return storeService.getMyApplication(user.getUserId());
     }
 
