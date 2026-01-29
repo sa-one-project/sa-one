@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminInquiryMapper">
+
+    <sql id="keywordFilter">
+        <if test="keyword != null and keyword != ''">
+            and (
+            i.title like concat('%', #{keyword}, '%')
+            or i.content like concat('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
+    <select id="count" resultType="int">
+        select count
+            (*)
+        from
+            inquiry_tb i
+        where
+            i.status = #{status}
+        <include refid="keywordFilter"/>
+    </select>
+
+    <select id="findList" resultType="com.saone.project.admin.inquiry.dto.AdminInquiryListItemRespDto">
+        select
+            i.inquiry_id   as inquiryId,
+            i.title        as title,
+            i.status       as status,
+            u.user_id      as userId,
+            u.name         as userName,
+            s.store_name   as storeName,
+            i.created_at   as createdAt
+        from
+            inquiry_tb i
+        join
+            user_tb u
+        on
+            u.user_id = i.user_id
+        left join
+            store_tb s
+        on
+            s.store_id = i.store_id
+        where
+            i.status = #{status}
+        <include refid="keywordFilter"/>
+        order by i.created_at desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <select id="findDetail" resultType="com.saone.project.admin.inquiry.dto.AdminInquiryDetailRespDto">
+        select
+            i.inquiry_id   as inquiryId,
+            i.title        as title,
+            i.content      as content,
+            i.status       as status,
+
+            u.user_id      as userId,
+            u.name         as userName,
+            u.email        as userEmail,
+
+            s.store_id     as storeId,
+            s.store_name   as storeName,
+
+            i.created_at   as createdAt,
+            i.reviewed_at  as reviewedAt
+        from
+            inquiry_tb i
+        join
+            user_tb u
+        on
+            u.user_id = i.user_id
+        left join
+            store_tb s
+        on
+            s.store_id = i.store_id
+        where
+            i.inquiry_id = #{id}
+    </select>
+
+    <select id="findComments" resultType="com.saone.project.inquiry.entity.InquiryCommentEntity">
+        select
+            c.comment_id  as commentId,
+            c.inquiry_id  as inquiryId,
+            c.user_id     as userId,
+            c.content     as content,
+            c.created_at  as createdAt,
+            c.updated_at  as updatedAt
+        from
+            inquiry_comment_tb c
+        where
+            c.inquiry_id = #{inquiryId}
+        order by c.created_at asc
+    </select>
+
+    <update id="updateStatus">
+        update
+            inquiry_tb
+        set
+            status = #{status},
+            reviewed_at = case
+                when
+                    #{status} in ('IN_PROGRESS', 'CLOSED') then now()
+                else
+                    reviewed_at
+                end
+        where
+            inquiry_id = #{id}
+    </update>
+
+    <insert id="insertComment">
+        insert into inquiry_comment_tb (
+            inquiry_id,
+            user_id,
+            content,
+            created_at,
+            updated_at
+        ) values (
+            #{inquiryId},
+            #{userId},
+            #{content},
+            now(),
+            now()
+        )
+    </insert>
+
+</mapper>
