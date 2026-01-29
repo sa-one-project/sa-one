@@ -1,5 +1,6 @@
 package com.korit.sa_one_back.service.admin;
 
+import com.korit.sa_one_back.dto.response.AdminDashboardRespDto;
 import com.korit.sa_one_back.mapper.admin.AdminDashboardMapper;
 import com.korit.sa_one_back.mapper.admin.PolicyType;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,14 @@ import java.util.Map;
 public class AdminDashboardService {
 
     private final AdminDashboardMapper adminDashboardMapper;
+
+    public AdminDashboardRespDto getDashboard() {
+        return AdminDashboardRespDto.builder()
+                .pendingApplications(countPendingApplication())
+                .openInquiries(countPendingInquiry())
+                .policyAlerts(getPolicyAlertsIfDue())
+                .build();
+    }
 
     public int countPendingApplication() {
         return adminDashboardMapper.countStoreApplicationsByStatus();

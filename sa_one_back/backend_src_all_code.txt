@@ -266,9 +266,9 @@ public class SwaggerApiConfig {
     public OpenAPI openAPIConfig() {
         OpenAPI openAPI = new OpenAPI();
         Info info = new Info();
-        info.title("소셜 게시판 미니 프로젝트");
+        info.title("SA:ONE Project");
         info.version("1.0");
-        info.description("소셜 게시판 미니 프로젝트");
+        info.description("사장님 혼자 관리하는 직원 시스템");
 
         SecurityRequirement securityRequirement = new SecurityRequirement();
         securityRequirement.addList("Bearer Authentication");
@@ -350,7 +350,14 @@ FILE: src/main/java/com/korit/sa_one_back/controller/AdminController.java
 
 package com.korit.sa_one_back.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
 public class AdminController {
+
+    @GetMapping("/api/admin/dashboard")
+    public void getDashboard() {}
 }
 
 
@@ -586,13 +593,13 @@ public class StoreController {
     @PostMapping("")
     public void postStoreInformationByOwner(
             @RequestBody StoreApplicationReqDto dto,
-            @AuthenticationPrincipal UserEntity user
+            @AuthenticationPrincipal PrincipalUser user
     ) {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
     @GetMapping("/my_application")
-    public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal UserEntity user) {
+    public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal PrincipalUser user) {
         return storeService.getMyApplication(user.getUserId());
     }
 
@@ -1050,7 +1057,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class StoreApplicationReqDto {
-    private Long storeId;
     private Long storeApplicationId;
     private String storeName;
     private String address;
@@ -1310,6 +1316,39 @@ public class UserMeRespDto {
 
 }
 
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/entity/inquiry/InquiryCommentEntity.java
+==================================================
+
+package com.korit.sa_one_back.entity.inquiry;
+
+public class InquiryCommentEntity {
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/entity/inquiry/InquiryEntity.java
+==================================================
+
+package com.korit.sa_one_back.entity.inquiry;
+
+public class InquiryEntity {
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/entity/inquiry/InquiryStatus.java
+==================================================
+
+package com.korit.sa_one_back.entity.inquiry;
+
+public enum InquiryStatus {
+    OPEN,
+    IN_PROGRESS,
+    CLOSED
+}
 
 
 ==================================================
@@ -1971,6 +2010,11 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AdminDashboardMapper {
     int countStoreApplicationsByStatus();
 
+    int countPendingInquiry();
+    int countInProgressInquiry();
+    int updateInquiryStatus(Long inquiryId);
+    int selectInquiry(Long inquiryId);
+
     int existMinimumWage(int year);
     int existTaxRate(int year);
     int existInsuranceRate(int year);
@@ -1987,11 +2031,45 @@ FILE: src/main/java/com/korit/sa_one_back/mapper/admin/AdminPolicyMapper.java
 
 package com.korit.sa_one_back.mapper.admin;
 
+import com.korit.sa_one_back.entity.payroll.PayPolicyEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface AdminPolicyMapper {
+}
 
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/mapper/admin/PolicyType.java
+==================================================
+
+package com.korit.sa_one_back.mapper.admin;
+
+import lombok.Getter;
+
+import java.util.function.ToIntBiFunction;
+
+public enum PolicyType {
+    MINIMUM_WAGE ("MINIMUM_WAGE", AdminDashboardMapper::existMinimumWage),
+    TAX_RATE ("TAX_RATE", AdminDashboardMapper::existTaxRate),
+    INSURANCE_RATE ("INSURANCE_RATE", AdminDashboardMapper::existInsuranceRate),
+    NATIONAL_PENSION_LIMIT ("NATIONAL_PENSION_LIMIT", AdminDashboardMapper::existNationalPensionRateLimit),
+    HEALTH_INSURANCE_LIMIT ("HEALTH_INSURANCE_LIMIT", AdminDashboardMapper::existHealthInsuranceRateLimit),
+    EMPLOYMENT_COMPANY_RATE ("EMPLOYMENT_COMPANY_RATE", AdminDashboardMapper::existEmploymentCompanyRate),
+    INDUSTRIAL_ACCIDENT_RATE ("INSURANCE_ACCIDENT_RATE", AdminDashboardMapper::existIndustrialAccidentRate);
+
+    @Getter
+    private final String key;
+    private final ToIntBiFunction<AdminDashboardMapper, Integer> queryFunction;
+
+    PolicyType(String key, ToIntBiFunction<AdminDashboardMapper, Integer> queryFunction) {
+        this.key = key;
+        this.queryFunction = queryFunction;
+    }
+
+    public boolean exists(AdminDashboardMapper mapper, int year) {
+        return queryFunction.applyAsInt(mapper, year) == 1;
+    }
 }
 
 
@@ -2341,14 +2419,10 @@ package com.korit.sa_one_back.security;
 
 import com.korit.sa_one_back.entity.UserEntity;
 import lombok.Getter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -2391,7 +2465,7 @@ public class PrincipalUser implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (isRegistered()) {
-            String role = user.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+            String role = RoleType.fromId(user.getRoleId()).getRoleName();
             return java.util.List.of((GrantedAuthority) () -> role);
         }
         return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");
@@ -2416,10 +2490,43 @@ import org.springframework.stereotype.Component;
 public class RoleResolver {
 
     public String resolveRoleName(long roleId) {
-        if (roleId == 1) return "ROLE_MANAGER"; // 관리자
-        if (roleId == 2) return "ROLE_OWNER"; // 사장
-        if (roleId == 3) return "ROLE_STAFF"; // 직원
-        return "ROLE_GUEST"; // 기본값 (예: role_id가 0이거나 비정상일 때)
+        return RoleType.fromId(roleId).getRoleName();
+    }
+}
+
+
+==================================================
+FILE: src/main/java/com/korit/sa_one_back/security/RoleType.java
+==================================================
+
+package com.korit.sa_one_back.security;
+
+import lombok.Getter;
+
+public enum RoleType {
+    ADMIN(1, "ROLE_ADMIN"),
+    OWNER(2, "ROLE_OWNER"),
+    STAFF(3, "ROLE_STAFF"),
+    GUEST(0, "ROLE_GUEST");
+
+    private final int id;
+    @Getter
+    private final String roleName;
+
+    RoleType(int id, String roleName) {
+        this.id = id;
+        this.roleName = roleName;
+    }
+
+    public static RoleType fromId(long id) {
+        for (RoleType role : values()) {
+            if (role.id == id) return role;
+        }
+        return GUEST;
+    }
+
+    public long getId() {
+        return id;
     }
 }
 
@@ -2431,6 +2538,7 @@ FILE: src/main/java/com/korit/sa_one_back/service/admin/AdminDashboardService.ja
 package com.korit.sa_one_back.service.admin;
 
 import com.korit.sa_one_back.mapper.admin.AdminDashboardMapper;
+import com.korit.sa_one_back.mapper.admin.PolicyType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -2445,18 +2553,12 @@ public class AdminDashboardService {
 
     private final AdminDashboardMapper adminDashboardMapper;
 
-    public static final class PolicyKey {
-        public static final String MINIMUM_WAGE = "MINIMUM_WAGE";
-        public static final String TAX_RATE = "TAX_RATE";
-        public static final String INSURANCE_RATE = "INSURANCE_RATE";
-        public static final String NATIONAL_PENSION_LIMIT = "NATIONAL_PENSION_LIMIT";
-        public static final String HEALTH_INSURANCE_LIMIT = "HEALTH_INSURANCE_LIMIT";
-        public static final String EMPLOYMENT_COMPANY_RATE = "EMPLOYMENT_COMPANY_RATE";
-        public static final String INDUSTRIAL_ACCIDENT_RATE = "INDUSTRIAL_ACCIDENT_RATE";
-    }
-
     public int countPendingApplication() {
         return adminDashboardMapper.countStoreApplicationsByStatus();
+    }
+
+    public int countPendingInquiry() {
+        return adminDashboardMapper.countPendingInquiry();
     }
 
     public Map<String, Boolean> getPolicyAlertsIfDue() {
@@ -2484,27 +2586,9 @@ public class AdminDashboardService {
     private Map<String, Boolean> countPolicyAlert(int year) {
         Map<String, Boolean> result = new LinkedHashMap<>();
 
-        result.put(PolicyKey.MINIMUM_WAGE,
-                adminDashboardMapper.existMinimumWage(year) == 1);
-
-        result.put(PolicyKey.TAX_RATE,
-                adminDashboardMapper.existTaxRate(year) == 1);
-
-        result.put(PolicyKey.INSURANCE_RATE,
-                adminDashboardMapper.existInsuranceRate(year) == 1);
-
-        result.put(PolicyKey.NATIONAL_PENSION_LIMIT,
-                adminDashboardMapper.existNationalPensionRateLimit(year) == 1);
-
-        result.put(PolicyKey.HEALTH_INSURANCE_LIMIT,
-                adminDashboardMapper.existHealthInsuranceRateLimit(year) == 1);
-
-        result.put(PolicyKey.EMPLOYMENT_COMPANY_RATE,
-                adminDashboardMapper.existEmploymentCompanyRate(year) == 1);
-
-        result.put(PolicyKey.INDUSTRIAL_ACCIDENT_RATE,
-                adminDashboardMapper.existIndustrialAccidentRate(year) == 1);
-
+        for (PolicyType policy : PolicyType.values()) {
+            result.put(policy.getKey(), policy.exists(adminDashboardMapper, year));
+        }
         return result;
     }
 
@@ -3579,9 +3663,9 @@ spring:
       on-profile: secret
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://34.11.250.12:3306/saone_project_db
+    url: jdbc:mysql://34.11.250.12:3306/post_project_db
     username: root
-    password: d#a21@!!kuen^^7f)eaccp2(
+    password: 1q2w3e4r!
   security:
     oauth2:
       client:
@@ -3746,6 +3830,53 @@ FILE: src/main/resources/mapper/admin/admin_mapper.xml
                 year = #{year}
         )
     </select>
+    <select id="countPendingInquiry" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            inquiry_tb
+        where
+            status = 'OPEN'
+    </select>
+    <select id="countInProgressInquiry" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            inquiry_tb
+        where
+            status = 'IN_PROGRESS'
+    </select>
+    <select id="selectInquiry" resultType="java.lang.Integer">
+        select
+            *
+        from
+            inquiry_tb
+        where
+            inquiry_id = #{inquiry_id}
+    </select>
+    <update id="updateInquiryStatus">
+        update
+            inquiry_tb
+        set
+            status = 'IN_PROGRESS',
+            reviewed_at = now()
+        where
+            inquiry_id = #{inquiryId}
+            and status = 'OPEN'
+    </update>
+</mapper>
+
+==================================================
+FILE: src/main/resources/mapper/admin/admin_policy_mapper.xml
+==================================================
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminPolicyMapper">
+
 </mapper>
 
 ==================================================

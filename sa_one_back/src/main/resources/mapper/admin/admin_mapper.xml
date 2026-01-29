@@ -13,6 +13,14 @@
         where
             status = 'PENDING'
     </select>
+    <select id="countInquiryByStatus" resultType="java.lang.Integer">
+        select count
+            (*)
+        from
+            inquiry_tb
+        where
+            status = #{status}
+    </select>
     <select id="existMinimumWage" resultType="java.lang.Integer">
         select exists(
             select
