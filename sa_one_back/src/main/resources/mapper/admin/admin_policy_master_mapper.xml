@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminPolicyMasterMapper">
+
+    <select id="findTaxRate" parameterType="int" resultType="TaxRateEntity">
+        select
+            year,
+            income_tax_rate as incomeTaxRate,
+            local_tax_rate  as localTaxRate
+        from
+            tax_rate_tb
+        where
+            year = #{year}
+    </select>
+
+    <select id="findMinimumWage" parameterType="int" resultType="MinimumWageEntity">
+        select
+            minimum_wage_id as minimumWageId,
+            year,
+            hourly_wage as hourlyWage,
+            effective_from as effectiveFrom,
+            created_at as createdAt,
+            updated_at as updatedAt
+        from
+            minimum_wage_tb
+        where
+            year = #{year}
+    </select>
+
+    <select id="findNationalPensionLimit" parameterType="int" resultType="NationalPensionLimitEntity">
+        select
+            national_pension_limit_id as nationalPensionLimitId,
+            year,
+            lower_limit as lowerLimit,
+            upper_limit as upperLimit
+        from
+            national_pension_limit_tb
+        where
+            year = #{year}
+    </select>
+
+    <select id="findHealthInsuranceLimit" parameterType="int" resultType="HealthInsuranceLimitEntity">
+        select
+            health_insurance_limit_id as healthInsuranceLimitId,
+            year,
+            lower_limit as lowerLimit,
+            upper_limit as upperLimit
+        from
+            health_insurance_limit_tb
+        where
+            year = #{year}
+    </select>
+
+    <select id="findInsuranceRates" parameterType="int" resultType="InsuranceRateEntity">
+        select
+            insurance_rate_id as insuranceRateId,
+            insurance_id as insuranceId,
+            year,
+            employee_rate as employeeRate,
+            employer_rate as employerRate,
+            total_rate as totalRate,
+            note
+        from
+            insurance_rate_tb
+        where
+            year = #{year}
+        order by insurance_id asc
+    </select>
+
+    <select id="findEmploymentCompanyRates" parameterType="int" resultType="EmploymentCompanyRateEntity">
+        select
+            company_rate_id as companyRateId,
+            year,
+            company_type as companyType,
+            employer_rate as employerRate
+        from
+            employment_company_rate_tb
+        where
+            year = #{year}
+        order by company_type asc
+    </select>
+
+    <select id="findIndustrialAccidentRates" parameterType="int" resultType="IndustrialAccidentRateEntity">
+        select
+            industrial_rate_id as industrialRateId,
+            industry_code as industryCode,
+            year,
+            employer_rate as employerRate
+        from
+            industrial_accident_rate_tb
+        where
+            year = #{year}
+        order by industry_code asc
+    </select>
+
+    <insert id="upsertTaxRate">
+        insert into tax_rate_tb (
+            year,
+            income_tax_rate,
+            local_tax_rate
+        ) values (
+            #{year},
+            #{incomeTaxRate},
+            #{localTaxRate}
+        )
+        on duplicate key update
+            income_tax_rate = values(income_tax_rate),
+            local_tax_rate = values(local_tax_rate)
+    </insert>
+
+    <insert id="upsertMinimumWage">
+        insert into minimum_wage_tb (
+            year,
+            hourly_wage,
+            effective_from
+        ) values (
+            #{year},
+            #{hourlyWage},
+            #{effectiveFrom}
+        )
+        on duplicate key update
+            hourly_wage = values(hourly_wage),
+            effective_from = values(effective_from),
+            updated_at = now()
+    </insert>
+
+    <insert id="upsertNationalPensionLimit">
+        insert into national_pension_limit_tb (
+            year,
+            lower_limit,
+            upper_limit
+        ) values (
+            #{year},
+            #{lowerLimit},
+            #{upperLimit}
+        )
+        on duplicate key update
+            lower_limit = values(lower_limit),
+            upper_limit = values(upper_limit)
+    </insert>
+
+    <insert id="upsertHealthInsuranceLimit">
+        insert into health_insurance_limit_tb (
+            year,
+            lower_limit,
+            upper_limit
+        ) values (
+            #{year},
+            #{lowerLimit},
+            #{upperLimit}
+        )
+        on duplicate key update
+            lower_limit = values(lower_limit),
+            upper_limit = values(upper_limit)
+    </insert>
+
+    <insert id="upsertInsuranceRates">
+        insert into insurance_rate_tb (
+            insurance_id,
+            year,
+            employee_rate,
+            employer_rate,
+            total_rate, note
+        )
+        values
+        <foreach collection="list" item="r" separator=",">
+            (
+                #{r.insuranceId},
+                #{r.year},
+                #{r.employeeRate},
+                #{r.employerRate},
+                #{r.totalRate},
+                #{r.note}
+            )
+        </foreach>
+        on duplicate key update
+            employee_rate = values(employee_rate),
+            employer_rate = values(employer_rate),
+            total_rate = values(total_rate),
+            note = values(note)
+    </insert>
+
+    <insert id="upsertEmploymentCompanyRates">
+        insert into employment_company_rate_tb (
+            year,
+            company_type,
+            employer_rate
+        )
+        values
+        <foreach collection="list" item="r" separator=",">
+            (
+                #{r.year},
+                #{r.companyType},
+                #{r.employerRate}
+            )
+        </foreach>
+        on duplicate key update
+            employer_rate = values(employer_rate)
+    </insert>
+
+    <insert id="upsertIndustrialAccidentRates">
+        insert into industrial_accident_rate_tb (
+            industry_code,
+            year,
+            employer_rate
+        )
+        values
+        <foreach collection="list" item="r" separator=",">
+            (
+                #{r.industryCode},
+                #{r.year},
+                #{r.employerRate}
+            )
+        </foreach>
+        on duplicate key update
+            employer_rate = values(employer_rate)
+    </insert>
+
+</mapper>
