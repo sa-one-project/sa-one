@@ -23,8 +23,26 @@ jobs:
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DONGWAN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_DONGWAN}}" >> $GITHUB_ENV
           
-#          elif [ ${{github.ref}} == 'refs/heads/deploy-dongwan' ]; then
-#            echo "TEST=abcdef" >> $GITHUB_ENV
+          elif [ ${{github.ref}} == 'refs/heads/deploy-seohyun' ]; then
+          
+            echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_SEOHYUN}}" >> $GITHUB_ENV
+            echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
+            echo "GCP_VM_SSHKEY=${{secrets.GCP_VM_SSHKEY_SEOHYUN}}" >> $GITHUB_ENV
+            echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
+            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $GITHUB_ENV
+            echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_SEOHYUN}}" >> $GITHUB_ENV
+            echo "REACT_ENV=${{secrets.REACT_ENV_SEOHYUN}}" >> $GITHUB_ENV
+          
+          elif [ ${{github.ref}} == 'refs/heads/deploy-dabin' ]; then
+          
+            echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_DABIN}}" >> $GITHUB_ENV
+            echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_DABIN}}" >> $GITHUB_ENV
+            echo "GCP_VM_SSHKEY=${{secrets.GCP_VM_SSHKEY_DABIN}}" >> $GITHUB_ENV
+            echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_DABIN}}" >> $GITHUB_ENV
+            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DABIN}}" >> $GITHUB_ENV
+            echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DABIN}}" >> $GITHUB_ENV
+            echo "REACT_ENV=${{secrets.REACT_ENV_DABIN}}" >> $GITHUB_ENV
+          
           fi
 
       - name: Checkout
@@ -40,14 +58,14 @@ jobs:
 
       - name: Springboot Build
         run: |
-          cd ~/sa_one_back
+          cd sa_one_back
           echo ${{env.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret.yml
           chmod 777 ./mvnw
           ./mvnw clean package -Dtestskip
 
       - name: Springboot Docker image build
         run: |
-          cd ~/sa_one_back
+          cd sa_one_back
           docker build -t ${{env.DOCKER_USERNAME}}/springboot-app:latest .
 
       - name: Springboot Docker image push
@@ -57,7 +75,7 @@ jobs:
 
       - name: React Docker image build
         run: |
-          cd ~/sa_one_front
+          cd sa_one_front
           echo ${{env.REACT_ENV}} | base64 --decode > .env
           docker build -t ${{env.DOCKER_USERNAME}}/react-app:latest .
 
