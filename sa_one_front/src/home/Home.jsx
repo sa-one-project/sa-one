@@ -18,14 +18,8 @@ import {
 
 function Home() {
     const navigate = useNavigate();
-<<<<<<< HEAD
-    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-    const roleId = useAuthStore((state) => state.roleId);
-=======
-    // 로그인 여부, 역할 가져옴
-    // ★ roleId를 가져올 때 Number()를 사용하여 숫자로 확실히 바꿉니다.
+    
     const { isLoggedIn, roleId } = useAuthStore();
->>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
 
     if (!isLoggedIn) {
         return (
@@ -110,21 +104,12 @@ function Home() {
         );
     }
 
-<<<<<<< HEAD
-    return <div>{Number(roleId) === 1 ? <OwnerMain /> : <EmployeeMain />}</div>;
-=======
+    // 3. 로그인한 경우: 역할(roleId)에 따라 메인 페이지 분기 (중복 리턴 정리)
     return (
-        <div>
-            {/* roleId 가 1 이면 사장님 그 외 2... 는 직원으로 판별 */}
-            {/* ★ 여기서 Number(roleId)를 해주면 문자열 "1"도 숫자 1로 인식되어 사장님 페이지가 뜸. */}
-            {Number(roleId) === 1 ? (
-                <OwnerMain /> // 사장님 메인
-            ) : (
-                <EmployeeMain /> // 직원 메인
-            )}
-        </div>
+        <>
+            {Number(roleId) === 1 ? <OwnerMain /> : <EmployeeMain />}
+        </>
     );
->>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
 }
 
 export default Home;

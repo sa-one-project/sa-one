@@ -31,11 +31,8 @@ function Header() {
                         )}
                         
                         {/* 공통 메뉴 */}
-<<<<<<< HEAD
                         <Link to="/employee/calendar">직원 캘린더</Link> 
-=======
                         <Link to="/calendar">직원 캘린더</Link>
->>>>>>> 619bd0be47e13eb844d28a3075927bd672b574ee
                         <Link to="/status">출근 현황</Link>
                         <Link to="/salary">급여명세서</Link>
                         <Link to="/mypage">마이페이지</Link>
