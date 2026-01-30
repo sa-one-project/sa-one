@@ -165,39 +165,86 @@ public class PayrollService {
         Map<String, Long> itemIdMap = payrollFunctions.loadPayrollItemIdMap();
         List<PayrollDetailEntity> details = new ArrayList<>();
 
-        payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("BASE").amount(basePay)
-                .minutes(totalWorkMinutes).unitPrice(hourlyRate).multiplier(1.0)
-                .memo("기본급").build());
+        payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("BASE")
+                                .amount(basePay)
+                                .minutes(totalWorkMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(1.0)
+                                .memo("기본급")
+                                .build());
 
-        if (weeklyAllowanceAmount > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("WEEKLY_ALLOWANCE").amount(weeklyAllowanceAmount)
-                .memo("주휴수당").build());
+        if (weeklyAllowanceAmount > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("WEEKLY_ALLOWANCE")
+                                .amount(weeklyAllowanceAmount)
+                                .memo("주휴수당")
+                                .build());
 
-        if (overtimePremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("OVERTIME_PREMIUM").amount(overtimePremium)
-                .minutes(totalOvertimeMinutes).unitPrice(hourlyRate).multiplier(overtimeMultiplier)
-                .memo("연장 프리미엄").build());
+        if (overtimePremium > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("OVERTIME_PREMIUM")
+                                .amount(overtimePremium)
+                                .minutes(totalOvertimeMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(overtimeMultiplier)
+                                .memo("연장 프리미엄")
+                                .build());
 
-        if (nightPremium > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("NIGHT_PREMIUM").amount(nightPremium)
-                .minutes(totalNightMinutes).unitPrice(hourlyRate).multiplier(nightMultiplier)
-                .memo("야간 프리미엄").build());
+        if (nightPremium > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("NIGHT_PREMIUM")
+                                .amount(nightPremium)
+                                .minutes(totalNightMinutes)
+                                .unitPrice(hourlyRate)
+                                .multiplier(nightMultiplier)
+                                .memo("야간 프리미엄")
+                                .build());
 
-        if (incomeTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("INCOME_TAX").amount(incomeTax).memo("소득세").build());
+        if (incomeTax > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("INCOME_TAX")
+                                .amount(incomeTax)
+                                .memo("소득세")
+                                .build());
 
-        if (localTax > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("LOCAL_TAX").amount(localTax).memo("지방소득세").build());
+        if (localTax > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("LOCAL_TAX")
+                                .amount(localTax)
+                                .memo("지방소득세")
+                                .build());
 
-        if (nationalPension > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("NATIONAL_PENSION").amount(nationalPension).memo("국민연금(근로자)").build());
+        if (nationalPension > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("NATIONAL_PENSION")
+                                .amount(nationalPension)
+                                .memo("국민연금(근로자)")
+                                .build());
 
-        if (healthInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("HEALTH_INSURANCE").amount(healthInsurance).memo("건강보험(근로자)").build());
+        if (healthInsurance > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("HEALTH_INSURANCE")
+                                .amount(healthInsurance)
+                                .memo("건강보험(근로자)")
+                                .build());
 
-        if (employmentInsurance > 0) payrollFunctions.addDetail(details, payrollId, itemIdMap, PayrollDetailDto.builder()
-                .itemCode("EMPLOYMENT_INSURANCE").amount(employmentInsurance).memo("고용보험(근로자)").build());
+        if (employmentInsurance > 0) payrollFunctions
+                .addDetail(details, payrollId, itemIdMap,
+                        PayrollDetailDto.builder()
+                                .itemCode("EMPLOYMENT_INSURANCE")
+                                .amount(employmentInsurance)
+                                .memo("고용보험(근로자)")
+                                .build());
 
         if (!details.isEmpty()) {
             payrollMapper.insertPayrollDetails(details);

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminStoreMapper">
+
+    <sql id="storeKeywordFilter">
+        <if test="keyword != null and keyword != ''">
+            and (
+                s.store_name like concat('%', #{keyword}, '%')
+                or s.business_number like concat('%', #{keyword}, '%')
+                or s.owner_name like concat('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
+    <select id="countStores" resultType="int">
+        select count
+            (*)
+        from
+            store_tb s
+        where
+            1=1
+        <include refid="storeKeywordFilter"/>
+    </select>
+
+    <select id="findStores" resultType="com.korit.sa_one_back.dto.response.admin.AdminStoreListItemRespDto">
+        select
+            s.store_id        as storeId,
+            s.store_name      as storeName,
+            s.address         as address,
+            s.business_number as businessNumber,
+            s.owner_name      as ownerName,
+            s.store_phone     as storePhone,
+
+            bi.company_type   as companyType,
+            bi.industry_code  as industryCode,
+
+            i.industry_name   as industryName,
+
+            s.created_at      as createdAt
+        from
+            store_tb s
+        left join
+            store_business_info_tb bi
+        on
+            bi.store_id = s.store_id
+        left join
+            industry_tb i
+        on
+            i.industry_code = bi.industry_code
+
+        where 1=1
+        <include refid="storeKeywordFilter"/>
+
+        order by s.created_at desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <select id="findStoreDetail" resultType="com.korit.sa_one_back.dto.response.admin.AdminStoreDetailRespDto">
+        select
+            s.store_id        as storeId,
+            s.store_name      as storeName,
+            s.address         as address,
+            s.business_number as businessNumber,
+            s.owner_name      as ownerName,
+            s.store_phone     as storePhone,
+            s.user_id         as userId,
+
+            bi.company_type   as companyType,
+            bi.industry_code  as industryCode,
+            i.industry_name   as industryName,
+
+            s.created_at      as createdAt,
+            s.updated_at      as updatedAt
+        from
+            store_tb s
+        left join
+            store_business_info_tb bi
+        on
+            bi.store_id = s.store_id
+        left
+            join industry_tb i
+        on
+            i.industry_code = bi.industry_code
+        where
+            s.store_id = #{storeId}
+    </select>
+
+</mapper>
