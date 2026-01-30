@@ -25,7 +25,7 @@
         <include refid="storeKeywordFilter"/>
     </select>
 
-    <select id="findStores" resultType="AdminStoreListItemRespDto">
+    <select id="findStores" resultType="com.korit.sa_one_back.dto.response.admin.AdminStoreListItemRespDto">
         select
             s.store_id        as storeId,
             s.store_name      as storeName,
@@ -58,7 +58,7 @@
         limit #{size} offset #{offset}
     </select>
 
-    <select id="findStoreDetail" resultType="AdminStoreDetailRespDto">
+    <select id="findStoreDetail" resultType="com.korit.sa_one_back.dto.response.admin.AdminStoreDetailRespDto">
         select
             s.store_id        as storeId,
             s.store_name      as storeName,
