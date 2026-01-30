@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.admin.AdminStoreApplicationMapper">
+
+    <select id="countByStatus" resultType="int">
+        select count
+            (*)
+        from
+            store_application_tb
+        where
+            status = #{status}
+    </select>
+
+    <select id="findByStatus" resultType="StoreApplicationEntity">
+        select
+            store_application_id,
+            store_name,
+            address,
+            business_number,
+            owner_name,
+            store_phone,
+            status,
+            reject_reason,
+            reviewed_at,
+            created_at,
+            user_id
+        from
+            store_application_tb
+        where
+            status = #{status}
+        order by created_at desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <select id="findById" resultType="StoreApplicationEntity">
+        select
+            store_application_id,
+            store_name,
+            address,
+            business_number,
+            owner_name,
+            store_phone,
+            status,
+            reject_reason,
+            reviewed_at,
+            created_at,
+            user_id
+        from
+            store_application_tb
+        where
+            store_application_id = #{id}
+    </select>
+
+    <update id="updateApproved">
+        update
+            store_application_tb
+        set
+            status = 'APPROVED',
+            reviewed_at = now()
+        where
+            store_application_id = #{id}
+    </update>
+
+    <update id="updateRejected">
+        update
+            store_application_tb
+        set
+            status = 'REJECTED',
+            reject_reason = #{reason},
+            reviewed_at = now()
+        where
+            store_application_id = #{id}
+    </update>
+
+    <insert id="insertStore" parameterType="StoreEntity"
+            useGeneratedKeys="true" keyProperty="storeId">
+        insert into store_tb (
+            store_name,
+            address,
+            business_number,
+            owner_name,
+            store_phone,
+            user_id
+        ) values (
+            #{storeName},
+            #{address},
+            #{businessNumber},
+            #{ownerName},
+            #{storePhone},
+            #{userId}
+        )
+    </insert>
+
+    <insert id="insertStoreBusinessInfo">
+        insert into store_business_info_tb (
+            store_id,
+            company_type,
+            industry_code
+        ) values (
+            #{storeId},
+            null,
+            null
+        )
+    </insert>
+
+</mapper>
