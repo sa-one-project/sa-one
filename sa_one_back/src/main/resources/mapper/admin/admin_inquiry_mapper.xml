@@ -24,7 +24,7 @@
         <include refid="keywordFilter"/>
     </select>
 
-    <select id="findList" resultType="com.saone.project.admin.inquiry.dto.AdminInquiryListItemRespDto">
+    <select id="findList" resultType="com.korit.sa_one_back.dto.response.admin.AdminInquiryListItemRespDto">
         select
             i.inquiry_id   as inquiryId,
             i.title        as title,
@@ -50,7 +50,7 @@
         limit #{size} offset #{offset}
     </select>
 
-    <select id="findDetail" resultType="com.saone.project.admin.inquiry.dto.AdminInquiryDetailRespDto">
+    <select id="findDetail" resultType="com.korit.sa_one_back.dto.response.admin.AdminInquiryDetailRespDto">
         select
             i.inquiry_id   as inquiryId,
             i.title        as title,
@@ -80,7 +80,7 @@
             i.inquiry_id = #{id}
     </select>
 
-    <select id="findComments" resultType="com.saone.project.inquiry.entity.InquiryCommentEntity">
+    <select id="findComments" resultType="InquiryCommentEntity">
         select
             c.comment_id  as commentId,
             c.inquiry_id  as inquiryId,
@@ -100,12 +100,7 @@
             inquiry_tb
         set
             status = #{status},
-            reviewed_at = case
-                when
-                    #{status} in ('IN_PROGRESS', 'CLOSED') then now()
-                else
-                    reviewed_at
-                end
+            reviewed_at = if (#{status} in ('IN_PROGRESS', 'CLOSED'), now(), reviewed_at)
         where
             inquiry_id = #{id}
     </update>
