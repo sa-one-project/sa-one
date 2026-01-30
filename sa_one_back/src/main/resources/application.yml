@@ -1,8 +1,16 @@
 spring:
   profiles:
-    active: local
+    active: dev
     group:
+      dev: dev, common, secret
       local: common, secret
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
 
 ---
 
@@ -18,6 +26,11 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+domain:
+  name:
+    http: http://localhost:80
+    https: https://localhost:443
 
 server:
   tomcat:

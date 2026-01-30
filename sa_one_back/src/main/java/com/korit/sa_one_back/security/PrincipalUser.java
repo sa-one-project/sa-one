@@ -2,14 +2,10 @@ package com.korit.sa_one_back.security;
 
 import com.korit.sa_one_back.entity.UserEntity;
 import lombok.Getter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -52,7 +48,7 @@ public class PrincipalUser implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (isRegistered()) {
-            String role = user.getRoleId() == 1 ? "ROLE_OWNER" : "ROLE_STAFF";
+            String role = RoleType.fromId(user.getRoleId()).getRoleName();
             return java.util.List.of((GrantedAuthority) () -> role);
         }
         return java.util.List.of((GrantedAuthority) () -> "ROLE_GUEST");

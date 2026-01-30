@@ -1,9 +1,8 @@
 package com.korit.sa_one_back.service;
 
-import com.korit.sa_one_back.dto.request.StoreApplicationReqDto;
+import com.korit.sa_one_back.dto.request.admin.StoreApplicationReqDto;
 import com.korit.sa_one_back.dto.response.MyStoreRespDto;
 import com.korit.sa_one_back.entity.StoreApplicationEntity;
-import com.korit.sa_one_back.entity.StoreEntity;
 import com.korit.sa_one_back.exception.StoreApplicationException;
 import com.korit.sa_one_back.mapper.StoreMapper;
 import lombok.RequiredArgsConstructor;
