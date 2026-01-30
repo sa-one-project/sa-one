@@ -2,8 +2,10 @@ spring:
   profiles:
     active: dev
     group:
-      dev: dev, common, secret
-      local: common, secret
+      dev: dev, common, secret-dev
+      dongwan: dongwan-server, common, secret-prod
+      seohyun: seohyun-server, common, secret-prod
+      dabin: dabin-server, common, secret-prod
 
 ---
 
@@ -11,6 +13,59 @@ spring:
   config:
     activate:
       on-profile: dev
+
+---
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dongwan-server
+
+domain:
+  name:
+    http: "http://githib.store"
+    https: "https://githib.store"
+
+app:
+  cors:
+    allowed-origins: "http://githib.store"
+
+---
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: seohyun-server
+
+domain:
+  name:
+    http: "http://seohyun.store"
+    https: "https://seohyun.store"
+
+app:
+  cors:
+    allowed-origins: "http://seohyun.store"
+
+---
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dabin-server
+
+domain:
+  name:
+    http: "http://test12345.store"
+    https: "https://test12345.store"
+
+app:
+  cors:
+    allowed-origins: "http://test12345.store"
 
 ---
 
@@ -29,8 +84,8 @@ spring:
 
 domain:
   name:
-    http: http://localhost:80
-    https: https://localhost:443
+    http: "http://localhost:80"
+    https: "https://localhost:443"
 
 server:
   tomcat:
