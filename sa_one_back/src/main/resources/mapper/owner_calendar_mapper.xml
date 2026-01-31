@@ -104,7 +104,6 @@
             a.check_out_time,
             a.work_minutes,
             a.attendance_status,
-            a.attendance_note,
 
             l.leave_id,
             lt.leave_type_name as leave_type,
