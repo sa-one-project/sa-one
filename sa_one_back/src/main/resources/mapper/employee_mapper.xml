@@ -23,15 +23,17 @@
             store_id,
             user_id,
             employee_no,
+
             position_id,
             join_date,
             work_status,
-        updated_at
+            updated_at
         ) values (
             default,
             #{storeId},
             #{userId},
             #{employeeNo},
+
             #{positionId},
             #{joinDate},
             #{workStatus},
@@ -40,6 +42,7 @@
     </insert>
 
     <!--  직원 목록 조회 -->
+
     <select id="selectEmployees" resultType="com.korit.sa_one_back.dto.response.EmployeeListRespDto">
         <![CDATA[
         select

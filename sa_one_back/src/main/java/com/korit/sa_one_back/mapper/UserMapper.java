@@ -28,4 +28,7 @@ public interface UserMapper {
     String findUsernameByNameAndEmail(String name, String email);
 
     int updatePassword(@Param("userId") Long userId, @Param("password") String password);
+
+    int findRoleIdByUserId(@Param("userId") Long userId);
+
 }

@@ -26,9 +26,6 @@ public class MyCalendarService {
     private void validateStaff(Long storeId, Long userId, String role) {
         if (!"ROLE_STAFF".equals(role)) throw new RuntimeException("FORBIDDEN_STAFF_ONLY");
         if (storeMapper.countByStoreId(storeId) == 0) throw new RuntimeException("STORE_NOT_FOUND");
-        if (myCalendarMapper.countMyStoreEmployee(storeId, userId) == 0) {
-            throw new RuntimeException("FORBIDDEN_STORE_ACCESS");
-        }
     }
 
     public MyCalendarRespDto getMyMonth(Long storeId, int year, int month, Long userId, String role) {
