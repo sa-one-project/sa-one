@@ -65,7 +65,6 @@ public class MyCalendarService {
                         .build();
             }
 
-
             items.add(CalendarDayRespDto.builder()
                     .workDate(r.getWorkDate())
                     .startTime(r.getStartTime())
