@@ -23,36 +23,36 @@
 
     <insert id="insertSchedule" useGeneratedKeys="true" keyProperty="scheduleId">
         insert into schedule_tb (
-        schedule_id,
-        store_employee_id,
-        work_date,
-        start_time,
-        end_time,
-        break_minutes,
-        note,
-        created_at,
-        updated_at
+            schedule_id,
+            store_employee_id,
+            work_date,
+            start_time,
+            end_time,
+            break_minutes,
+            note,
+            created_at,
+            updated_at
         ) values (
-        default,
-        #{storeEmployeeId},
-        #{workDate},
-        #{startTime},
-        #{endTime},
-        #{breakMinutes},
-        #{note},
-        now(),
-        now()
+            default,
+            #{storeEmployeeId},
+            #{workDate},
+            #{startTime},
+            #{endTime},
+            #{breakMinutes},
+            #{note},
+            now(),
+            now()
         )
     </insert>
 
     <update id="updateSchedule">
         update schedule_tb
         set
-        work_date = #{workDate},
-        start_time = #{startTime},
-        end_time = #{endTime},
-        break_minutes = #{breakMinutes},
-        note = #{note},
+            work_date = #{workDate},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            break_minutes = #{breakMinutes},
+            note = #{note},
         updated_at = now()
         where schedule_id = #{scheduleId}
     </update>

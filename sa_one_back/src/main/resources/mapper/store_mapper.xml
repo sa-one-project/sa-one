@@ -123,13 +123,13 @@
             parameterType="long"
             resultType="com.korit.sa_one_back.entity.MyStoreEntity">
         select
-        store_id as storeId,
-        store_name as storeName,
-        address as address
+            store_id as storeId,
+            store_name as storeName,
+            address as address
         from
-        store_tb
+            store_tb
         where
-        user_id = #{userId}
+            user_id = #{userId}
         order by store_id asc
     </select>
 

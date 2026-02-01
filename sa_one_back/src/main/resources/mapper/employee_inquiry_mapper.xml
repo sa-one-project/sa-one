@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.inquiry.EmployeeInquiryMapper">
+
+    <sql id="keywordFilter">
+        <if test="keyword != null and keyword != ''">
+            and (
+            i.title like concat('%', #{keyword}, '%')
+            or i.content like concat('%', #{keyword}, '%')
+            )
+        </if>
+    </sql>
+
+    <select id="existsEmployeeInStore" resultType="boolean">
+        select exists(
+            select 1
+        from store_employee_tb se
+        where se.user_id = #{userId}
+        and se.store_id = #{storeId}
+        )
+    </select>
+
+    <select id="existsMyInquiry" resultType="boolean">
+        select exists(
+            select 1
+        from inquiry_tb i
+        where i.inquiry_id = #{inquiryId}
+        and i.user_id = #{userId}
+        )
+    </select>
+
+    <select id="countMyInquiries" resultType="int">
+        select count(*)
+        from inquiry_tb i
+        where i.user_id = #{userId}
+        and i.status = #{status}
+        <include refid="keywordFilter"/>
+    </select>
+
+    <select id="findMyInquiryList"
+            resultType="com.korit.sa_one_back.dto.response.inquiry.EmployeeInquiryListItemRespDto">
+        select
+            i.inquiry_id as inquiryId,
+            i.title as title,
+            i.content as content,
+            i.status as status,
+            s.store_name as storeName,
+            DATE_FORMAT(i.created_at, '%Y-%m-%d %H:%i:%s') as createdAt
+        from inquiry_tb i
+        left join store_tb s on s.store_id = i.store_id
+        where i.user_id = #{userId}
+        and i.status = #{status}
+        <include refid="keywordFilter"/>
+        order by i.created_at desc
+        limit #{size} offset #{offset}
+    </select>
+
+    <select id="findDetail"
+            resultType="com.korit.sa_one_back.dto.response.inquiry.EmployeeInquiryDetailRespDto">
+        select
+            i.inquiry_id as inquiryId,
+            i.title as title,
+            i.content as content,
+            i.status as status,
+
+            u.user_id as userId,
+            u.name as userName,
+            u.email as userEmail,
+
+            s.store_id as storeId,
+            s.store_name as storeName,
+
+            DATE_FORMAT(i.created_at, '%Y-%m-%d %H:%i:%s')  as createdAt,
+            DATE_FORMAT(i.reviewed_at, '%Y-%m-%d %H:%i:%s') as reviewedAt
+        from inquiry_tb i
+        join user_tb u on u.user_id = i.user_id
+        left join store_tb s on s.store_id = i.store_id
+        where i.inquiry_id = #{inquiryId}
+    </select>
+
+    <select id="findComments" resultType="InquiryCommentEntity">
+        select
+            c.comment_id as commentId,
+            c.inquiry_id as inquiryId,
+            c.user_id as userId,
+            c.content as content,
+            c.created_at as createdAt,
+            c.updated_at as updatedAt
+        from inquiry_comment_tb c
+        where c.inquiry_id = #{inquiryId}
+        order by c.created_at asc
+    </select>
+
+    <insert id="insertInquiry">
+        insert into inquiry_tb (
+        inquiry_id, user_id, store_id, title, content, status, reviewed_at, created_at, updated_at
+        ) values (
+        default, #{userId}, #{storeId}, #{title}, #{content}, 'OPEN', null, now(), now()
+        )
+    </insert>
+
+    <insert id="insertComment">
+        insert into inquiry_comment_tb (
+        comment_id, inquiry_id, user_id, content, created_at, updated_at
+        ) values (
+        default, #{inquiryId}, #{userId}, #{content}, now(), now()
+        )
+    </insert>
+
+</mapper>

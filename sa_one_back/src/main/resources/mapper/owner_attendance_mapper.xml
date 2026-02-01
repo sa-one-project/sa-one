@@ -29,25 +29,25 @@
 
     <select id="findOwnerDayAttendanceRows" resultMap="CalendarRowMap">
         select
-        s.store_id,
-        s.store_name,
+            s.store_id,
+            s.store_name,
 
-        se.store_employee_id,
-        u.user_id,
-        u.name,
+            se.store_employee_id,
+            u.user_id,
+            u.name,
 
-        #{workDate} as work_date,
+            #{workDate} as work_date,
 
-        sc.start_time,
-        sc.end_time,
+            sc.start_time,
+            sc.end_time,
 
-        a.attendance_id,
-        a.check_in_time,
-        a.check_out_time,
-        a.attendance_status,
+            a.attendance_id,
+            a.check_in_time,
+            a.check_out_time,
+            a.attendance_status,
 
-        l.leave_id,
-        lt.leave_type_name
+            l.leave_id,
+            lt.leave_type_name
         from store_tb s
         join store_employee_tb se
         on se.store_id = s.store_id

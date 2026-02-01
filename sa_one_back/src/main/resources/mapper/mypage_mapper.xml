@@ -52,7 +52,7 @@
     <select id="findFirstStoreId" resultType="long">
 
         select
-        st.store_id
+            st.store_id
         from store_employee_tb se
         join store_tb st on st.store_id = se.store_id
         where se.user_id = #{userId}

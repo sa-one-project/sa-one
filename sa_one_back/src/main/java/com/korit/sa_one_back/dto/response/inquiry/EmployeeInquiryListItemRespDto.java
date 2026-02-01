@@ -1,4 +1,4 @@
-package com.korit.sa_one_back.entity.inquiry;
+package com.korit.sa_one_back.dto.response.inquiry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InquiryCommentEntity {
-    private Long commentId;
+public class EmployeeInquiryListItemRespDto {
     private Long inquiryId;
-    private Long userId;
+    private String title;
     private String content;
+    private String status;
+    private String storeName;
     private String createdAt;
-    private String updatedAt;
 }

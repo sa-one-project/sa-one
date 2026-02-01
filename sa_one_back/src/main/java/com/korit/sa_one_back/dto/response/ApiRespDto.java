@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /*
-    모든 API 응답을 { success, message, data } 형태로 통일하기 위한 Wrapper.
+    모든 API 응답을 { success, message, data } 형태로 통일하기 위한 Wrapper
 */
 @Data
 @Builder

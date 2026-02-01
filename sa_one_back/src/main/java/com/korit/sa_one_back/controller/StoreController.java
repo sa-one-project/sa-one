@@ -27,11 +27,8 @@ public class StoreController {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
-<<<<<<< HEAD
     @GetMapping("/api/my_application")
-=======
-    @GetMapping("/my_application")
->>>>>>> origin/main
+
     public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal PrincipalUser user) {
         return storeService.getMyApplication(user.getUserId());
     }

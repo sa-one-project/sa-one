@@ -8,7 +8,7 @@
     <!-- storeId + userId가 ACTIVE 상태로 이미 등록돼있는지 체크 -->
     <select id="existsActiveEmployee" resultType="boolean">
         select exists(
-        select 1
+            select 1
         from store_employee_tb
         where store_id = #{storeId}
         and user_id = #{userId}

@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 application-secret-dev.yml
 application-secret-prod.yml
-=======
 application-secret.yml
 githubyml.yml
->>>>>>> origin/main
 
 HELP.md
 target/
