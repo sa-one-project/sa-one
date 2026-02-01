@@ -105,7 +105,7 @@
     <select id="findMyStoresByUserId" parameterType="long" resultType="com.korit.sa_one_back.entity.MyStoreEntity">
         select distinct
             s.store_id as storeId,
-            s.store_name as storeName,
+            s.store_name,
             s.address as address
         from
             store_employee_tb se

@@ -66,7 +66,7 @@
         on lt.leave_type_id = l.leave_type_id
         where
         s.store_id = #{storeId}
-        and se.work_status = 'WORKING'
+        and se.work_status in ('WORKING', 'ACTIVE')
         order by
         u.name asc
     </select>

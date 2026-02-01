@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -25,4 +26,6 @@ public class EmployeeCalendarItemRespDto {
 
     private AttendanceInfoRespDto attendance;
     private LeaveInfoRespDto leave;
+
+    private List<EmployeeCalendarRespDto> items;
 }

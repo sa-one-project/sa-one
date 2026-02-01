@@ -74,11 +74,12 @@ public class OwnerCalendarService {
 
             items.add(CalendarDayRespDto.builder()
                     .workDate(workDate)
-//                    .items(employees)
+                    .items(employees)
                     .build());
         }
 
-        String storeName = rows.isEmpty() ? null : rows.get(0).getStoreName();
+//        String storeName = rows.isEmpty() ? null : rows.get(0).getStoreName();
+        String storeName = storeMapper.findStoreName(storeId);
         return OwnerCalendarRespDto.builder()
                 .storeId(storeId)
                 .storeName(storeName)

@@ -49,12 +49,12 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/attendances")
+@RequestMapping("/api/attendances")
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-    @PostMapping("/check-in")
+    @PostMapping("/api/check-in")
     public ResponseEntity<?> checkIn(@RequestBody AttendanceCheckInReqDto reqDto,
                                      @org.springframework.security.core.annotation.AuthenticationPrincipal PrincipalUser principalUser) {
 
@@ -65,7 +65,7 @@ public class AttendanceController {
                         attendanceService.checkIn(loginUserId, reqDto)));
     }
 
-    @PostMapping("/check-out")
+    @PostMapping("/api/check-out")
     public ResponseEntity<?> checkOut(@RequestBody AttendanceCheckOutReqDto reqDto,
                                       @org.springframework.security.core.annotation.AuthenticationPrincipal PrincipalUser principalUser) {
 
@@ -75,7 +75,7 @@ public class AttendanceController {
                 attendanceService.checkOut(loginUserId, reqDto)));
     }
 
-    @GetMapping("/me")
+    @GetMapping("/api/me")
     public ResponseEntity<?> getMyAttendances(@RequestParam Long storeId,
                                               @org.springframework.security.core.annotation.AuthenticationPrincipal PrincipalUser principalUser) {
 
@@ -85,7 +85,7 @@ public class AttendanceController {
                 attendanceService.getMyAttendances(loginUserId, storeId)));
     }
 
-    @GetMapping("/owner/stores/{storeId}")
+    @GetMapping("/api/owner/stores/{storeId}")
     public ResponseEntity<?> getOwnerAttendances(@PathVariable Long storeId,
                                                  @RequestParam(required = false) LocalDate date,
                                                  @org.springframework.security.core.annotation.AuthenticationPrincipal PrincipalUser principalUser) {

@@ -15,7 +15,8 @@
         and
             store_id = #{storeId}
         and
-            work_status = 'ACTIVE'
+            work_status IN ('ACTIVE', 'WORKING')
+
     </select>
 
     <select id="countTodayAttendance" resultType="int">
@@ -98,9 +99,41 @@
     </select>
 
     <!--  사장 출근현황 리스트 -->
+<!--    <select id="findOwnerAttendanceItems"-->
+<!--            resultType="com.korit.sa_one_back.dto.response.OwnerAttendanceRespDto">-->
+<!--        select-->
+<!--            a.attendance_id attendanceId,-->
+<!--            se.store_employee_id employeeId,-->
+<!--            u.name employeeName,-->
+<!--            #{workDate} date,-->
+<!--            a.check_in_time checkInTime,-->
+<!--            a.check_out_time checkOutTime,-->
+<!--            a.work_minutes workedMinutes,-->
+<!--            a.attendance_status status,-->
+<!--            lt.leave_type_name absentReason-->
+<!--        from-->
+<!--            store_employee_tb se-->
+<!--        join user_tb u on u.user_id = se.user_id-->
+<!--        left join attendance_tb a-->
+<!--        on a.store_employee_id = se.store_employee_id-->
+<!--        and a.work_date = #{workDate}-->
+<!--        left join leave_tb l-->
+<!--        on l.store_employee_id = se.store_employee_id-->
+<!--        and #{workDate} between l.start_date and l.end_date-->
+<!--        and l.work_status = 'APPROVED'-->
+<!--        left join leave_type_tb lt on lt.leave_type_id = l.leave_type_id-->
+<!--        where se.store_id = #{storeId}-->
+<!--        and se.work_status IN ('ACTIVE', 'WORKING')-->
+
+<!--        order by se.store_employee_id desc-->
+<!--    </select>-->
+
     <select id="findOwnerAttendanceItems"
             resultType="com.korit.sa_one_back.dto.response.OwnerAttendanceRespDto">
         select
+            s.store_id storeId,
+            s.store_name storeName,
+
             a.attendance_id attendanceId,
             se.store_employee_id employeeId,
             u.name employeeName,
@@ -111,8 +144,11 @@
             a.attendance_status status,
             lt.leave_type_name absentReason
         from
-            store_employee_tb se
-        join user_tb u on u.user_id = se.user_id
+        store_employee_tb se
+        join store_tb s
+        on s.store_id = se.store_id
+        join user_tb u
+        on u.user_id = se.user_id
         left join attendance_tb a
         on a.store_employee_id = se.store_employee_id
         and a.work_date = #{workDate}
@@ -120,11 +156,14 @@
         on l.store_employee_id = se.store_employee_id
         and #{workDate} between l.start_date and l.end_date
         and l.work_status = 'APPROVED'
-        left join leave_type_tb lt on lt.leave_type_id = l.leave_type_id
-        where se.store_id = #{storeId}
-        and se.work_status = 'ACTIVE'
+        left join leave_type_tb lt
+        on lt.leave_type_id = l.leave_type_id
+        where
+        se.store_id = #{storeId}
+        and se.work_status in ('ACTIVE','WORKING')
         order by se.store_employee_id desc
     </select>
+
 
     <!-- 운영 시작 시간 -->
     <select id="findOpenTime" resultType="java.time.LocalDateTime">
@@ -187,7 +226,8 @@
         and
         u.name = #{storeEmployeeName}
         and
-        se.work_status = 'ACTIVE'
+        se.work_status IN ('ACTIVE', 'WORKING')
+
         limit 1
     </select>
 
@@ -201,7 +241,9 @@
         and
         user_id = #{userId}
         and
-        work_status = 'ACTIVE'
+<!--        work_status = 'ACTIVE'-->
+        work_status IN ('ACTIVE', 'WORKING')
+
     </select>
 
     <select id="findEmployeeName" resultType="java.lang.String">

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stores/{storeId}/me")
+@RequestMapping("/api/stores/{storeId}/me")
 public class MyCalendarController {
 
     private final MyCalendarService myCalendarService;
 
     // 직원 본인: store 선택 후 월 캘린더 조회
-    @GetMapping("/calendar")
+    @GetMapping("/api/calendar")
     public ApiRespDto<MyCalendarRespDto> getMyMonth(@PathVariable Long storeId,
                                                     @RequestParam int year,
                                                     @RequestParam int month,

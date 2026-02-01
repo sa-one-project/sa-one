@@ -1,5 +1,6 @@
 package com.korit.sa_one_back.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @Builder
 @NoArgsConstructor
@@ -27,4 +29,6 @@ public class CalendarDayRespDto {
 
     private AttendanceInfoRespDto attendance;
     private LeaveInfoRespDto leave;
+
+    private List<EmployeeCalendarRespDto> items;
 }

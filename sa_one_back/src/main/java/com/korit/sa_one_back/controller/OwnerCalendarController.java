@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stores/{storeId}/owner")
+@RequestMapping("/api/stores/{storeId}/owner")
 public class OwnerCalendarController {
 
     private final OwnerCalendarService ownerCalendarService;
 
     // 사장 월 캘린더 전체
-    @GetMapping("/calendar")
+    @GetMapping("/api/calendar")
     public ApiRespDto<OwnerCalendarRespDto> getOwnerMonth(@PathVariable Long storeId,
                                                           @RequestParam int year,
                                                           @RequestParam int month,
@@ -31,7 +31,7 @@ public class OwnerCalendarController {
     }
 
     // 사장 -> 직원 개인 캘린더(월)
-    @GetMapping("/employees/{storeEmployeeId}/calendar")
+    @GetMapping("/api/employees/{storeEmployeeId}/calendar")
     public ApiRespDto<EmployeeCalendarRespDto> getOwnerEmployeeMonth(@PathVariable Long storeId,
                                                                      @PathVariable Long storeEmployeeId,
                                                                      @RequestParam int year,

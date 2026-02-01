@@ -54,7 +54,6 @@
             a.check_out_time,
             a.work_minutes,
             a.attendance_status,
-            a.attendance_note,
 
             l.leave_id,
             lt.leave_type_name as leave_type,
@@ -77,7 +76,8 @@
         on lt.leave_type_id = l.leave_type_id
         where
         s.store_id = #{storeId}
-        and se.work_status = 'WORKING'
+        and se.work_status in ('WORKING', 'ACTIVE')
+
         order by
         sc.work_date asc, u.name asc
     </select>

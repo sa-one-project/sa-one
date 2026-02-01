@@ -12,13 +12,13 @@ import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/stores/{storeId}/owner")
+@RequestMapping("/api/stores/{storeId}/owner")
 public class OwnerAttendanceController {
 
     private final OwnerAttendanceService ownerAttendanceService;
 
     // 예: /stores/1/owner/attendance?date=2026-01-26
-    @GetMapping("/attendance")
+    @GetMapping("/api/attendance")
     public ApiRespDto<OwnerDayAttendanceRespDto> getDay(@PathVariable Long storeId,
                                                         @RequestParam("date") LocalDate date,
                                                         @AuthenticationPrincipal PrincipalUser principal) {

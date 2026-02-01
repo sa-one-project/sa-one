@@ -19,7 +19,7 @@ public class PayrollController {
 
     private final PayrollService payrollService;
 
-    @GetMapping("/me")
+    @GetMapping("/api/me")
     public ResponseEntity<PayrollEntity> getMyPayroll(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam Long storeId,
@@ -29,7 +29,7 @@ public class PayrollController {
         return ResponseEntity.ok(payrollService.getMyPayroll(userId, storeId, payslipYearMonth));
     }
 
-    @PostMapping("/me")
+    @PostMapping("/api/me")
     public ResponseEntity<PayrollIdRespDto> generateMyPayroll(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam Long storeId,
@@ -40,7 +40,7 @@ public class PayrollController {
         return ResponseEntity.ok(new PayrollIdRespDto(payrollId));
     }
 
-    @GetMapping("/me/details")
+    @GetMapping("/api/me/details")
     public ResponseEntity<List<PayrollDetailEntity>> getMyPayrollDetails(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam Long storeId,
