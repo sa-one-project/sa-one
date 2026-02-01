@@ -85,13 +85,15 @@
     </insert>
 
     <update id="softDelete">
-        UPDATE
+        update
             user_tb
-        SET
-            is_deleted = TRUE,
-            deleted_at = NOW()
-        WHERE
+        set
+            is_deleted = true,
+            deleted_at = now(),
+            updated_at = now()
+        where
             user_id = #{userId}
+            and is_deleted = false
     </update>
 
     <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">

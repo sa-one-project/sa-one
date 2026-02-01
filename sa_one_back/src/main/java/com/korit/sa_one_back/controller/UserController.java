@@ -48,15 +48,15 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/api/delete/me")
-    public ResponseEntity<?> deleteMe(@AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
-
-        if (principalUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        userService.delete(principalUser.getUserId());
-
-        return ResponseEntity.ok().body("회원탈퇴 완료");
-    }
+//    @PostMapping("/api/delete/me")
+//    public ResponseEntity<?> deleteMe(@AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
+//
+//        if (principalUser == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        userService.deleteUser(principalUser.getUserId());
+//
+//        return ResponseEntity.ok().body("회원탈퇴 완료");
+//    }
 }
