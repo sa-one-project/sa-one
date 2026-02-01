@@ -12,6 +12,7 @@ import StartPage from "./pages/auth/StartPage";
 import AttendancePage from "./pages/employee/AttendancePage";
 import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
 import PasswordReset from "./pages/auth/PasswordReset";
+import PayrollDetail from "./pages/PayrollDetail.jsx";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -53,6 +54,9 @@ function App() {
                 {/* 4. 공통 페이지 */}
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/change-password" element={<PasswordReset />} />
+
+                {/* 5. 급여 명세서 */}
+                <Route path="/salary" element={<PayrollDetail />} />
             </Routes>
         </BrowserRouter>
     );
