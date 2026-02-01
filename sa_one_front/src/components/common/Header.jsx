@@ -1,53 +1,58 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
+import * as S from "./HeaderStyle";
 
 function Header() {
     const navigate = useNavigate();
-
-    // Store 에서 로그인상태, 로그아웃 기능만 빼옴
+    const location = useLocation();
     const { isLoggedIn, roleId, logout } = useAuthStore();
 
-    // 로그아웃 버튼용. (토큰 지우고 비로그인 메인으로 전송)
     const handleLogout = () => {
-        logout(); // 상태 false 로 변경
+        logout();
         alert("로그아웃 되었습니다.");
-        navigate("/"); // 메인으로 이동
+        navigate("/");
+    };
+
+    // 사장님(roleId === 1)이면 파란색, 그 외(직원)는 보라색 스타일 적용
+    const getActiveStyle = (path) => {
+        if (location.pathname !== path) return {};
+        return { color: Number(roleId) === 1 ? "#599afd" : "#9370DB" };
     };
 
     return (
-        <header>
-            {/* 로고 영역 - 나중에 h3 대신 img 태그를 사용해 로고 그림으로 수정 */}
-            <Link to="/"><h3>SA-ONE</h3></Link> 
+        <header css={S.header}>
+            <Link to="/" css={S.logo}>SA : ONE</Link> 
 
-            <nav>
+            <nav css={S.nav}>
                 {isLoggedIn ? (
-                    <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+                    <>
                         {/* 사장님 전용 메뉴 */}
-                        {roleId === 1 && (
-                            <Link to="/signup/employee" style={{ fontWeight: "bold", color: "blue" }}>
+                        {Number(roleId) === 1 && (
+                            <Link 
+                                to="/signup/employee" 
+                                className={location.pathname === "/signup/employee" ? "active" : ""}
+                                style={getActiveStyle("/signup/employee")}
+                            >
                                 직원 추가
                             </Link>
                         )}
                         
-                        {/* 공통 메뉴 */}
-                        <Link to="/employee/calendar">직원 캘린더</Link> 
-                        <Link to="/calendar">직원 캘린더</Link>
-                        <Link to="/status">출근 현황</Link>
-                        <Link to="/salary">급여명세서</Link>
-                        <Link to="/mypage">마이페이지</Link>
-                        <button onClick={handleLogout}>로그아웃</button>
-                    </div>
+                        <Link to="/calendar" className={location.pathname === "/calendar" ? "active" : ""} style={getActiveStyle("/calendar")}>직원 캘린더</Link>
+                        <Link to="/status" className={location.pathname === "/status" ? "active" : ""} style={getActiveStyle("/status")}>출근 현황</Link>
+                        <Link to="/salary" className={location.pathname === "/salary" ? "active" : ""} style={getActiveStyle("/salary")}>급여명세서</Link>
+                        <Link to="/mypage" className={location.pathname === "/mypage" ? "active" : ""} style={getActiveStyle("/mypage")}>마이페이지</Link>
+                        
+                        <button onClick={handleLogout} className="logout-btn">로그아웃</button>
+                    </>
                 ) : (
-                    <div style={{ display: "flex", gap: "15px" }}>
+                    <>
                         <Link to="/login">로그인</Link>
-                        {/* 시작하기 버튼의 경로를 /singup => /start (StartPage) 로 변경 */}
-                        <Link to="/start">시작하기</Link>
-                    </div>
+                        <Link to="/start" css={S.startBtn}>시작하기</Link>
+                    </>
                 )}
             </nav>
-            {/* 잠깐 구분을 위해 넣어둠... */}
-            <hr /> 
         </header>
     );
 }

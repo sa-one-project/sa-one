@@ -33,6 +33,7 @@ export const logo = css`
     cursor: pointer;
     background: linear-gradient(to right, #98e9f0, #c3c2ed);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 `;
 
@@ -129,6 +130,7 @@ export const heroTextContent = css`
         span {
             background: linear-gradient(to right, #8a88d8, #60a5fa);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     }

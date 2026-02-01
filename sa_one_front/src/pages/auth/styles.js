@@ -45,6 +45,7 @@ export const startLogo = css`
     margin-bottom: 50px;
     background: linear-gradient(to right, #98e9f0, #c3c2ed);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -2px;
 `;
@@ -92,7 +93,7 @@ export const loginLayout = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 60px; /* 간격 고정 */
+    gap: 60px;
     width: 100%;
 `;
 
