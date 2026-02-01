@@ -17,6 +17,7 @@ spring:
 spring:
   config:
     activate:
+<<<<<<< HEAD
       on-profile: secret
     import:
       - classpath:application-secret-dev.yml
@@ -27,6 +28,8 @@ spring:
 spring:
   config:
     activate:
+=======
+>>>>>>> origin/main
       on-profile: common
   servlet:
     multipart:

@@ -23,7 +23,6 @@ function EmployeeAdd() {
         employmentType: "정규직" // 기본값 정규직
     });
 
-    // ★ 에러 방지를 위해 누락된 스타일 변수 정의
     const rowStyle = { display: "flex", gap: "15px", marginBottom: "15px" };
     const inputBox = { display: "flex", flexDirection: "column", flex: 1 };
     
@@ -43,7 +42,6 @@ function EmployeeAdd() {
 
             <form onSubmit={handleSubmit} style={{ display: "flex", gap: "30px" }}>
                 
-                {/* 1. 왼쪽: 이미지 업로드 섹션 */}
                 <div style={{ width: "200px", textAlign: "center" }}>
                     <div style={{ width: "150px", height: "180px", backgroundColor: "#eee", margin: "0 auto 10px", border: "1px solid #ccc", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         이미지 미리보기
@@ -51,7 +49,6 @@ function EmployeeAdd() {
                     <input type="file" style={{ width: "100%" }} />
                 </div>
 
-                {/* 2. 오른쪽: 상세 정보 입력 섹션 */}
                 <div style={{ flex: 1 }}>
                     <div style={rowStyle}>
                         <div style={inputBox}>
@@ -60,7 +57,6 @@ function EmployeeAdd() {
                         </div>
                         <div style={inputBox}>
                             <label>생년월일</label>
-                            {/* 여기서 선택한 값은 "2026-01-16" 형태의 문자열로 저장됩니다. */}
                             <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} />
                         </div>
                     </div>
@@ -105,7 +101,6 @@ function EmployeeAdd() {
                             <label>입사일</label>
                             <input type="date" name="hireDate" value={formData.hireDate} onChange={handleChange} />
                         </div>
-                        {/* 고용형태 선택 기능 추가 */}
                         <div style={inputBox}>
                             <label>고용형태</label>
                             <select 

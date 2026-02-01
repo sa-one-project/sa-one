@@ -1,4 +1,6 @@
 .env
+codeExtractor.cjs
+frontend_files_bundle.txt
 
 # Logs
 logs

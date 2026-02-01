@@ -15,9 +15,9 @@ public class SwaggerApiConfig {
     public OpenAPI openAPIConfig() {
         OpenAPI openAPI = new OpenAPI();
         Info info = new Info();
-        info.title("소셜 게시판 미니 프로젝트");
+        info.title("SA:ONE Project");
         info.version("1.0");
-        info.description("소셜 게시판 미니 프로젝트");
+        info.description("사장님 혼자 관리하는 직원 시스템");
 
         SecurityRequirement securityRequirement = new SecurityRequirement();
         securityRequirement.addList("Bearer Authentication");
