@@ -2,6 +2,8 @@ application-secret-dev.yml
 application-secret-prod.yml
 application-secret.yml
 githubyml.yml
+.env
+.env.*
 
 HELP.md
 target/
