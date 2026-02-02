@@ -1,5 +1,7 @@
+/** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from "react";
 import Holidays from "date-holidays"; 
+import * as S from "./styles"; 
 import CalendarSidebar from "../../components/calendar/CalendarSidebar";
 import CalendarGrid from "../../components/calendar/CalendarGrid";
 import CalendarModal from "../../components/calendar/CalendarModal";
@@ -7,13 +9,15 @@ import CalendarModal from "../../components/calendar/CalendarModal";
 function EmployeeCalendarPage() {
   const [userRole, setUserRole] = useState("ADMIN"); 
   const isOwner = userRole === "ADMIN";
-  const themeColor = isOwner ? "skyblue" : "mediumpurple";
+
+  const themeColor = isOwner ? "#599afd" : "#9370DB"; 
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [holidays, setHolidays] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null); 
   const [selectedDay, setSelectedDay] = useState(0);
-  const [noteText, setNoteText] = useState(""); // 딱 이거 하나만 추가
+  const [noteText, setNoteText] = useState("");
 
   const year = currentDate.getFullYear();
   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
@@ -40,25 +44,43 @@ function EmployeeCalendarPage() {
   }, [currentDate, year]);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <button onClick={() => setUserRole(isOwner ? "USER" : "ADMIN")}>모드 전환</button>
+    <div css={S.calendarPageContainer}>
+      <button 
+        onClick={() => setUserRole(isOwner ? "USER" : "ADMIN")}
+        style={{ position: 'absolute', top: '20px', left: '20px' }} 
+      >
+        모드 전환
+      </button>
 
-      <div style={{ display: "flex", gap: "20px", marginTop: "20px" }}>
+      <div css={S.calendarMainCard}> 
         <CalendarSidebar 
-          year={year} month={month} themeColor={themeColor} isOwner={isOwner}
+          year={year} 
+          month={month} 
+          themeColor={themeColor} 
+          isOwner={isOwner}
           prevMonth={() => setCurrentDate(new Date(year, currentDate.getMonth() - 1, 1))}
           nextMonth={() => setCurrentDate(new Date(year, currentDate.getMonth() + 1, 1))}
           handleEditClick={() => { setModalType("edit"); setShowModal(true); }}
-          noteText={noteText} setNoteText={setNoteText}
+          noteText={noteText} 
+          setNoteText={setNoteText}
         />
-        <CalendarGrid themeColor={themeColor} currentDate={currentDate} holidays={holidays} handleDateClick={(day) => { setSelectedDay(day); setModalType("view"); setShowModal(true); }} />
+        <CalendarGrid 
+          themeColor={themeColor} 
+          currentDate={currentDate} 
+          holidays={holidays} 
+          handleDateClick={(day) => { setSelectedDay(day); setModalType("view"); setShowModal(true); }} 
+        />
       </div>
 
       {showModal && (
         <CalendarModal 
-          modalType={modalType} month={month} selectedDay={selectedDay || "26"}
+          modalType={modalType} 
+          month={month} 
+          selectedDay={selectedDay || "26"}
           data={dailyAttendanceData[`${year}-${month}-${String(selectedDay || "26").padStart(2, "0")}`] || []}
-          themeColor={themeColor} closeModal={() => setShowModal(false)}
+          themeColor={themeColor} 
+          isOwner={isOwner}
+          closeModal={() => setShowModal(false)}
         />
       )}
     </div>

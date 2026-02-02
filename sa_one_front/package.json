@@ -17,6 +17,7 @@
     "date-holidays": "^3.26.7",
     "openai": "^6.15.0",
     "react": "^19.2.0",
+    "react-calendar": "^6.0.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",

@@ -1,25 +1,28 @@
+/** @jsxImportSource @emotion/react */
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import { useAuthStore } from "../../stores/useAuthStore";
+import OwnerAttendanceView from "../owner/OwnerAttendanceView";
+import * as S from "./AttendanceStyle";
 
 function AttendancePage() {
+  const { roleId } = useAuthStore();
+  const isOwner = Number(roleId) === 1;
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [now, setNow] = useState(new Date());
   const [capturedImg, setCapturedImg] = useState(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
+  const [user, setUser] = useState({ storeEmployeeId: null, name: "불러오는 중...", storeName: "1호점" });
 
-  const [user, setUser] = useState({
-    storeEmployeeId: null,
-    name: "불러오는 중...",
-    storeName: "1호점"
-  });
+  const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [checkInTimeDisplay, setCheckInTimeDisplay] = useState("-");
 
-  // [TODO] 출근 확인, 퇴근 관리 로직 짜기??
-
-  // 실시간 시계 및 사용자 정보 로드
   useEffect(() => {
-    const timer = setInterval(() => setNow(new Date()), 1000);
-    
+    const timer = setInterval(() => {
+      if (!isCheckedIn) setNow(new Date());
+    }, 1000);
+
     const savedUser = JSON.parse(localStorage.getItem("user")); 
     if (savedUser) {
       setUser({
@@ -28,11 +31,9 @@ function AttendancePage() {
         storeName: savedUser.storeName || "1호점"
       });
     }
-
     return () => clearInterval(timer);
-  }, []);
+  }, [isCheckedIn]);
 
-  // 카메라 시동
   const handleStartCamera = () => {
     setCapturedImg(null);
     setIsCameraOn(true);
@@ -50,7 +51,6 @@ function AttendancePage() {
       });
   };
 
-  // 사진 촬영
   const takePhoto = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -66,31 +66,32 @@ function AttendancePage() {
     }
   };
 
-  // 등록 버튼 클릭 (실제 데이터 전송)
   const handleRegister = async () => {
     if (!capturedImg) return;
-
     try {
+      const fixedTime = now.toLocaleTimeString();
+      setCheckInTimeDisplay(fixedTime);
+      setIsCheckedIn(true);
+
       const attendanceData = {
-        storeEmployeeId: user.storeEmployeeId, // 로그인 정보에서 가져온 ID
+        storeEmployeeId: user.storeEmployeeId,
         checkInImgUrl: capturedImg,
         checkInTime: now.toISOString(), 
       };
-
       console.log("전송 데이터:", attendanceData);
-      // await axios.post("/api/attendance", attendanceData);
-      alert(`${user.name}님, 출근 등록이 완료되었습니다!`);
+      alert(`${user.name}님, ${fixedTime}에 출근 등록이 완료되었습니다!`);
     } catch (error) {
       console.error("등록 실패:", error);
     }
   };
 
+  if (isOwner) return <OwnerAttendanceView user={user} />;
+
   return (
-    <div style={{ padding: "20px" }}>
-      <div style={{ display: "flex", border: "1px solid #ccc", padding: "20px", gap: "20px", maxWidth: "800px", margin: "0 auto" }}>
-        
+    <div css={S.employee.container}>
+      <div css={S.employee.card}>
         <div style={{ flex: 1, textAlign: "center" }}>
-          <div style={{ width: "300px", height: "300px", background: "#eee", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto", position: "relative" }}>
+          <div css={S.employee.photoArea}>
             {capturedImg ? (
               <img src={capturedImg} alt="captured" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : isCameraOn ? (
@@ -100,29 +101,41 @@ function AttendancePage() {
             )}
           </div>
           <canvas ref={canvasRef} width="300" height="300" style={{ display: "none" }} />
-          <div style={{ marginTop: "10px" }}>
-            {!isCameraOn && !capturedImg ? (
-              <button onClick={handleStartCamera}>카메라 켜기</button>
-            ) : isCameraOn ? (
-              <button onClick={takePhoto} style={{ background: "#ff4d4f", color: "white" }}>촬영하기</button>
-            ) : (
-              <button onClick={handleStartCamera}>재촬영</button>
+          <div style={{ marginTop: "15px" }}>
+            {/* 출근 완료 후에는 버튼 숨김 */}
+            {!isCheckedIn && (
+              !isCameraOn && !capturedImg ? (
+                <button onClick={handleStartCamera}>카메라 켜기</button>
+              ) : isCameraOn ? (
+                <button onClick={takePhoto} style={{ background: "#ff4d4f", color: "white" }}>촬영하기</button>
+              ) : (
+                <button onClick={handleStartCamera}>재촬영</button>
+              )
             )}
           </div>
         </div>
 
-        <div style={{ flex: 1 }}>
-          {/* 아래로는 현재 로그인 된 직원의 정보를 들고와야 함... 모두 임의로 넣어둠. */}
-          <p>사업장명: {user.storeName}</p> 
-          <p>이름: {user.name}</p>
-          <p>날짜: {now.toLocaleDateString()}</p>
-          <p>출근: {now.toLocaleTimeString()}</p>
+        <div css={S.employee.infoArea}>
+          <p><span>사업장명</span> <span>{user.storeName}</span></p> 
+          <p><span>이름</span> <span>{user.name}</span></p>
+          <p><span>날짜</span> <span>{now.toLocaleDateString()}</span></p>
+          <p>
+            <span>출근</span> 
+            <span style={{ color: isCheckedIn ? "#599afd" : "inherit" }}>
+              {isCheckedIn ? checkInTimeDisplay : now.toLocaleTimeString()}
+            </span>
+          </p>
           <hr />
-          <p style={{ color: "#999" }}>퇴근: -</p>
-          <p style={{ color: "#999" }}>총 근무 시간: -</p>
-          
-          <div style={{ marginTop: "40px", textAlign: "right" }}>
-            <button disabled={!capturedImg} onClick={handleRegister}>등록</button>
+          <p className="sub-text"><span>퇴근</span> <span>-</span></p>
+          <p className="sub-text"><span>총 근무 시간</span> <span>-</span></p>
+          <div style={{ textAlign: "right" }}>
+            <button 
+              disabled={!capturedImg || isCheckedIn} 
+              onClick={handleRegister}
+              css={S.employee.registerBtn(!!capturedImg && !isCheckedIn)}
+            >
+              {isCheckedIn ? "출근 완료" : "확인"}
+            </button>
           </div>
         </div>
       </div>
