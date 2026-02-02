@@ -178,7 +178,7 @@ public class SecurityConfig {
             auth.requestMatchers("/swagger-ui/**").permitAll();
             auth.requestMatchers("/swagger-ui.html").permitAll();
             auth.requestMatchers("/doc").permitAll();
-            auth.requestMatchers("/oauth2/**").permitAll();
+            auth.requestMatchers("/oauth2/**").permitAll(); // oauth2 관련
             auth.requestMatchers("/login/**").permitAll();
 
             auth.requestMatchers("/signin/**").permitAll();
@@ -187,7 +187,8 @@ public class SecurityConfig {
             auth.requestMatchers("/api/account/**").permitAll();
 
             auth.requestMatchers("/image/**").permitAll();       // 이미지 조회 공개 (원하면 GET만 허용하도록 나중에 강화)
-            auth.requestMatchers("/api/account/**").permitAll(); // 너 프로젝트에서 열어둔거 유지
+            auth.requestMatchers("/api/account/**").permitAll(); // 프로젝트에서 열어둔거 유지
+
 
             // -------------------------
             // (B) 관리자(ADMIN) 전용
@@ -208,7 +209,7 @@ public class SecurityConfig {
             auth.requestMatchers("/api/employees/**").hasRole("OWNER");       // 직원관리 API
             auth.requestMatchers("/api/attendances/check-in").hasRole("OWNER");
             auth.requestMatchers("/api/attendances/check-out").hasRole("OWNER");
-            auth.requestMatchers("/api/attendances/owner/**").hasRole("OWNER"); // (권장) 사장 전용 출결 API를 이 prefix로 묶기
+            auth.requestMatchers("/api/attendances/owner/**").hasRole("OWNER"); // 사장 전용 출결 API를 이 prefix로 묶기
             auth.requestMatchers("/api/users/owner/**").hasRole("OWNER");     // 사장 마이페이지
 
             // -------------------------

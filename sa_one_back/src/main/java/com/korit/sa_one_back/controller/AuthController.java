@@ -65,17 +65,22 @@ public class AuthController {
     }
 
     // 회원탈퇴
-    @DeleteMapping("/api/deleteuser")
-    public ResponseEntity<?> deleteUser(@RequestBody(required = false) DeleteUserReqDto dto,
-                                        @AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
+    @DeleteMapping("api/oauth2/deleteuser")
+    public ResponseEntity<?> deleteUser(
+            @AuthenticationPrincipal PrincipalUser principalUser,
+            @RequestBody(required = false) DeleteUserReqDto dto
+    ) throws IllegalAccessException {
+
         if (principalUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 정보 없음");
         }
 
-        String password = (dto == null) ? null : dto.getPassword();
-        userService.deleteUser(principalUser.getUserId(), password);
+        String password = dto != null ? dto.getPassword() : null;
+        String email = dto != null ? dto.getEmail() : null;
 
-        return ResponseEntity.ok(Map.of("message", "회원탈퇴가 완료되었습니다."));
+        userService.deleteUser(principalUser.getUserId(), password, email);
+
+        return ResponseEntity.ok("회원탈퇴 완료");
     }
 
 }

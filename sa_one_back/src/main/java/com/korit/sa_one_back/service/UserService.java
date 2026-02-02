@@ -63,22 +63,25 @@ public class UserService extends DefaultOAuth2UserService {
         return accessToken;
     }
 
-    public void deleteUser(long userId, String rawPassword) throws IllegalAccessException {
-        UserEntity user = userMapper.findByUserId(userId);
+    public void deleteUser(long userId, String rawPassword, String email) throws IllegalAccessException {
 
+        UserEntity user = userMapper.findByUserId(userId);
         if (user == null || user.isDeleted()) {
             throw new IllegalAccessException("이미 탈퇴한 사용자 입니다.");
         }
 
-        boolean isOauthUser = user.getProvider() != null && !user.getProvider().isBlank()
-                && user.getOauth2Id() != null && !user.getOauth2Id().isBlank();
+        boolean isOauthUser =
+                user.getProvider() != null && !user.getProvider().isBlank()
+                        && user.getOauth2Id() != null && !user.getOauth2Id().isBlank();
 
-        // Local 유저면 비번 검증
-        if (!isOauthUser) {
-            if (rawPassword == null || rawPassword.isBlank()) {
-                throw new BadCredentialsException("비밀번호를 입력해주세요.");
+        if (isOauthUser) {
+            // OAuth -> 이메일 검증
+            if (email == null || !email.equals(user.getEmail())) {
+                throw new BadCredentialsException("이메일이 일치하지 않습니다.");
             }
-            if (user.getPassword() == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
+        } else {
+            // Local -> 비밀번호 검증
+            if (rawPassword == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
                 throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
             }
         }
@@ -173,7 +176,7 @@ public class UserService extends DefaultOAuth2UserService {
         UserEntity user = new UserEntity();
         user.setUserId(userId);
 
-        // PATCH: null/빈문자면 수정하지 않도록 mapper에서 if 처리함
+        // PATCH: null/빈문자면 수정하지 않도록 mapper에서 if 처리
         user.setEmail(dto.getEmail());
         user.setPhone(dto.getPhone());
         user.setImgUrl(dto.getImgUrl());
