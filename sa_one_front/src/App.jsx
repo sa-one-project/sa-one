@@ -13,6 +13,7 @@ import AttendancePage from "./pages/employee/AttendancePage";
 import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
 import PasswordReset from "./pages/auth/PasswordReset";
 import PayrollDetail from "./pages/PayrollDetail.jsx";
+import ChatPage from "./pages/chat/ChatPage.jsx";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -40,10 +41,10 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<SignUp />} />
 
-                {/* 2. 사장님 전용 페이지 (콘솔 에러 발생했던 경로 수정) */}
+                {/* 2. 사장님 전용 페이지 */}
                 <Route path="/owner" element={<OwnerMain />} />
-                <Route path="/signup/employee" element={<EmployeeAdd />} /> {/* 에러 해결용 */}
-                <Route path="/employee-add" element={<EmployeeAdd />} />     {/* 기존 경로 유지 */}
+                <Route path="/signup/employee" element={<EmployeeAdd />} />
+                <Route path="/employee-add" element={<EmployeeAdd />} />
 
                 {/* 3. 직원 전용 페이지 */}
                 <Route path="/employee" element={<EmployeeMain />} />
@@ -55,8 +56,9 @@ function App() {
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/change-password" element={<PasswordReset />} />
 
-                {/* 5. 급여 명세서 */}
+                {/* 5. 추가 기능 (급여 및 채팅) */}
                 <Route path="/salary" element={<PayrollDetail />} />
+                <Route path="/chat" element={<ChatPage />} />
             </Routes>
         </BrowserRouter>
     );
