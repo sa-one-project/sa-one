@@ -1,62 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchPayrollList } from "../../apis/payroll/payrollApi";
-
-function fmtYm(yyyymm) {
-    if (!yyyymm || yyyymm.length !== 6) return yyyymm;
-    return `${yyyymm.slice(0, 4)}-${yyyymm.slice(4, 6)}`;
-}
+import { fetchPayrollList } from "././apis/payroll/payrollApi";
+import { initStoreIdIfNeeded } from "../../utils/initStoreId";
 
 function PayrollListPage() {
-    const [rows, setRows] = useState([]);
-    const [err, setErr] = useState(null);
+    const [items, setItems] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchPayrollList()
-        .then(setRows)
-        .catch((e) => setErr(e.message));
-    }, []);
+        const run = async () => {
+            const storeId = await initStoreIdIfNeeded();
+            if (!storeId) return;
 
-    if (err) return <div>에러: {err}</div>;
+            const data = await fetchPayrollList(storeId);
+            setItems(data);
+        };
+
+        run().catch(console.error);
+    }, []);
 
     return (
         <div>
-        <h2>급여명세서</h2>
+            <h2>급여명세서</h2>
 
-        <table border="1" cellPadding="8" cellSpacing="0">
-            <thead>
-            <tr>
-                <th>월</th>
-                <th>상태</th>
-                <th>총급여</th>
-                <th>총공제</th>
-                <th>실수령</th>
-                <th>상세</th>
-            </tr>
-            </thead>
-            <tbody>
-            {rows.map((r) => (
-                <tr key={r.payslipYearMonth}>
-                <td>{fmtYm(r.payslipYearMonth)}</td>
-                <td>{r.status}</td>
-                <td>{Number(r.grossPay ?? 0).toLocaleString()}</td>
-                <td>{Number(r.totalDeduction ?? 0).toLocaleString()}</td>
-                <td>{Number(r.netPay ?? 0).toLocaleString()}</td>
-                <td>
-                    <button onClick={() => navigate(`/payroll/${r.payslipYearMonth}`)}>
-                    보기
-                    </button>
-                </td>
-                </tr>
-            ))}
-            {rows.length === 0 && (
-                <tr>
-                <td colSpan="6">데이터가 없습니다.</td>
-                </tr>
-            )}
-            </tbody>
-        </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>월</th>
+                        <th>총 지급액</th>
+                        <th>총 공제액</th>
+                        <th>실수령액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {items.map((p) => (
+                        <tr
+                            key={p.payrollId}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => navigate(`/payrolls/${p.payslipYearMonth}`)}
+                        >
+                            <td>{p.payslipYearMonth}</td>
+                            <td>{Number(p.grossPay ?? 0).toLocaleString()}</td>
+                            <td>{Number(p.totalDeduction ?? 0).toLocaleString()}</td>
+                            <td>{Number(p.netPay ?? 0).toLocaleString()}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }

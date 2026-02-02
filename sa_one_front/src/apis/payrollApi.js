@@ -1,11 +1,15 @@
-export async function fetchPayrollList() {
-  const res = await fetch("/api/payroll", { credentials: "include" });
-  if (!res.ok) throw new Error("Failed to fetch payroll list");
-  return res.json();
+import { http } from "../../../../apis/http";
+
+export async function fetchPayrollList(storeId) {
+    const res = await http.get("/api/payrolls/me", {
+        params: { storeId },
+    });
+    return res.data;
 }
 
-export async function fetchPayrollDetail(payslipYearMonth) {
-    const res = await fetch(`/api/payroll/${payslipYearMonth}`, { credentials: "include" });
-    if (!res.ok) throw new Error("Failed to fetch payroll detail");
-    return res.json();
+export async function fetchPayrollDetail(storeId, yyyyMM) {
+    const res = await http.get(`/api/payrolls/me/${yyyyMM}`, {
+        params: { storeId },
+    });
+    return res.data;
 }
