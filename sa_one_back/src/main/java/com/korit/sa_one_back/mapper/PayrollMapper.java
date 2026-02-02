@@ -1,6 +1,7 @@
 package com.korit.sa_one_back.mapper;
 
 import com.korit.sa_one_back.dto.request.payroll.*;
+import com.korit.sa_one_back.dto.response.PayrollDetailViewRespDto;
 import com.korit.sa_one_back.entity.PayEntity;
 import com.korit.sa_one_back.entity.payroll.*;
 import org.apache.ibatis.annotations.Mapper;
@@ -61,5 +62,9 @@ public interface PayrollMapper {
     );
 
     StoreBusinessInfoEntity findStoreBusinessInfo (Long storeId);
+
+    List<PayrollEntity> findPayrollListByStoreEmployeeId(Long storeEmployeeId);
+
+    List<PayrollDetailViewRespDto> findPayrollDetailViewByPayrollId(Long payrollId);
 }
 
