@@ -1,5 +1,6 @@
 package com.korit.sa_one_back.controller;
 
+import com.korit.sa_one_back.dto.request.DeleteUserReqDto;
 import com.korit.sa_one_back.dto.request.OAuth2SignUpReqDto;
 import com.korit.sa_one_back.dto.request.SignInReqDto;
 import com.korit.sa_one_back.dto.request.SignUpReqDto;
@@ -27,7 +28,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserMapper userMapper;
 
-    @PostMapping("/local/signup")
+    @PostMapping("/api/local/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpReqDto dto) {
         userService.createLocalUser(dto);
         // 가입 후 JWT 발급
@@ -40,7 +41,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/oauth2/signup")
+    @PostMapping("/api/oauth2/signup")
     public ResponseEntity<?> oauth2SignUp(@RequestBody OAuth2SignUpReqDto dto,
                                           @AuthenticationPrincipal PrincipalUser principalUser) {
         // SecurityContext에 OAuth2 인증 정보 존재
@@ -57,10 +58,24 @@ public class AuthController {
         return ResponseEntity.ok().body(token);
     }
 
-    @PostMapping("/local/signin")
+    @PostMapping("/api/local/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInReqDto dto) {
         String accessToken = userService.signin(dto);
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
+    }
+
+    // 회원탈퇴
+    @DeleteMapping("/api/deleteuser")
+    public ResponseEntity<?> deleteUser(@RequestBody(required = false) DeleteUserReqDto dto,
+                                        @AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
+        if (principalUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 정보 없음");
+        }
+
+        String password = (dto == null) ? null : dto.getPassword();
+        userService.deleteUser(principalUser.getUserId(), password);
+
+        return ResponseEntity.ok(Map.of("message", "회원탈퇴가 완료되었습니다."));
     }
 
 }

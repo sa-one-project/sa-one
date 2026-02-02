@@ -24,7 +24,7 @@ public class UserController {
 //
 //        return ResponseEntity.ok(principalUser.getUser());
 //    }
-    @GetMapping("/me")
+    @GetMapping("/api/me")
     public ResponseEntity<UserMeRespDto> getMyPage(
             Authentication authentication,
             @RequestParam(required = false) Long storeId
@@ -37,7 +37,7 @@ public class UserController {
         return ResponseEntity.ok(resp);
     }
 
-    @PatchMapping("/me")
+    @PatchMapping("/api/me")
     public ResponseEntity<Void> updateMyPage(
             Authentication authentication,
             @RequestBody UpdateMyPageReqDto dto
@@ -48,15 +48,15 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/delete/me")
-    public ResponseEntity<?> deleteMe(@AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
-
-        if (principalUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        userService.delete(principalUser.getUserId());
-
-        return ResponseEntity.ok().body("회원탈퇴 완료");
-    }
+//    @PostMapping("/api/delete/me")
+//    public ResponseEntity<?> deleteMe(@AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
+//
+//        if (principalUser == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//
+//        userService.deleteUser(principalUser.getUserId());
+//
+//        return ResponseEntity.ok().body("회원탈퇴 완료");
+//    }
 }

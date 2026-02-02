@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class StoreApplicationReqDto {
+
     private Long storeApplicationId;
     private String storeName;
     private String address;

@@ -17,6 +17,16 @@ spring:
 spring:
   config:
     activate:
+      on-profile: secret
+    import:
+      - classpath:application-secret-dev.yml
+      - classpath:application-secret-prod.yml
+
+---
+
+spring:
+  config:
+    activate:
       on-profile: common
   servlet:
     multipart:

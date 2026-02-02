@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.AttendanceMapper">
+
+    <select id="findStoreEmployeeId" resultType="java.lang.Long">
+        select
+            store_employee_id
+        from
+            store_employee_tb
+        where
+            user_id = #{userId}
+        and
+            store_id = #{storeId}
+        and
+            work_status IN ('ACTIVE', 'WORKING')
+
+    </select>
+
+    <select id="countTodayAttendance" resultType="int">
+        select
+            count(*)
+        from
+            attendance_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+        and
+            work_date = #{workDate}
+    </select>
+
+    <insert id="insertCheckIn" useGeneratedKeys="true" keyProperty="attendanceId">
+        insert into attendance_tb (
+            attendance_id,
+            store_employee_id,
+            work_date,
+            check_in_time,
+            check_in_img_url,
+            attendance_status,
+            created_at,
+            updated_at
+        ) values (
+            default,
+            #{storeEmployeeId},
+            #{workDate},
+            #{checkInTime},
+            #{checkInImgUrl},
+            #{attendanceStatus},
+            now(),
+            now()
+        )
+    </insert>
+
+    <select id="findTodayAttendanceForCheckOut"
+            resultType="com.korit.sa_one_back.entity.AttendanceEntity">
+        select
+            *
+        from
+            attendance_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+        and
+            work_date = #{workDate}
+        order by check_out_time is not null, attendance_id desc
+        limit 1
+    </select>
+
+    <update id="updateCheckOut">
+        update
+            attendance_tb
+        set
+            check_out_time = #{checkOutTime},
+            check_out_img_url = #{checkOutImgUrl},
+            work_minutes = #{workMinutes},
+            attendance_status = #{attendanceStatus},
+            updated_at = now()
+        where
+            attendance_id = #{attendanceId}
+    </update>
+
+    <select id="findMyAttendances"
+            resultType="com.korit.sa_one_back.dto.response.MyAttendanceRespDto">
+        select
+            a.attendance_id attendanceId,
+            se.store_id workplaceId,
+            s.store_name workplaceName,
+            a.work_date date,
+            a.check_in_time checkInTime,
+            a.check_out_time checkOutTime,
+            a.work_minutes workedMinutes,
+            a.attendance_status status
+        from
+            attendance_tb a
+        join store_employee_tb se on se.store_employee_id = a.store_employee_id
+        join store_tb s on s.store_id = se.store_id
+        where a.store_employee_id = #{storeEmployeeId}
+        order by a.work_date desc, a.attendance_id desc
+    </select>
+
+    <!--  사장 출근현황 리스트 -->
+<!--    <select id="findOwnerAttendanceItems"-->
+<!--            resultType="com.korit.sa_one_back.dto.response.OwnerAttendanceRespDto">-->
+<!--        select-->
+<!--            a.attendance_id attendanceId,-->
+<!--            se.store_employee_id employeeId,-->
+<!--            u.name employeeName,-->
+<!--            #{workDate} date,-->
+<!--            a.check_in_time checkInTime,-->
+<!--            a.check_out_time checkOutTime,-->
+<!--            a.work_minutes workedMinutes,-->
+<!--            a.attendance_status status,-->
+<!--            lt.leave_type_name absentReason-->
+<!--        from-->
+<!--            store_employee_tb se-->
+<!--        join user_tb u on u.user_id = se.user_id-->
+<!--        left join attendance_tb a-->
+<!--        on a.store_employee_id = se.store_employee_id-->
+<!--        and a.work_date = #{workDate}-->
+<!--        left join leave_tb l-->
+<!--        on l.store_employee_id = se.store_employee_id-->
+<!--        and #{workDate} between l.start_date and l.end_date-->
+<!--        and l.work_status = 'APPROVED'-->
+<!--        left join leave_type_tb lt on lt.leave_type_id = l.leave_type_id-->
+<!--        where se.store_id = #{storeId}-->
+<!--        and se.work_status IN ('ACTIVE', 'WORKING')-->
+
+<!--        order by se.store_employee_id desc-->
+<!--    </select>-->
+
+    <select id="findOwnerAttendanceItems"
+            resultType="com.korit.sa_one_back.dto.response.OwnerAttendanceRespDto">
+        select
+            s.store_id storeId,
+            s.store_name storeName,
+
+            a.attendance_id attendanceId,
+            se.store_employee_id employeeId,
+            u.name employeeName,
+            #{workDate} date,
+            a.check_in_time checkInTime,
+            a.check_out_time checkOutTime,
+            a.work_minutes workedMinutes,
+            a.attendance_status status,
+            lt.leave_type_name absentReason
+        from
+        store_employee_tb se
+        join store_tb s
+        on s.store_id = se.store_id
+        join user_tb u
+        on u.user_id = se.user_id
+        left join attendance_tb a
+        on a.store_employee_id = se.store_employee_id
+        and a.work_date = #{workDate}
+        left join leave_tb l
+        on l.store_employee_id = se.store_employee_id
+        and #{workDate} between l.start_date and l.end_date
+        and l.work_status = 'APPROVED'
+        left join leave_type_tb lt
+        on lt.leave_type_id = l.leave_type_id
+        where
+        se.store_id = #{storeId}
+        and se.work_status in ('ACTIVE','WORKING')
+        order by se.store_employee_id desc
+    </select>
+
+
+    <!-- 운영 시작 시간 -->
+    <select id="findOpenTime" resultType="java.time.LocalDateTime">
+        select
+            min(a.check_in_time)
+        from
+            attendance_tb a
+        join store_employee_tb se on se.store_employee_id = a.store_employee_id
+        where se.store_id = #{storeId}
+        and a.work_date = #{workDate}
+    </select>
+
+    <!-- 운영 종료 시간 -->
+    <select id="findCloseTime" resultType="java.time.LocalDateTime">
+        select
+            max(a.check_out_time)
+        from
+            attendance_tb a
+        join store_employee_tb se on se.store_employee_id = a.store_employee_id
+        where se.store_id = #{storeId}
+        and a.work_date = #{workDate}
+    </select>
+
+    <!-- 매장 카드 -->
+    <select id="findStoreCard"
+            resultType="com.korit.sa_one_back.dto.response.StoreRespDto">
+        select
+            store_name storeName,
+            address storeAddress,
+            store_phone storeIntro,
+            null storeHoliday
+        from
+            store_tb
+        where
+            store_id = #{storeId}
+    </select>
+
+    <select id="countOwnerStore" resultType="int">
+        select
+        count(*)
+        from
+        store_tb
+        where
+        store_id = #{storeId}
+        and user_id = #{userId}
+
+    </select>
+
+
+    <select id="findStoreEmployeeIdByNoAndName" resultType="java.lang.Long">
+        select
+        se.store_employee_id
+        from
+        store_employee_tb se
+        join user_tb u on u.user_id = se.user_id
+        where
+        se.store_id = #{storeId}
+        and
+        se.employee_no = #{employeeNo}
+        and
+        u.name = #{storeEmployeeName}
+        and
+        se.work_status IN ('ACTIVE', 'WORKING')
+
+        limit 1
+    </select>
+
+    <select id="countActiveEmployee" resultType="int">
+        select
+        count(*)
+        from
+        store_employee_tb
+        where
+        store_id = #{storeId}
+        and
+        user_id = #{userId}
+        and
+<!--        work_status = 'ACTIVE'-->
+        work_status IN ('ACTIVE', 'WORKING')
+
+    </select>
+
+    <select id="findEmployeeName" resultType="java.lang.String">
+        select
+        u.name
+        from
+        store_employee_tb se
+        join user_tb u on u.user_id = se.user_id
+        where
+        se.store_employee_id = #{storeEmployeeId}
+    </select>
+</mapper>

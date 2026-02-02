@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.ScheduleMapper">
+
+    <select id="countStoreEmployeeInStore" resultType="int">
+        select count(*)
+        from store_employee_tb
+        where store_id = #{storeId}
+        and store_employee_id = #{storeEmployeeId}
+    </select>
+
+    <select id="countScheduleInStore" resultType="int">
+        select count(*)
+        from schedule_tb sc
+        join store_employee_tb se
+        on se.store_employee_id = sc.store_employee_id
+        where se.store_id = #{storeId}
+        and sc.schedule_id = #{scheduleId}
+    </select>
+
+    <insert id="insertSchedule" useGeneratedKeys="true" keyProperty="scheduleId">
+        insert into schedule_tb (
+            schedule_id,
+            store_employee_id,
+            work_date,
+            start_time,
+            end_time,
+            break_minutes,
+            note,
+            created_at,
+            updated_at
+        ) values (
+            default,
+            #{storeEmployeeId},
+            #{workDate},
+            #{startTime},
+            #{endTime},
+            #{breakMinutes},
+            #{note},
+            now(),
+            now()
+        )
+    </insert>
+
+    <update id="updateSchedule">
+        update schedule_tb
+        set
+            work_date = #{workDate},
+            start_time = #{startTime},
+            end_time = #{endTime},
+            break_minutes = #{breakMinutes},
+            note = #{note},
+        updated_at = now()
+        where schedule_id = #{scheduleId}
+    </update>
+
+    <delete id="deleteSchedule">
+        delete from schedule_tb
+        where schedule_id = #{scheduleId}
+    </delete>
+
+</mapper>

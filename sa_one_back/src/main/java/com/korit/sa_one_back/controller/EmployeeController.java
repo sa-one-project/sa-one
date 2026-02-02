@@ -7,6 +7,7 @@ import com.korit.sa_one_back.security.PrincipalUser;
 import com.korit.sa_one_back.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,25 +26,35 @@ public class EmployeeController {
     /**
      * 직원 등록 (사장)
      */
-    @PostMapping("/store/{storeId}/employees")
+    @PostMapping("/api/store/{storeId}/employees")
     public ResponseEntity<?> createEmployee(
             @PathVariable Long storeId,
             @RequestBody CreateEmployeeReqDto dto,
             @AuthenticationPrincipal PrincipalUser principalUser
+
     ) {
+
         employeeService.createEmployee(storeId, principalUser.getUserId(), dto);
         return ResponseEntity.ok().build();
+
     }
+
 
     /**
      * 직원 목록 조회
      * - workplaceId를 storeId로 사용
      */
-    @GetMapping("/workplaces/{workplaceId}/employees")
+    @GetMapping("/api/workplaces/{workplaceId}/employees")
     public ResponseEntity<List<EmployeeListRespDto>> getEmployees(
             @PathVariable Long workplaceId,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
+        System.out.println(
+                principalUser.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .toList()
+        );
         return ResponseEntity.ok(employeeService.getEmployees(workplaceId, principalUser.getUserId()));
     }
 
@@ -51,7 +62,7 @@ public class EmployeeController {
      * 직원 삭제(퇴사 처리) - 다중
      * DELETE /store/{storeId}/employees
      */
-    @DeleteMapping("/store/{storeId}/employees")
+    @DeleteMapping("/api/store/{storeId}/employees")
     public ResponseEntity<?> deleteEmployees(
             @PathVariable Long storeId,
             @RequestBody DeleteEmployeeReqDto dto,

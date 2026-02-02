@@ -63,14 +63,30 @@ public class UserService extends DefaultOAuth2UserService {
         return accessToken;
     }
 
-    public void delete(long userId) throws IllegalAccessException {
+    public void deleteUser(long userId, String rawPassword) throws IllegalAccessException {
         UserEntity user = userMapper.findByUserId(userId);
 
         if (user == null || user.isDeleted()) {
             throw new IllegalAccessException("이미 탈퇴한 사용자 입니다.");
         }
 
-        userMapper.softDelete(userId);
+        boolean isOauthUser = user.getProvider() != null && !user.getProvider().isBlank()
+                && user.getOauth2Id() != null && !user.getOauth2Id().isBlank();
+
+        // Local 유저면 비번 검증
+        if (!isOauthUser) {
+            if (rawPassword == null || rawPassword.isBlank()) {
+                throw new BadCredentialsException("비밀번호를 입력해주세요.");
+            }
+            if (user.getPassword() == null || !passwordEncoder.matches(rawPassword, user.getPassword())) {
+                throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            }
+        }
+
+        int result = userMapper.softDelete(userId);
+        if (result == 0) {
+            throw new IllegalAccessException("회원탈퇴 처리 실패");
+        }
     }
 
     /**
@@ -145,7 +161,7 @@ public class UserService extends DefaultOAuth2UserService {
     }
 
     /**
-     * ✅ 마이페이지 수정
+     * 마이페이지 수정
 
      * 1) 로그인 userId를 서버에서 확정한다 (프론트가 바꾸게 두면 안 됨)
      * 2) PATCH이므로 넘어온 값만 Entity에 담는다

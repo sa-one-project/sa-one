@@ -27,16 +27,6 @@ public class EmployeeService {
     private final PayMapper payMapper;
     private final PositionMapper positionMapper;
 
-    /**
-     * 직원 등록 알고리즘
-     * 1) store 존재 확인
-     * 2) 사장 권한 확인 (store_tb.user_id == 로그인 userId)
-     * 3) positionName -> positionId 조회
-     * 4) email로 user 조회 -> 없으면 생성, 있으면 최신 정보 업데이트(선택)
-     * 5) store_employee 중복(활성) 체크
-     * 6) store_employee insert (work_status는 ACTIVE로 고정)
-     * 7) pay insert (start_date는 joinDate로 고정, end_date는 null)
-     */
     @Transactional
     public void createEmployee(Long storeId, Long ownerUserId, CreateEmployeeReqDto dto) {
 
@@ -51,7 +41,7 @@ public class EmployeeService {
             throw new RuntimeException("FORBIDDEN_OWNER_ONLY");
         }
 
-        // 3) positionName -> positionId 변환 (DB 저장은 id로 해야 함)
+        // 3) positionName -> positionId 변환
         Long positionId = positionMapper.findPositionIdByName(dto.getPositionName());
         if (positionId == null) {
             throw new RuntimeException("POSITION_NOT_FOUND");
@@ -61,25 +51,9 @@ public class EmployeeService {
         Long employeeUserId = userMapper.findUserIdByEmail(dto.getEmail());
 
         if (employeeUserId == null) {
-            // 신규 유저 생성
-            UserEntity user = UserEntity.builder()
-                    .username(dto.getEmail())
-                    .password(null)
-                    .name(dto.getName())
-                    .phone(dto.getPhone())
-                    .email(dto.getEmail())
-                    .imgUrl(dto.getImgUrl())
-                    .imgPath(dto.getImgPath())
-                    .roleId(3) // EMPLOYEE
-                    .birthDate(dto.getBirthDate())
-                    .build();
-
-            userMapper.insertLocalUser(user); // useGeneratedKeys로 userId 채움
-            employeeUserId = user.getUserId();
-        } else {
-            // 기존 유저면 프로필 갱신(선택)
-            userMapper.updateEmployeeProfile(employeeUserId, dto);
+            throw new RuntimeException("USER_NOT_FOUND");
         }
+        userMapper.updateEmployeeProfile(employeeUserId, dto);
 
         // 5) 중복 직원 체크 (storeId + userId, ACTIVE)
         if (employeeMapper.existsActiveEmployee(storeId, employeeUserId)) {
@@ -93,12 +67,12 @@ public class EmployeeService {
                 .employeeNo(dto.getEmployeeNo())
                 .positionId(positionId)
                 .joinDate(dto.getJoinDate())
-                .workStatus("ACTIVE") // 요청 DTO에서 안 받고, 서버에서 ACTIVE 고정
+                .workStatus("ACTIVE")
                 .build();
 
-        employeeMapper.insertStoreEmployee(se); // useGeneratedKeys로 storeEmployeeId 채움
+        employeeMapper.insertStoreEmployee(se);
 
-        // 7) pay insert (초기 급여는 joinDate부터 적용)
+        // 7) pay insert
         PayEntity pay = PayEntity.builder()
                 .storeEmployeeId(se.getStoreEmployeeId())
                 .payType(dto.getPayType())
@@ -111,9 +85,10 @@ public class EmployeeService {
         payMapper.insertPay(pay);
     }
 
+
     /**
      * 직원 목록 조회
-     * - 여기서는 사장만 조회 가능으로 처리(정책에 맞게 변경 가능)
+     * - 사장만 조회 가능
      */
     @Transactional(readOnly = true)
     public List<EmployeeListRespDto> getEmployees(Long storeId, Long requestUserId) {

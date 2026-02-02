@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.korit.sa_one_back.mapper.OwnerAttendanceMapper">
+
+    <resultMap id="CalendarRowMap" type="com.korit.sa_one_back.dto.response.CalendarRowRespDto">
+        <result property="storeId" column="store_id"/>
+        <result property="storeName" column="store_name"/>
+
+        <result property="storeEmployeeId" column="store_employee_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+
+        <result property="workDate" column="work_date"/>
+
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+
+        <result property="attendanceId" column="attendance_id"/>
+        <result property="checkInTime" column="check_in_time"/>
+        <result property="checkOutTime" column="check_out_time"/>
+        <result property="attendanceStatus" column="attendance_status"/>
+
+        <result property="leaveId" column="leave_id"/>
+        <result property="leaveTypeName" column="leave_type_name"/>
+    </resultMap>
+
+    <select id="findOwnerDayAttendanceRows" resultMap="CalendarRowMap">
+        select
+            s.store_id,
+            s.store_name,
+
+            se.store_employee_id,
+            u.user_id,
+            u.name,
+
+            #{workDate} as work_date,
+
+            sc.start_time,
+            sc.end_time,
+
+            a.attendance_id,
+            a.check_in_time,
+            a.check_out_time,
+            a.attendance_status,
+
+            l.leave_id,
+            lt.leave_type_name
+        from store_tb s
+        join store_employee_tb se
+        on se.store_id = s.store_id
+        join user_tb u
+        on u.user_id = se.user_id
+        left join schedule_tb sc
+        on sc.store_employee_id = se.store_employee_id
+        and sc.work_date = #{workDate}
+        left join attendance_tb a
+        on a.store_employee_id = se.store_employee_id
+        and a.work_date = #{workDate}
+        left join leave_tb l
+        on l.store_employee_id = se.store_employee_id
+        and #{workDate} between l.start_date and l.end_date
+        left join leave_type_tb lt
+        on lt.leave_type_id = l.leave_type_id
+        where
+        s.store_id = #{storeId}
+        and se.work_status in ('WORKING', 'ACTIVE')
+        order by
+        u.name asc
+    </select>
+
+</mapper>

@@ -85,13 +85,15 @@
     </insert>
 
     <update id="softDelete">
-        UPDATE
+        update
             user_tb
-        SET
-            is_deleted = TRUE,
-            deleted_at = NOW()
-        WHERE
+        set
+            is_deleted = true,
+            deleted_at = now(),
+            updated_at = now()
+        where
             user_id = #{userId}
+            and is_deleted = false
     </update>
 
     <select id="findByUserId" resultType="com.korit.sa_one_back.entity.UserEntity">
@@ -178,7 +180,7 @@
                 img_url = #{imgUrl},
             </if>
             <if test="dto.address != null and dto.address != ''">
-                address = #{dto.address},
+                address = #{address},
             </if>
         </set>
         where user_id = #{userId}
@@ -249,5 +251,14 @@
         and
             is_deleted = false
     </update>
+
+    <select id="findRoleIdByUserId" resultType="int">
+        select
+        role_id
+        from
+        user_tb
+        where
+        user_id = #{userId}
+    </select>
 
 </mapper>

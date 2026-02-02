@@ -24,9 +24,20 @@ public interface StoreMapper {
                                 @Param("status") String status,
                                 @Param("reviewedAt") LocalDateTime reviewedAt,
                                 @Param("rejectReason") String rejectReason);
-  
+
     int countByStoreId(@Param("storeId") Long storeId);
     Long findOwnerUserId(@Param("storeId") Long storeId);
 
     List<MyStoreEntity> findMyStoresByUserId(Long userId);
+
+    // 사장 소유 매장 목록 (사장 캘린더/가게 선택용)
+    List<MyStoreEntity> findOwnerStoresByUserId(Long userId);
+
+    // 매장명 단건 조회 (캘린더 응답 보조용)
+    String findStoreName(@Param("storeId") Long storeId);
+    // 기존 그대로 두고 아래 2개만 추가
+    int countEmployeeInStoreByUserId(@Param("storeId") Long storeId, @Param("userId") Long userId);
+
+
+
 }
