@@ -22,7 +22,7 @@ public class AccountController {
     private final UserService userService;
     private final PasswordResetService resetService;
 
-    @PostMapping("/api/find-username")
+    @PostMapping("/find-username")
     public ResponseEntity<?> findUsername(@RequestBody FindUsernameReqDto dto) {
         userService.findUsernameAndSendMail(dto);
 
@@ -31,13 +31,13 @@ public class AccountController {
         ));
     }
 
-    @PostMapping("/api/password/reset-request")
+    @PostMapping("/password/reset-request")
     public ResponseEntity<?> requestPasswordReset(@RequestBody PasswordResetReqDto dto) {
         resetService.requestPasswordReset(dto.getEmail());
         return ResponseEntity.ok().body("입력하신 정보와 일치하는 계정이 있으면 이메일을 전송했습니다.");
     }
 
-    @PostMapping("/api/password/reset")
+    @PostMapping("/password/reset")
     public ResponseEntity<?> confirmPasswordReset(@RequestBody PasswordResetConfirmReqDto dto) {
         resetService.confirmPasswordReset(dto.getToken(),
                 dto.getNewPassword(),

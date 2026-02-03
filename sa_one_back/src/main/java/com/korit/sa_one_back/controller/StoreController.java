@@ -27,13 +27,13 @@ public class StoreController {
         storeService.postMyApplication(dto, user.getUserId());
     }
 
-    @GetMapping("/api/my_application")
+    @GetMapping("/my_application")
 
     public StoreApplicationEntity getMyApplication(@AuthenticationPrincipal PrincipalUser user) {
         return storeService.getMyApplication(user.getUserId());
     }
 
-    @GetMapping("/api/me")
+    @GetMapping("/me")
     public ResponseEntity<List<MyStoreRespDto>> getMyStores(@AuthenticationPrincipal PrincipalUser principalUser) {
         Long userId = principalUser.getUserId();;
         return ResponseEntity.ok(storeService.getMyStores(userId));

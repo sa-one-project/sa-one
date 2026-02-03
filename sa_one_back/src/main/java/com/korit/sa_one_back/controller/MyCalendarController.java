@@ -16,7 +16,7 @@ public class MyCalendarController {
     private final MyCalendarService myCalendarService;
 
     // 직원 본인: store 선택 후 월 캘린더 조회
-    @GetMapping("/api/calendar")
+    @GetMapping("/calendar")
     public ApiRespDto<MyCalendarRespDto> getMyMonth(@PathVariable Long storeId,
                                                     @RequestParam int year,
                                                     @RequestParam int month,
