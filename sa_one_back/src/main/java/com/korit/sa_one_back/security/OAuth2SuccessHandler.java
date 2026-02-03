@@ -38,14 +38,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (principal.isRegistered()) {
             String token = jwtTokenProvider.createToken(principal.getUser());
             response.sendRedirect(
-                    baseurl + "/auth/login/oauth2?accessToken=" + token
+                    baseurl + "/api/auth/login/oauth2?accessToken=" + token
             );
             return;
         }
 
         // 신규 OAuth2 사용자
         response.sendRedirect(
-                baseurl + "/auth/signup/oauth2"
+                baseurl + "/api/auth/signup/oauth2"
         );
     }
 }
