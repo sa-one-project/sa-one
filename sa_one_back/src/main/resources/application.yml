@@ -2,11 +2,17 @@ spring:
   profiles:
     active: dev
     group:
-      dongwan: dongwan-server, dev, secret
-      seohyun: seohyun-server, dev, secret
-      dabin: dabin-server, dev, secret
-      dev: dev, common, secret
-      local: common, secret
+      dev: dev, common, secret-dev
+      dongwan: dongwan-server, common, secret-prod
+      seohyun: seohyun-server, common, secret-prod
+      dabin: dabin-server, dev, secret-prod
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
 
 ---
 
