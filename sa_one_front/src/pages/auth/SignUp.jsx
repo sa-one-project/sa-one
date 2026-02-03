@@ -17,7 +17,7 @@ function SignUp() {
         phone: "",
         gender: "남",
         birthDate: "",
-        roleId: 1,
+        roleId: 2,
     });
 
     const [errorMsg, setErrorMsg] = useState("");
@@ -78,7 +78,7 @@ function SignUp() {
             if (token) {
                 login(token, Number(signUpData.roleId));
             }
-
+            console.log("signup roleId =", signUpData.roleId);
             alert("회원가입 성공!");
             navigate("/", { replace: true });
         } catch (error) {
@@ -111,8 +111,8 @@ function SignUp() {
                         <div className="label">가입 유형</div>
                         <div className="content">
                             <div className="role-selector">
-                                <label><input type="radio" name="roleId" value="1" checked={Number(signUpData.roleId) === 1} onChange={handleChange} /> 사장 | 매니저</label>
-                                <label><input type="radio" name="roleId" value="2" checked={Number(signUpData.roleId) === 2} onChange={handleChange} /> 직원</label>
+                                <label><input type="radio" name="roleId" value="2" checked={Number(signUpData.roleId) === 2} onChange={handleChange} /> 사장 | 매니저</label>
+                                <label><input type="radio" name="roleId" value="3" checked={Number(signUpData.roleId) === 3} onChange={handleChange} /> 직원</label>
                             </div>
                         </div>
 

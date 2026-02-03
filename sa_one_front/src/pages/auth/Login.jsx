@@ -25,21 +25,23 @@ function Login() {
         try {
             const response = await axiosInstance.post("/api/auth/local/signin", loginData);
 
-                const { accessToken, roleId } = response.data;
+            const { accessToken, roleId } = response.data;
 
-                if (selectedRole === "owner" && Number(roleId) !== 2) {
-                    alert("사장님 계정이 아닙니다.");
-                    return;
-                }
-                if (selectedRole === "employee" && Number(roleId) !== 3) {
+            if (selectedRole === "owner" && Number(roleId) !== 2) {
+                alert("사장님 계정이 아닙니다.");
+                return;
+            }
+            if (selectedRole === "employee" && Number(roleId) !== 3) {
                 alert("직원 계정이 아닙니다.");
                 return;
-                }
+            }
 
-                const roleName = Number(roleId) === 1 ? "ADMIN" : Number(roleId) === 2 ? "OWNER" : "STAFF";
-                login(accessToken, roleName);
+            login(accessToken, roleId);
 
-                navigate(Number(roleId) === 2 ? "/owner" : "/employee");
+            if (Number(roleId) === 1) navigate("/admin");
+            else if (Number(roleId) === 2) navigate("/owner");
+            else navigate("/employee");
+
         } catch (error) {
             alert(error.response?.data?.message || "로그인 실패");
         }
