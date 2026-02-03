@@ -41,7 +41,7 @@ function Header() {
                         
                         <Link to="/calendar" className={location.pathname === "/calendar" ? "active" : ""} style={getActiveStyle("/calendar")}>직원 캘린더</Link>
                         <Link to="/status" className={location.pathname === "/status" ? "active" : ""} style={getActiveStyle("/status")}>출근 현황</Link>
-                        <Link to="/salary" className={location.pathname === "/salary" ? "active" : ""} style={getActiveStyle("/salary")}>급여명세서</Link>
+                        <Link to="/payrolls" className={location.pathname === "/payrolls" ? "active" : ""} style={getActiveStyle("/payrolls")}>급여명세서</Link>
                         <Link to="/mypage" className={location.pathname === "/mypage" ? "active" : ""} style={getActiveStyle("/mypage")}>마이페이지</Link>
                         
                         <button onClick={handleLogout} className="logout-btn">로그아웃</button>

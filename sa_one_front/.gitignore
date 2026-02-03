@@ -1,4 +1,4 @@
-.env
+.env.*
 codeExtractor.cjs
 frontend_files_bundle.txt
 

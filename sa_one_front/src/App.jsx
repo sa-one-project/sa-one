@@ -65,7 +65,7 @@ function App() {
                 <Route path="/change-password" element={<PasswordReset />} />
 
                 {/* 5. 추가 기능 (급여 및 채팅) */}
-                {/* <Route path="/salary" element={<PayrollDetail />} /> */}
+                <Route path="/salary" element={<PayrollDetail />} />
                 <Route path="/chat" element={<ChatPage />} />
 
                 <Route path="/payrolls" element={<PayrollListPage />} />
