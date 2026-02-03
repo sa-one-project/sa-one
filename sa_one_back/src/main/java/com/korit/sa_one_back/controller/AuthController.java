@@ -49,19 +49,30 @@ public class AuthController {
             return ResponseEntity.badRequest().body("이미 가입된 사용자 또는 인증 정보 없음");
         }
 
+        dto.setOauth2Id(principalUser.getOauth2Id());
+        dto.setProvider(principalUser.getProvider());
+        dto.setEmail(principalUser.getEmail());
+        dto.setName(principalUser.getName());
+
         userService.createOauth2User(dto);
 
-        // 가입 완료 후 DB에서 다시 조회
-        var user = userMapper.findByOauth2IdAndProvider(dto.getOauth2Id(), dto.getProvider());
+        UserEntity user = userMapper.findByOauth2IdAndProvider(principalUser.getProvider(), principalUser.getOauth2Id());
         String token = jwtTokenProvider.createToken(user);
-
         return ResponseEntity.ok().body(token);
     }
 
+
     @PostMapping("/local/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInReqDto dto) {
+
         String accessToken = userService.signin(dto);
-        return ResponseEntity.ok(Map.of("accessToken", accessToken));
+
+        UserEntity user = userMapper.findUserByUsername(dto.getUsername());
+
+        return ResponseEntity.ok(Map.of(
+                "accessToken", accessToken,
+                "roleId", user.getRoleId()
+        ));
     }
 
     // 회원탈퇴

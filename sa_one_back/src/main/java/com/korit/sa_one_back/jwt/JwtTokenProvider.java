@@ -1,10 +1,7 @@
 package com.korit.sa_one_back.jwt;
 
 import com.korit.sa_one_back.entity.UserEntity;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -37,7 +34,6 @@ public class JwtTokenProvider {
                 .claim("userId", userEntity.getUserId())    // 필수
                 .signWith(key, SignatureAlgorithm.HS256)    // 필수
                 .compact();
-        // 토큰이 만들어진다.
     }
 
     public boolean validateToken(String token) {
@@ -60,4 +56,38 @@ public class JwtTokenProvider {
                 .getPayload()
                 .get("userId");
     }
+
+    public Claims getClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getPayload();
+    }
+
+    public boolean isOAuth2TempToken(Claims claims) {
+        Object type = claims.get("type");
+        return type != null && "OAUTH2_TEMP".equals(type.toString());
+    }
+
+    public String createOAuth2TempToken(String oauth2Id, String provider, String email, String name) {
+        Date now = new Date();
+        long expiredTime = now.getTime() + (1000L * 60L * 10L); // 10분
+        Date expiredDate = new Date(expiredTime);
+
+        return Jwts.builder()
+                .subject("oauth2 temp token")
+                .issuer("wan03224")
+                .issuedAt(now)
+                .expiration(expiredDate)
+                .claim("type", "OAUTH2_TEMP")
+                .claim("oauth2Id", oauth2Id)
+                .claim("provider", provider)
+                .claim("email", email)
+                .claim("name", name)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+
 }

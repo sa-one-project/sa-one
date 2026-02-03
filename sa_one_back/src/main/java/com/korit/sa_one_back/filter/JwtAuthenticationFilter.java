@@ -107,6 +107,7 @@ import com.korit.sa_one_back.entity.UserEntity;
 import com.korit.sa_one_back.jwt.JwtTokenProvider;
 import com.korit.sa_one_back.mapper.UserMapper;
 import com.korit.sa_one_back.security.PrincipalUser;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -135,23 +136,50 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         String bearerToken = request.getHeader("Authorization");
-
-        // 토큰이 없으면 그냥 통과 (permitAll 경로 포함)
         if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String accessToken = bearerToken.replace("Bearer ", "");
+        String token = bearerToken.replace("Bearer ", "");
 
-        // 토큰 유효성 검사
-        if (!jwtTokenProvider.validateToken(accessToken)) {
+        if (!jwtTokenProvider.validateToken(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Claims claims = jwtTokenProvider.getClaims(token);
+
+        if (jwtTokenProvider.isOAuth2TempToken(claims)) {
+
+            String oauth2Id = (String) claims.getOrDefault("oauth2Id", "");
+            String provider = (String) claims.getOrDefault("provider", "");
+            String email = (String) claims.getOrDefault("email", "");
+            String name = (String) claims.getOrDefault("name", "");
+
+            PrincipalUser principalUser = new PrincipalUser(
+                    Map.of("id", oauth2Id),
+                    oauth2Id,
+                    provider,
+                    email,
+                    name,
+                    null
+            );
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            principalUser,
+                            null,
+                            principalUser.getAuthorities()
+                    );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
             return;
         }
 
         // 토큰 → userId 추출
-        int userId = jwtTokenProvider.getUserId(accessToken);
+        int userId = (int) claims.get("userId");
         UserEntity foundUser = userMapper.findByUserId(userId);
 
         if (foundUser == null) {

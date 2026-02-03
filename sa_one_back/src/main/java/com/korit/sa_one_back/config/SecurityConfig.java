@@ -98,20 +98,23 @@ public class SecurityConfig {
             auth.requestMatchers("/api/attendances/check-out").hasRole("OWNER");
             auth.requestMatchers("/api/attendances/owner/**").hasRole("OWNER"); // (권장) 사장 전용 출결 API를 이 prefix로 묶기
             auth.requestMatchers("/api/users/owner/**").hasRole("OWNER");     // 사장 마이페이지
+            auth.requestMatchers("/api/owner/inquiries/**").hasRole("OWNER");
+            auth.requestMatchers("/api/store/*/employees/**").hasRole("OWNER");
 
             // -------------------------
             // (D) 직원(EMPLOYEE) 전용
             // - 내 출결 조회
             // - 직원 마이페이지
             // -------------------------
-            auth.requestMatchers("/api/attendances/me").hasRole("EMPLOYEE");
-            auth.requestMatchers("/api/users/employee/**").hasRole("EMPLOYEE");
+            auth.requestMatchers("/api/attendances/me").hasRole("STAFF");
+            auth.requestMatchers("/api/users/employee/**").hasRole("STAFF");
+            auth.requestMatchers("/api/employee/inquiries/**").hasRole("STAFF");
 
             // -------------------------
             // (E) 공통 로그인 사용자(OWNER/EMPLOYEE/ADMIN)
             // - 둘 다 접근 가능한 공용 API가 있으면 여기로
             // -------------------------
-            auth.requestMatchers("/api/users/me").hasAnyRole("OWNER", "EMPLOYEE", "ADMIN");
+            auth.requestMatchers("/api/users/me").hasAnyRole("OWNER", "STAFF", "ADMIN");
 
             // -------------------------
             // (F) 그 외는 로그인만 하면 접근
