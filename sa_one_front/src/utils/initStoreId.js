@@ -4,7 +4,7 @@ export async function initStoreIdIfNeeded() {
     const existing = Number(localStorage.getItem("storeId"));
     if (existing) return existing;
 
-    const res = await axiosInstance.get("/api/stores/api/me");
+    const res = await axiosInstance.get("/api/stores/me");
     const stores = res.data;
 
     if (Array.isArray(stores) && stores.length > 0) {
