@@ -324,4 +324,51 @@
         from
             payroll_item_tb
     </select>
+
+    <select id="findPayrollListByStoreEmployeeId"
+            resultType="com.korit.sa_one_back.entity.payroll.PayrollEntity">
+        select
+            payroll_id as payrollId,
+            store_employee_id as storeEmployeeId,
+            payslip_year_month as payslipYearMonth,
+            period_start as periodStart,
+            period_end as periodEnd,
+            pay_date as payDate,
+            status as status,
+            gross_pay as grossPay,
+            total_deduction as totalDeduction,
+            net_pay as netPay,
+            created_at as createdAt,
+            updated_at as updatedAt
+        from
+            payroll_tb
+        where
+            store_employee_id = #{storeEmployeeId}
+        order by payslip_year_month desc
+    </select>
+
+    <select id="findPayrollDetailViewByPayrollId"
+            resultType="com.korit.sa_one_back.dto.response.payroll.PayrollDetailViewRespDto">
+        select
+            d.payroll_detail_id as payrollDetailId,
+            d.payroll_id as payrollId,
+            d.payroll_item_id as payrollItemId,
+            i.item_name as itemName,
+            i.item_type as itemType,
+            i.taxable as taxable,
+            d.amount as amount,
+            d.minutes as minutes,
+            d.unit_price as unitPrice,
+            d.multiplier as multiplier,
+            d.memo as memo
+        from
+            payroll_detail_tb d
+        join
+            payroll_item_tb i
+        on
+            i.payroll_item_id = d.payroll_item_id
+        where
+            d.payroll_id = #{payrollId}
+        order by d.payroll_detail_id asc
+    </select>
 </mapper>

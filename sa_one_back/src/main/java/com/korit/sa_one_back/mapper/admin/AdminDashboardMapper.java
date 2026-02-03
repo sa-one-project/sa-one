@@ -20,4 +20,8 @@ public interface AdminDashboardMapper {
     int existHealthInsuranceRateLimit(int year);
     int existEmploymentCompanyRate(int year);
     int existIndustrialAccidentRate(int year);
+
+    int countStores();
+    int countStoreEmployees();
+    int countPayrolls();
 }

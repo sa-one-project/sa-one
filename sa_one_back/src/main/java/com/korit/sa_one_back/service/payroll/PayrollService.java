@@ -2,6 +2,8 @@ package com.korit.sa_one_back.service.payroll;
 
 import com.korit.sa_one_back.dto.request.payroll.PayrollDetailDto;
 import com.korit.sa_one_back.dto.request.payroll.PayrollDto;
+import com.korit.sa_one_back.dto.response.PayrollDetailRespDto;
+import com.korit.sa_one_back.dto.response.PayrollDetailViewRespDto;
 import com.korit.sa_one_back.entity.PayEntity;
 import com.korit.sa_one_back.entity.payroll.*;
 import com.korit.sa_one_back.mapper.PayrollMapper;
@@ -251,6 +253,20 @@ public class PayrollService {
         }
 
         return payrollId;
+    }
+
+    public List<PayrollEntity> listMyPayrolls(Long userId, Long storeId) {
+        Long storeEmployeeId = storeEmployeeId(userId, storeId);
+        return payrollMapper.findPayrollListByStoreEmployeeId(storeEmployeeId);
+    }
+
+    public PayrollDetailRespDto getMyPayrollDetail(Long userId, Long storeId, String yyyyMM) {
+        PayrollEntity payroll = getMyPayroll(userId, storeId, yyyyMM);
+        List<PayrollDetailViewRespDto> details = payrollMapper.findPayrollDetailViewByPayrollId(payroll.getPayrollId());
+        return PayrollDetailRespDto.builder()
+                .payroll(payroll)
+                .details(details)
+                .build();
     }
 
 }
