@@ -5,7 +5,7 @@ spring:
       dev: dev, common, secret-dev
       dongwan: dongwan-server, common, secret-prod
       seohyun: seohyun-server, common, secret-prod
-      dabin: dabin-server, dev, secret-prod
+      dabin: dabin-server, common, secret-prod
 
 ---
 
