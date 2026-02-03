@@ -1,6 +1,6 @@
-import { http } from "./http";
+import axiosInstance from "./axiosInstance";
 
 export async function fetchAdminDashboard() {
-    const res = await http.get("/api/admin/dashboard");
+    const res = await axiosInstance.get("/api/admin/dashboard");
     return res.data;
 }

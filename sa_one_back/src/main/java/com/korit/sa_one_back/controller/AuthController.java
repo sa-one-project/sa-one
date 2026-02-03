@@ -28,7 +28,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserMapper userMapper;
 
-    @PostMapping("/api/local/signup")
+    @PostMapping("/local/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpReqDto dto) {
         userService.createLocalUser(dto);
         // 가입 후 JWT 발급
@@ -41,7 +41,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/api/oauth2/signup")
+    @PostMapping("/oauth2/signup")
     public ResponseEntity<?> oauth2SignUp(@RequestBody OAuth2SignUpReqDto dto,
                                           @AuthenticationPrincipal PrincipalUser principalUser) {
         // SecurityContext에 OAuth2 인증 정보 존재
@@ -58,14 +58,14 @@ public class AuthController {
         return ResponseEntity.ok().body(token);
     }
 
-    @PostMapping("/api/local/signin")
+    @PostMapping("/local/signin")
     public ResponseEntity<?> signIn(@Valid @RequestBody SignInReqDto dto) {
         String accessToken = userService.signin(dto);
         return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
 
     // 회원탈퇴
-    @DeleteMapping("/api/deleteuser")
+    @DeleteMapping("/deleteuser")
     public ResponseEntity<?> deleteUser(@RequestBody(required = false) DeleteUserReqDto dto,
                                         @AuthenticationPrincipal PrincipalUser principalUser) throws IllegalAccessException {
         if (principalUser == null) {

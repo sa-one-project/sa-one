@@ -20,7 +20,7 @@ public class OwnerScheduleController {
     private final OwnerScheduleService ownerScheduleService;
 
     // 등록: 사장이 가게 + 직원 선택 후 스케줄 저장
-    @PostMapping("/api/employees/{storeEmployeeId}/schedules")
+    @PostMapping("/employees/{storeEmployeeId}/schedules")
     public ApiRespDto<Map<String, Object>> create(@PathVariable Long storeId,
                                                   @PathVariable Long storeEmployeeId,
                                                   @RequestBody CreateScheduleReqDto req,
@@ -37,7 +37,7 @@ public class OwnerScheduleController {
     }
 
     // 수정: 팝업에서 기존 스케줄 수정 후 저장
-    @PutMapping("/api/schedules/{scheduleId}")
+    @PutMapping("/schedules/{scheduleId}")
     public ApiRespDto<Void> update(@PathVariable Long storeId,
                                    @PathVariable Long scheduleId,
                                    @RequestBody UpdateScheduleReqDto req,
@@ -53,7 +53,7 @@ public class OwnerScheduleController {
     }
 
     // 삭제: 사장만 가능
-    @DeleteMapping("/api/schedules/{scheduleId}")
+    @DeleteMapping("/schedules/{scheduleId}")
     public ApiRespDto<Void> delete(@PathVariable Long storeId,
                                    @PathVariable Long scheduleId,
                                    @AuthenticationPrincipal PrincipalUser principal) {

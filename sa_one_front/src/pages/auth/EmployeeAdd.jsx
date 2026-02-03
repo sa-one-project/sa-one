@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import * as S from "./EmployeeAddStyle";
+import axiosInstance from "../../apis/axiosInstance";
 
 function EmployeeAdd() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ function EmployeeAdd() {
 
   const fetchEmployees = async () => {
     try {
-      const res = await axios.get("/api/employees");
+      const res = await axiosInstance.get("/api/employees");
       const data = res.data.employees || res.data;
       setEmployeeList(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -55,7 +55,7 @@ function EmployeeAdd() {
         monthlySalary: parseInt(formData.monthlySalary || 0)
       };
 
-      await axios.post("/api/employees", submitData);
+      await axiosInstance.post("/api/employees", submitData);
       alert("직원 정보가 저장되었습니다.");
       fetchEmployees();
       
@@ -84,7 +84,7 @@ function EmployeeAdd() {
 
     try {
       for (const id of selectedIds) {
-        await axios.delete(`/api/employees/${id}`);
+        await axiosInstance.delete(`/api/employees/${id}`);
       }
       alert("삭제 완료");
       setSelectedIds([]);

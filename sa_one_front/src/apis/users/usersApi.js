@@ -1,6 +1,6 @@
-import axios from "axios"
+import axiosInstance from "../axiosInstance";
 
 export const deleteUserAccount = async () => {
-    const response = await axios.delete("api/owner/withdraw");
+    const response = await axiosInstance.delete("/api/owner/withdraw");
     return response.data;
 };

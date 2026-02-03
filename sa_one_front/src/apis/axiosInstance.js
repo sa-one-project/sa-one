@@ -1,31 +1,25 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
+    baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-axiosInstance.interceptors.request.use(
-  (config) => {
+axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
-  },
-  (error) => Promise.reject(error)
-);
+});
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      console.warn("인증 만료");
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            console.warn("인증 만료");
+        }
+        return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
 );
+
+console.log("VITE_API_BASE_URL =", import.meta.env.VITE_API_BASE_URL);
 
 export default axiosInstance;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchPayrollList } from "././apis/payroll/payrollApi";
+import { fetchPayrollList } from "../../apis/payrollApi";
 import { initStoreIdIfNeeded } from "../../utils/initStoreId";
 
 function PayrollListPage() {

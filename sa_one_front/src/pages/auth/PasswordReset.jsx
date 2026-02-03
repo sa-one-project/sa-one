@@ -1,41 +1,41 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as S from "./PasswordResetStyle";
+import axiosInstance from "../../apis/axiosInstance";
 
 function PasswordReset() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const tokenFromUrl = searchParams.get("token");
 
-    const [email, setEmail] = useState(""); 
+    const [email, setEmail] = useState("");
     const [passwords, setPasswords] = useState({
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
+
     const [message, setMessage] = useState("");
     const [isMismatch, setIsMismatch] = useState(false);
 
     // 실시간 비밀번호 일치 확인
     useEffect(() => {
-        if (passwords.confirmPassword) {
-            setIsMismatch(passwords.newPassword !== passwords.confirmPassword);
-        } else {
+        if (!passwords.confirmPassword) {
             setIsMismatch(false);
+            return;
         }
-    }, [passwords]);
+        setIsMismatch(passwords.newPassword !== passwords.confirmPassword);
+    }, [passwords.newPassword, passwords.confirmPassword]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setPasswords({ ...passwords, [name]: value });
+        setPasswords((prev) => ({ ...prev, [name]: value }));
     };
 
-    // 메일 발송 요청 (유효성 검사 추가)
+    // 메일 발송 요청
     const handleRequestMail = async (e) => {
         e.preventDefault();
 
-        // 이메일 입력 여부 및 형식 확인
         if (!email.trim()) {
             alert("이메일 주소를 입력해주세요.");
             return;
@@ -48,19 +48,26 @@ function PasswordReset() {
         }
 
         try {
-            await axios.post("http://localhost:8080/api/account/password/reset-request", { email });
+            await axiosInstance.post("/api/account/password/reset-request", { email });
             alert("재설정 링크를 입력한 메일로 보냈습니다.");
-            setMessage(""); 
+            setMessage("");
         } catch (error) {
-            setMessage("요청 실패: " + (error.response?.data?.message || "이메일을 확인해주세요."));
+            setMessage(
+                "요청 실패: " + (error.response?.data?.message || "이메일을 확인해주세요.")
+            );
         }
     };
 
-    // 실제 비밀번호 변경
+    // 비밀번호 변경
     const handlePasswordReset = async (e) => {
         e.preventDefault();
-        
-        // 비밀번호 미입력 방지
+
+        // 토큰 없는 상태에서 재설정 폼이 보이면 바로 막기(방어코드)
+        if (!tokenFromUrl) {
+            setMessage("유효한 토큰이 없습니다. 재설정 메일을 다시 요청해주세요.");
+            return;
+        }
+
         if (!passwords.newPassword || !passwords.confirmPassword) {
             alert("비밀번호를 입력해주세요.");
             return;
@@ -72,14 +79,11 @@ function PasswordReset() {
         }
 
         try {
-            const response = await axios.post(
-                "http://localhost:8080/api/account/password/reset", 
-                {
-                    token: tokenFromUrl,
-                    newPassword: passwords.newPassword,
-                    newPasswordConfirm: passwords.confirmPassword
-                }
-            );
+            const response = await axiosInstance.post("/api/account/password/reset", {
+                token: tokenFromUrl,
+                newPassword: passwords.newPassword,
+                newPasswordConfirm: passwords.confirmPassword,
+            });
 
             if (response.status === 200) {
                 alert("비밀번호가 성공적으로 변경되었습니다.");
@@ -96,37 +100,46 @@ function PasswordReset() {
                 <h2 css={S.title}>{!tokenFromUrl ? "비밀번호 관리" : "비밀번호 재설정"}</h2>
 
                 {!tokenFromUrl ? (
-                    <div css={S.form}>
-                        <p css={S.description}>비밀번호를 변경하려면 인증 메일을 먼저 받아야 합니다.</p>
+                    <form css={S.form} onSubmit={handleRequestMail}>
+                        <p css={S.description}>
+                            비밀번호를 변경하려면 인증 메일을 먼저 받아야 합니다.
+                        </p>
+
                         <div css={S.inputGroup}>
                             <label>이메일 주소</label>
                             <div className="input-wrapper">
-                                <input 
-                                    type="email" 
-                                    value={email} 
-                                    onChange={(e) => setEmail(e.target.value)} 
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="example@email.com"
-                                    required 
+                                    required
                                 />
                             </div>
                         </div>
-                        <button css={S.actionBtn} onClick={handleRequestMail}>재설정 메일 받기</button>
-                    </div>
+
+                        <button type="submit" css={S.actionBtn}>
+                            재설정 메일 받기
+                        </button>
+                    </form>
                 ) : (
                     <form css={S.form} onSubmit={handlePasswordReset}>
-                        <p css={S.description}>본인 인증이 확인되었습니다.<br/>새 비밀번호를 입력하세요.</p>
-                        
+                        <p css={S.description}>
+                            본인 인증이 확인되었습니다.<br />
+                            새 비밀번호를 입력하세요.
+                        </p>
+
                         <div css={S.inputGroup}>
                             <label>새 비밀번호</label>
                             <div className="input-wrapper">
-                                <input 
-                                    type="password" 
-                                    name="newPassword" 
+                                <input
+                                    type="password"
+                                    name="newPassword"
                                     placeholder="*******"
-                                    value={passwords.newPassword} 
-                                    onChange={handleInputChange} 
+                                    value={passwords.newPassword}
+                                    onChange={handleInputChange}
                                     className={isMismatch ? "error-border" : ""}
-                                    required 
+                                    required
                                 />
                             </div>
                         </div>
@@ -134,21 +147,26 @@ function PasswordReset() {
                         <div css={S.inputGroup}>
                             <label>새 비밀번호 확인</label>
                             <div className="input-wrapper">
-                                {isMismatch && <span className="error-msg">비밀번호가 다릅니다. 다시 확인해주세요.</span>}
-                                <input 
-                                    type="password" 
-                                    name="confirmPassword" 
+                                {isMismatch && (
+                                    <span className="error-msg">
+                                        비밀번호가 다릅니다. 다시 확인해주세요.
+                                    </span>
+                                )}
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
                                     placeholder="*****"
-                                    value={passwords.confirmPassword} 
+                                    value={passwords.confirmPassword}
                                     onChange={handleInputChange}
                                     className={isMismatch ? "error-border" : ""}
-                                    style={isMismatch ? { borderColor: "#ff6b6b" } : {}}
-                                    required 
+                                    required
                                 />
                             </div>
                         </div>
-                        
-                        <button type="submit" css={S.actionBtn} disabled={isMismatch}>확인</button>
+
+                        <button type="submit" css={S.actionBtn} disabled={isMismatch}>
+                            확인
+                        </button>
                     </form>
                 )}
 

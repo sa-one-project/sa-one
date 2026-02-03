@@ -1,6 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import React, { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { useAuthStore } from "../stores/useAuthStore";
 import { useDeleteUserMutation } from "../react-query/mutations/userMutations";
 import DeleteAccountModal from "../components/DeleteAccountModal";
@@ -8,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import * as O from "./OwnerMyPageStyle"; 
 import * as E from "./EmployeeMyPageStyle";
+import axiosInstance from "../apis/axiosInstance";
 
 function MyPage() {
     const navigate = useNavigate();
@@ -24,21 +24,20 @@ function MyPage() {
     const isOwner = Number(roleId) === 1;
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const token = localStorage.getItem("accessToken");
-                const response = await axios.get("http://localhost:8080/api/users/me", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setUserInfo(response.data);
-                if (Number(roleId) === 1 && response.data.stores?.length > 0) {
-                    setSelectedStore(response.data.stores[0]);
-                }
-            } catch (error) {
-                console.error("마이페이지 정보를 불러오지 못했습니다.", error);
+    const fetchUserData = async () => {
+        try {
+            const response = await axiosInstance.get("/api/users/me");
+            setUserInfo(response.data);
+
+            if (Number(roleId) === 1 && response.data.stores?.length > 0) {
+                setSelectedStore(response.data.stores[0]);
             }
-        };
-        fetchUserData();
+        } catch (error) {
+            console.error("마이페이지 정보를 불러오지 못했습니다.", error);
+        }
+    };
+
+    fetchUserData();
     }, [roleId]);
 
     const handleInputChange = (e) => {
