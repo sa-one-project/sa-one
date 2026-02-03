@@ -115,7 +115,7 @@ public class SecurityConfig {
             // - 둘 다 접근 가능한 공용 API가 있으면 여기로
             // -------------------------
             auth.requestMatchers("/api/users/me").hasAnyRole("OWNER", "STAFF", "ADMIN");
-
+            auth.requestMatchers("/error").permitAll();
             // -------------------------
             // (F) 그 외는 로그인만 하면 접근
             // -------------------------
