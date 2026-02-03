@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../pages/auth/stores/useAuthStore";
+import { useAuthStore } from "../../stores/useAuthStore";
 import { createMyInquiry } from "../../apis/myInquiriesApi";
 
 export default function MyInquiryCreatePage() {

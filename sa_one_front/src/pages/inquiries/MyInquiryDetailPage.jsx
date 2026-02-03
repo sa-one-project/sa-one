@@ -1,40 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuthStore } from "../../pages/auth/stores/useAuthStore";
 import { addMyInquiryComment, fetchMyInquiryDetail } from "../../apis/myInquiriesApi";
 
 export default function MyInquiryDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { roleId } = useAuthStore();
 
     const [detail, setDetail] = useState(null);
     const [comment, setComment] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
-    const load = async () => {
+    const load = useCallback(async () => {
+        if (!id) return;
+
         setLoading(true);
         setError("");
         try {
-            const res = await fetchMyInquiryDetail(roleId, id);
+            const res = await fetchMyInquiryDetail(id);
             setDetail(res);
         } catch (e) {
             setError(e.response?.data?.message || "문의 상세 조회 실패");
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         load();
-    }, [id]);
+    }, [load]);
 
     const onAddComment = async () => {
+        if (!id) return;
         if (!comment.trim()) return;
 
         try {
-            await addMyInquiryComment(roleId, id, comment);
+            await addMyInquiryComment(id, comment);
             setComment("");
             await load();
             alert("댓글 등록 완료");
@@ -60,9 +61,7 @@ export default function MyInquiryDetailPage() {
                 <div>매장: {detail.storeName || "-"}</div>
             </div>
 
-            <div>
-                {detail.content}
-            </div>
+            <div>{detail.content}</div>
 
             <h3>댓글</h3>
 

@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/useAuthStore";
 import * as S from "./styles"; 
+import axiosInstance from "../../apis/axiosInstance";
 
 function Login() {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Login() {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post("http://localhost:8080/api/auth/local/signin", loginData);
+            const response = await axiosInstance.post("/api/auth/local/signin", loginData);
             if (response.status === 200) {
                 const { accessToken, user } = response.data;
                 // 백엔드에서 user 객체를 안 줄 경우를 대비한 방어 코드

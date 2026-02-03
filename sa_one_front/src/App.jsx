@@ -14,14 +14,14 @@ import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
 import PasswordReset from "./pages/auth/PasswordReset";
 import PayrollDetail from "./pages/PayrollDetail.jsx";
 import ChatPage from "./pages/chat/ChatPage.jsx";
-import PayrollListPage from "./pages/payroll/PayrollListPage.jsx";
 import PayrollDetailPage from "./pages/payroll/PayrollDetailPage.jsx";
-import AdminRouteGuard from "./routes/AdminRouteGuard";
-import AdminInquiriesPage from "./pages/admin/AdminInquiriesPage";
-import AdminInquiryDetailPage from "./pages/admin/AdminInquiryDetailPage";
+import AdminInquiriesPage from "./pages/inquiries/AdminInquiriesPage.jsx";
+import AdminInquiryDetailPage from "./pages/inquiries/AdminInquiryDetailPage.jsx";
 import MyInquiriesPage from "./pages/inquiries/MyInquiriesPage.jsx";
-import MyInquiryCreatePage from "./pages/inquiries/MyInquiryCreatePage.jsx";
 import MyInquiryDetailPage from "./pages/inquiries/MyInquiryDetailPage.jsx";
+import PayrollListPage from "./pages/payroll/PayrollListPage.jsx";
+import AdminRouteGuard from "./routes/AdminRouteGuard.jsx";
+import MyInquiryCreatePage from "./pages/inquiries/MyInquiryCreatePage.jsx";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {

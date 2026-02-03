@@ -1,17 +1,23 @@
 /** @jsxImportSource @emotion/react */
-import axios from "axios";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { useAuthStore } from "../../stores/useAuthStore";
 import * as ss from "./SignUpStyle"; 
+import axiosInstance from "../../apis/axiosInstance";
 
-// 오류 고치면서 어느 순간 유효성 검사가 사라짐... 다시 추가중...
 function SignUp() {
     const navigate = useNavigate();
     const { login } = useAuthStore();
 
     const [signUpData, setSignUpData] = useState({
-        username: "", password: "", name: "", email: "", phone: "", gender: "남", birthDate: "", roleId: 1
+        username: "",
+        password: "",
+        name: "",
+        email: "",
+        phone: "",
+        gender: "남",
+        birthDate: "",
+        roleId: 1,
     });
 
     const [errorMsg, setErrorMsg] = useState("");
@@ -20,24 +26,31 @@ function SignUp() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setSignUpData({ ...signUpData, [name]: name === "roleId" ? Number(value) : value });
+        setSignUpData((prev) => ({
+            ...prev,
+            [name]: name === "roleId" ? Number(value) : value,
+        }));
     };
 
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
+        const file = e.target.files?.[0];
         if (file) setPreviewUrl(URL.createObjectURL(file));
     };
 
-    // 중복 확인이 안 되면 그냥... 삭제하기로...
     const handleCheckUsername = () => {
-        if (!signUpData.username) { alert("아이디를 입력해주세요."); return; }
+        if (!signUpData.username) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
         alert("현재 백엔드에 중복 확인 기능이 준비되지 않았습니다.");
     };
 
-    // ★ 백엔드 SignInReqDto 기반 유효성 검사 추가
     const handleSignUp = async () => {
+        setErrorMsg("");
+
         const usernameRegex = /^[a-z0-9_-]{5,20}$/;
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z0-9^A-Za-z0-9\W]{8,16}$/;
+        const passwordRegex =
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z0-9^A-Za-z0-9\W]{8,16}$/;
 
         if (!usernameRegex.test(signUpData.username)) {
             setErrorMsg("5~20자의 영문 소문자, 숫자와 특수기호(_),(-)만 사용 가능합니다.");
@@ -50,27 +63,33 @@ function SignUp() {
         }
 
         if (!signUpData.name || !signUpData.birthDate) {
-            alert("이름과 생년월일은 필수입니다.");
+            setErrorMsg("이름과 생년월일은 필수입니다.");
             return;
         }
 
         try {
-            const response = await axios({
-                method: "POST",
-                url: "http://localhost:8080/api/auth/local/signup",
-                data: { ...signUpData, roleId: Number(signUpData.roleId) },
-                headers: { "Content-Type": "application/json" }
+            const res = await axiosInstance.post("/api/auth/local/signup", {
+                ...signUpData,
+                roleId: Number(signUpData.roleId),
             });
 
-            if (response.status === 200 || response.status === 201) {
-                const token = typeof response.data === 'object' ? response.data.token : response.data;
-                if (token) login(token, Number(signUpData.roleId));
-                alert("회원가입 성공!");
-                navigate("/", { replace: true });
+            const token = typeof res.data === "object" ? res.data?.token : res.data;
+
+            if (token) {
+                login(token, Number(signUpData.roleId));
             }
+
+            alert("회원가입 성공!");
+            navigate("/", { replace: true });
         } catch (error) {
             console.error(error);
-            setErrorMsg(error.response?.data?.message || "가입 처리 중 문제가 발생했습니다.");
+
+            const msg =
+                error.response?.data?.message ||
+                (typeof error.response?.data === "string" ? error.response.data : null) ||
+                "가입 처리 중 문제가 발생했습니다.";
+
+            setErrorMsg(msg);
         }
     };
 

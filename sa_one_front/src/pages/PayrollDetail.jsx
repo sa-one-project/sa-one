@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import * as S from "./PayrollStyle";
+import axiosInstance from "../apis/axiosInstance";
 
 function PayrollDetail() {
     const [isOwner, setIsOwner] = useState(true); 
@@ -47,7 +47,7 @@ function PayrollDetail() {
     useEffect(() => {
         const fetchStores = async () => {
             try {
-                const response = await axios.get("/stores/me", { headers: getAuthHeader() });
+                const response = await axiosInstance.get("/stores/me", { headers: getAuthHeader() });
                 const storeData = Array.isArray(response.data) ? response.data : [];
                 setStores(storeData);
                 if (storeData.length > 0) setSelectedStore(storeData[0]);
@@ -62,7 +62,7 @@ function PayrollDetail() {
         if (!selectedStore?.storeId) return;
         const fetchEmployees = async () => {
             try {
-                const response = await axios.get(`/api/employees`, { 
+                const response = await axiosInstance.get(`/api/employees`, { 
                     params: { storeId: selectedStore.storeId },
                     headers: getAuthHeader()
                 });
@@ -92,7 +92,7 @@ function PayrollDetail() {
                 ...details
             };
 
-            await axios.post("/api/payrolls/save", payload, { headers: getAuthHeader() });
+            await axiosInstance.post("/api/payrolls/save", payload, { headers: getAuthHeader() });
             alert("급여명세서가 저장되었습니다.");
             setIsEditMode(false);
         } catch (error) {
