@@ -348,7 +348,7 @@
     </select>
 
     <select id="findPayrollDetailViewByPayrollId"
-            resultType="com.korit.sa_one_back.dto.response.payroll.PayrollDetailViewRespDto">
+            resultType="com.korit.sa_one_back.dto.response.PayrollDetailViewRespDto">
         select
             d.payroll_detail_id as payrollDetailId,
             d.payroll_id as payrollId,

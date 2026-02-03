@@ -4,6 +4,7 @@ application-secret.yml
 githubyml.yml
 .env
 .env.*
+backend_src_all_code.txt
 
 HELP.md
 target/
