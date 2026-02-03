@@ -125,4 +125,19 @@
             inquiry_id = #{inquiryId}
             and status = 'OPEN'
     </update>
+
+    <select id="countStores" resultType="int">
+        select count(*)
+        from store_tb
+    </select>
+
+    <select id="countStoreEmployees" resultType="int">
+        select count(*)
+        from store_employee_tb
+    </select>
+
+    <select id="countPayrolls" resultType="int">
+        select count(*)
+        from payroll_tb
+    </select>
 </mapper>

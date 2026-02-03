@@ -16,4 +16,8 @@ public class AdminDashboardRespDto {
     private int pendingApplications;
     private int openInquiries;
     private Map<String, Boolean> policyAlerts;
+
+    private int storeCount;
+    private int employeeCount;
+    private int payrollCount;
 }

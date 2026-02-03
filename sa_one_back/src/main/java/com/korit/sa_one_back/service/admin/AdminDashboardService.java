@@ -17,14 +17,6 @@ public class AdminDashboardService {
 
     private final AdminDashboardMapper adminDashboardMapper;
 
-    public AdminDashboardRespDto getDashboard() {
-        return AdminDashboardRespDto.builder()
-                .pendingApplications(countPendingApplication())
-                .openInquiries(countPendingInquiry())
-                .policyAlerts(getPolicyAlertsIfDue())
-                .build();
-    }
-
     public int countPendingApplication() {
         return adminDashboardMapper.countStoreApplicationsByStatus();
     }
@@ -62,6 +54,26 @@ public class AdminDashboardService {
             result.put(policy.getKey(), policy.exists(adminDashboardMapper, year));
         }
         return result;
+    }
+
+    public AdminDashboardRespDto getDashboard() {
+        int pendingApplications = countPendingApplication();
+        int openInquiries = countPendingInquiry();
+
+        Map<String, Boolean> policyAlerts = getPolicyAlertsIfDue();
+
+        int storeCount = adminDashboardMapper.countStores();
+        int employeeCount = adminDashboardMapper.countStoreEmployees();
+        int payrollCount = adminDashboardMapper.countPayrolls();
+
+        return AdminDashboardRespDto.builder()
+                .pendingApplications(pendingApplications)
+                .openInquiries(openInquiries)
+                .policyAlerts(policyAlerts)
+                .storeCount(storeCount)
+                .employeeCount(employeeCount)
+                .payrollCount(payrollCount)
+                .build();
     }
 
 }

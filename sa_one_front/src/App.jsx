@@ -14,6 +14,14 @@ import EmployeeCalendarPage from "./pages/employee/EmployeeCalendarPage";
 import PasswordReset from "./pages/auth/PasswordReset";
 import PayrollDetail from "./pages/PayrollDetail.jsx";
 import ChatPage from "./pages/chat/ChatPage.jsx";
+import PayrollListPage from "./pages/payroll/PayrollListPage.jsx";
+import PayrollDetailPage from "./pages/payroll/PayrollDetailPage.jsx";
+import AdminRouteGuard from "./routes/AdminRouteGuard";
+import AdminInquiriesPage from "./pages/admin/AdminInquiriesPage";
+import AdminInquiryDetailPage from "./pages/admin/AdminInquiryDetailPage";
+import MyInquiriesPage from "./pages/inquiries/MyInquiriesPage.jsx";
+import MyInquiryCreatePage from "./pages/inquiries/MyInquiryCreatePage.jsx";
+import MyInquiryDetailPage from "./pages/inquiries/MyInquiryDetailPage.jsx";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -57,8 +65,24 @@ function App() {
                 <Route path="/change-password" element={<PasswordReset />} />
 
                 {/* 5. 추가 기능 (급여 및 채팅) */}
-                <Route path="/salary" element={<PayrollDetail />} />
+                {/* <Route path="/salary" element={<PayrollDetail />} /> */}
                 <Route path="/chat" element={<ChatPage />} />
+
+                <Route path="/payrolls" element={<PayrollListPage />} />
+                <Route path="/payrolls/:yyyyMM" element={<PayrollDetailPage />} />
+                
+                <Route element={<AdminRouteGuard />}>
+                    <Route path="/admin/inquiries" element={<AdminInquiriesPage />} />
+                    <Route path="/admin/inquiries/:id" element={<AdminInquiryDetailPage />}/>
+                </Route>
+
+                <Route path="/employee/inquiries" element={<MyInquiriesPage />} />
+                <Route path="/employee/inquiries/new" element={<MyInquiryCreatePage />} />
+                <Route path="/employee/inquiries/:id" element={<MyInquiryDetailPage />} />
+
+                <Route path="/owner/inquiries" element={<MyInquiriesPage />} />
+                <Route path="/owner/inquiries/new" element={<MyInquiryCreatePage />} />
+                <Route path="/owner/inquiries/:id" element={<MyInquiryDetailPage />} />
             </Routes>
         </BrowserRouter>
     );

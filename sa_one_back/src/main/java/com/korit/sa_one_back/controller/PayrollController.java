@@ -1,5 +1,6 @@
 package com.korit.sa_one_back.controller;
 
+import com.korit.sa_one_back.dto.response.PayrollDetailRespDto;
 import com.korit.sa_one_back.dto.response.PayrollIdRespDto;
 import com.korit.sa_one_back.entity.payroll.PayrollDetailEntity;
 import com.korit.sa_one_back.entity.payroll.PayrollEntity;
@@ -19,34 +20,22 @@ public class PayrollController {
 
     private final PayrollService payrollService;
 
-    @GetMapping("/api/me")
-    public ResponseEntity<PayrollEntity> getMyPayroll(
+    @GetMapping("/me")
+    public ResponseEntity<List<PayrollEntity>> listMyPayrolls(
             @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestParam Long storeId,
-            @RequestParam("ym") String payslipYearMonth
+            @RequestParam Long storeId
     ) {
         Long userId = principalUser.getUserId();
-        return ResponseEntity.ok(payrollService.getMyPayroll(userId, storeId, payslipYearMonth));
+        return ResponseEntity.ok(payrollService.listMyPayrolls(userId, storeId));
     }
 
-    @PostMapping("/api/me")
-    public ResponseEntity<PayrollIdRespDto> generateMyPayroll(
+    @GetMapping("/me/{yyyyMM}")
+    public ResponseEntity<PayrollDetailRespDto> getMyPayrollDetail(
             @AuthenticationPrincipal PrincipalUser principalUser,
             @RequestParam Long storeId,
-            @RequestParam("ym") String payslipYearMonth
+            @PathVariable String yyyyMM
     ) {
         Long userId = principalUser.getUserId();
-        Long payrollId = payrollService.generateMyPayroll(userId, storeId, payslipYearMonth);
-        return ResponseEntity.ok(new PayrollIdRespDto(payrollId));
-    }
-
-    @GetMapping("/api/me/details")
-    public ResponseEntity<List<PayrollDetailEntity>> getMyPayrollDetails(
-            @AuthenticationPrincipal PrincipalUser principalUser,
-            @RequestParam Long storeId,
-            @RequestParam("ym") String payslipYearMonth
-    ) {
-        Long userId = principalUser.getUserId();
-        return ResponseEntity.ok(payrollService.getMyPayrollDetails(userId, storeId, payslipYearMonth));
+        return ResponseEntity.ok(payrollService.getMyPayrollDetail(userId, storeId, yyyyMM));
     }
 }
