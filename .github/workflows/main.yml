@@ -69,7 +69,7 @@ jobs:
           cd sa_one_back
           echo ${{env.APPLICATION_SECRET}} | base64 --decode > ./src/main/resources/application-secret-prod.yml
           chmod 777 ./mvnw
-          ./mvnw clean package -Dskiptests
+          ./mvnw clean package -Dskiptests -Dactive.profile=${{env.ACTIVE_PROFILE}}
 
       - name: Springboot Docker image build
         run: |
