@@ -16,7 +16,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtTokenProvider jwtTokenProvider;
     private final String baseurl;
 
-    public OAuth2SuccessHandler(JwtTokenProvider jwtTokenProvider, @Value("${app.frontend.baseurl}") String baseurl) {
+    public OAuth2SuccessHandler(JwtTokenProvider jwtTokenProvider, @Value("${domain.name.https}") String baseurl) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.baseurl = baseurl;
     }

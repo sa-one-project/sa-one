@@ -70,9 +70,17 @@ app:
 spring:
   config:
     activate:
-      on-profile: secret
+      on-profile: secret-dev
     import:
       - classpath:application-secret-dev.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: secret-prod
+    import:
       - classpath:application-secret-prod.yml
 
 ---
