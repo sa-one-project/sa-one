@@ -82,7 +82,7 @@ spring:
     activate:
       on-profile: secret-prod
   import:
-    - classpath: application-secret-prod.yml
+    classpath: application-secret-prod.yml
 
 ---
 
