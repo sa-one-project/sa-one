@@ -44,9 +44,9 @@ public class EmployeeController {
      * 직원 목록 조회
      * - workplaceId를 storeId로 사용
      */
-    @GetMapping("/api/workplaces/{workplaceId}/employees")
+    @GetMapping("/api/store/{storeId}/employees")
     public ResponseEntity<List<EmployeeListRespDto>> getEmployees(
-            @PathVariable Long workplaceId,
+            @PathVariable Long storeId,
             @AuthenticationPrincipal PrincipalUser principalUser
     ) {
         System.out.println(
@@ -55,7 +55,7 @@ public class EmployeeController {
                         .map(GrantedAuthority::getAuthority)
                         .toList()
         );
-        return ResponseEntity.ok(employeeService.getEmployees(workplaceId, principalUser.getUserId()));
+        return ResponseEntity.ok(employeeService.getEmployees(storeId, principalUser.getUserId()));
     }
 
     /**

@@ -33,6 +33,13 @@ public class UserService extends DefaultOAuth2UserService {
 
     // Local 회원 생성
     public void createLocalUser(SignUpReqDto dto) {
+        if (dto.getRoleId() == 1) {
+            throw new IllegalArgumentException("ADMIN 계정은 회원가입으로 생성할 수 없습니다.");
+        }
+        if (dto.getRoleId() != 2 && dto.getRoleId() != 3) {
+            throw new IllegalArgumentException("roleId는 OWNER(2) 또는 STAFF(3)만 가능합니다.");
+        }
+
         UserEntity user = dto.toLocalEntity(passwordEncoder);
         userMapper.insertLocalUser(user);
     }

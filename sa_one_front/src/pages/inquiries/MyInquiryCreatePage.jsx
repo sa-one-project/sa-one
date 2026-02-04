@@ -14,7 +14,7 @@ export default function MyInquiryCreatePage() {
 
     const onSubmit = async () => {
         if (!title.trim() || !content.trim()) {
-            alert("제목/내용을 입력해줘");
+            alert("제목/내용을 입력해주세요");
             return;
         }
 
@@ -45,11 +45,7 @@ export default function MyInquiryCreatePage() {
                     placeholder="storeId (선택)"
                 />
 
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="제목"
-                />
+                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="제목" />
 
                 <textarea
                     value={content}

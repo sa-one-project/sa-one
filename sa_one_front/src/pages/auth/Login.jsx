@@ -24,25 +24,24 @@ function Login() {
     const handleLogin = async () => {
         try {
             const response = await axiosInstance.post("/api/auth/local/signin", loginData);
-            if (response.status === 200) {
-                const { accessToken, user } = response.data;
-                // 백엔드에서 user 객체를 안 줄 경우를 대비한 방어 코드
-                const roleId = user ? user.roleId : (selectedRole === "owner" ? 1 : 2);
 
-                console.log("로그인한 사용자의 roleId:", roleId);
+            const { accessToken, roleId } = response.data;
 
-                // 역할 검증 로직
-                if (selectedRole === "owner" && Number(roleId) !== 1) {
-                    alert("사장님 계정이 아닙니다."); return;
-                }
-                if (selectedRole === "employee" && Number(roleId) !== 2) {
-                    alert("직원 계정이 아닙니다."); return;
-                }
-
-                login(accessToken, roleId);
-                alert("로그인 성공");
-                navigate(Number(roleId) === 1 ? "/owner" : "/employee");
+            if (selectedRole === "owner" && Number(roleId) !== 2) {
+                alert("사장님 계정이 아닙니다.");
+                return;
             }
+            if (selectedRole === "employee" && Number(roleId) !== 3) {
+                alert("직원 계정이 아닙니다.");
+                return;
+            }
+
+            login(accessToken, roleId);
+
+            if (Number(roleId) === 1) navigate("/admin");
+            else if (Number(roleId) === 2) navigate("/owner");
+            else navigate("/employee");
+
         } catch (error) {
             alert(error.response?.data?.message || "로그인 실패");
         }

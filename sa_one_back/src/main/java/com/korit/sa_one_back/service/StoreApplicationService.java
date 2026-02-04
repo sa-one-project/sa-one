@@ -42,35 +42,4 @@ public class StoreApplicationService {
                 .collect(Collectors.toList());
     }
 
-    // 어드민용
-    @Transactional
-    public void createStoreInformation(StoreApplicationReqDto dto) throws IllegalAccessException {
-        StoreApplicationEntity storeApplication = storeMapper.selectByApplicationIdForAdmin(dto.getStoreApplicationId());
-
-        if (storeApplication == null) {
-            throw new IllegalAccessException("요청하신 신청 정보를 찾을 수 없습니다.");
-        }
-
-        if (!"PENDING".equalsIgnoreCase(storeApplication.getStatus())) {
-            throw new IllegalAccessException("이미 처리된 신청입니다.");
-        }
-
-        storeMapper.insertStore(dto.toStoreEntity());
-
-        storeMapper.updateApplicationStatus(dto.getStoreApplicationId(), "APPROVED", LocalDateTime.now(), null);
-    }
-
-    public void rejectApplication(Long storeApplicationId, String rejectReason) throws IllegalAccessException {
-        StoreApplicationEntity storeApplication = storeMapper.selectByApplicationIdForAdmin(storeApplicationId);
-
-        if (storeApplication == null) {
-            throw new IllegalAccessException("요청하신 신청 정보를 찾을 수 없습니다.");
-        }
-
-        if (!"REJECTED".equalsIgnoreCase(storeApplication.getStatus())) {
-            throw new IllegalAccessException("이미 처리된 신청입니다.");
-        }
-
-        storeMapper.updateApplicationStatus(storeApplicationId, "REJECTED", LocalDateTime.now(), rejectReason);
-    }
 }

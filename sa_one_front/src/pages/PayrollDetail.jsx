@@ -47,7 +47,7 @@ function PayrollDetail() {
     useEffect(() => {
         const fetchStores = async () => {
             try {
-                const response = await axiosInstance.get("/stores/me", { headers: getAuthHeader() });
+                const response = await axiosInstance.get("/api/stores/me", { headers: getAuthHeader() });
                 const storeData = Array.isArray(response.data) ? response.data : [];
                 setStores(storeData);
                 if (storeData.length > 0) setSelectedStore(storeData[0]);
@@ -77,29 +77,29 @@ function PayrollDetail() {
         fetchEmployees();
     }, [selectedStore, isOwner]);
 
-    const handleSave = async () => {
-        if (!selectedEmployee || !selectedStore) {
-            alert("매장과 직원을 선택해야 저장할 수 있습니다.");
-            return;
-        }
+    // const handleSave = async () => {
+    //     if (!selectedEmployee || !selectedStore) {
+    //         alert("매장과 직원을 선택해야 저장할 수 있습니다.");
+    //         return;
+    //     }
 
-        try {
-            const payload = {
-                storeId: selectedStore.storeId,
-                userId: selectedEmployee.userId,
-                yearMonth: "2024-05", 
-                ...values,
-                ...details
-            };
+    //     try {
+    //         const payload = {
+    //             storeId: selectedStore.storeId,
+    //             userId: selectedEmployee.userId,
+    //             yearMonth: "2024-05", 
+    //             ...values,
+    //             ...details
+    //         };
 
-            await axiosInstance.post("/api/payrolls/save", payload, { headers: getAuthHeader() });
-            alert("급여명세서가 저장되었습니다.");
-            setIsEditMode(false);
-        } catch (error) {
-            console.error("저장 실패", error);
-            alert("저장 중 오류가 발생했습니다.");
-        }
-    };
+    //         await axiosInstance.post("/api/payrolls/save", payload, { headers: getAuthHeader() });
+    //         alert("급여명세서가 저장되었습니다.");
+    //         setIsEditMode(false);
+    //     } catch (error) {
+    //         console.error("저장 실패", error);
+    //         alert("저장 중 오류가 발생했습니다.");
+    //     }
+    // };
 
     const handleInputChange = (e, key, isDetail = false) => {
         const val = e.target.value.replace(/[^0-9]/g, ""); 
@@ -154,11 +154,11 @@ function PayrollDetail() {
                     </div>
                 </div>
 
-                {isOwner && (
-                    <button css={S.editBtn} onClick={isEditMode ? handleSave : () => setIsEditMode(true)}>
-                        {isEditMode ? "저장" : "수정"}
-                    </button>
-                )}
+                {isOwner 
+                // && (<button css={S.editBtn} onClick={isEditMode ? handleSave : () => setIsEditMode(true)}>
+                //         {isEditMode ? "저장" : "수정"}
+                //     </button>)
+                }
 
                 <div css={S.titleBar(isOwner)}>급여명세서</div>
 

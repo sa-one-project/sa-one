@@ -6,20 +6,29 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem("accessToken");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+
+    const url = config.url || "";
+    const isAuthRequest = url.startsWith("/api/auth/");
+
+    config.headers = config.headers ?? {};
+
+    if (token && !isAuthRequest) {
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization;
+    }
+
     return config;
 });
 
 axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
+    (res) => res,
+    (err) => {
+        if (err.response?.status === 401) {
             console.warn("인증 만료");
         }
-        return Promise.reject(error);
+        return Promise.reject(err);
     }
 );
-
-console.log("VITE_API_BASE_URL =", import.meta.env.VITE_API_BASE_URL);
 
 export default axiosInstance;

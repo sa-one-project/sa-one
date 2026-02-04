@@ -21,15 +21,6 @@ public class PayrollFunctions {
 
     private final PayrollMapper payrollMapper;
 
-    public YearMonth parseYearMonth(String yyyyMm) {
-        if (yyyyMm == null || yyyyMm.length() != 6) {
-            throw new IllegalStateException("월별 급여명세서 형식은 yyyymm 이어야 합니다. :" + yyyyMm);
-        }
-        int year = Integer.parseInt(yyyyMm.substring(0, 4));
-        int month = Integer.parseInt(yyyyMm.substring(4, 6));
-        return YearMonth.of(year, month);
-    }
-
     public int calcMinutesPay(int minutes, int hourlyRate) {
         BigDecimal perMinutes =
                 BigDecimal.valueOf(hourlyRate)

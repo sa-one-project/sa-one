@@ -1,10 +1,12 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "../../stores/useAuthStore";
 import { addMyInquiryComment, fetchMyInquiryDetail } from "../../apis/myInquiriesApi";
 
 export default function MyInquiryDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { roleId } = useAuthStore();
 
     const [detail, setDetail] = useState(null);
     const [comment, setComment] = useState("");
@@ -17,14 +19,14 @@ export default function MyInquiryDetailPage() {
         setLoading(true);
         setError("");
         try {
-            const res = await fetchMyInquiryDetail(id);
+            const res = await fetchMyInquiryDetail(roleId, id);
             setDetail(res);
         } catch (e) {
             setError(e.response?.data?.message || "문의 상세 조회 실패");
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [id, roleId]);
 
     useEffect(() => {
         load();
@@ -35,7 +37,7 @@ export default function MyInquiryDetailPage() {
         if (!comment.trim()) return;
 
         try {
-            await addMyInquiryComment(id, comment);
+            await addMyInquiryComment(roleId, id, comment);
             setComment("");
             await load();
             alert("댓글 등록 완료");
