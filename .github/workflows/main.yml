@@ -23,6 +23,7 @@ jobs:
             echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DONGWAN}}" >> $GITHUB_ENV
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DONGWAN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_DONGWAN}}" >> $GITHUB_ENV
+            echo "ACTIVE_PROFILE=dongwan" >> $GITHUB_ENV
           
           elif [ ${{github.ref}} == 'refs/heads/deploy-seohyun' ]; then
 
@@ -35,6 +36,7 @@ jobs:
             echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $GITHUB_ENV
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_SEOHYUN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_SEOHYUN}}" >> $GITHUB_ENV
+            echo "ACTIVE_PROFILE=seohyun" >> $GITHUB_ENV
 
           elif [ ${{github.ref}} == 'refs/heads/deploy-dabin' ]; then
 
@@ -47,6 +49,7 @@ jobs:
             echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DABIN}}" >> $GITHUB_ENV
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DABIN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_DABIN}}" >> $GITHUB_ENV
+            echo "ACTIVE_PROFILE=dabin" >> $GITHUB_ENV
 
           fi
 
