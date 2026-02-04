@@ -25,31 +25,31 @@ jobs:
             echo "REACT_ENV=${{secrets.REACT_ENV_DONGWAN}}" >> $GITHUB_ENV
             echo "ACTIVE_PROFILE=dongwan" >> $GITHUB_ENV
           
-          elif [ ${{github.ref}} == 'refs/heads/deploy-seohyun' ]; then
+          # elif [ ${{github.ref}} == 'refs/heads/deploy-seohyun' ]; then
 
-            echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_SEOHYUN}}" >> $GITHUB_ENV
-            echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
-            echo "GCP_VM_SSHKEY<<EOF" >> $GITHUB_ENV
-            echo "${{ secrets.GCP_VM_SSHKEY_SEOHYUN }}" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $GITHUB_ENV
-            echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_SEOHYUN}}" >> $GITHUB_ENV
-            echo "REACT_ENV=${{secrets.REACT_ENV_SEOHYUN}}" >> $GITHUB_ENV
-            echo "ACTIVE_PROFILE=seohyun" >> $GITHUB_ENV
+          #   echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "GCP_VM_SSHKEY<<EOF" >> $GITHUB_ENV
+          #   echo "${{ secrets.GCP_VM_SSHKEY_SEOHYUN }}" >> $GITHUB_ENV
+          #   echo "EOF" >> $GITHUB_ENV
+          #   echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "REACT_ENV=${{secrets.REACT_ENV_SEOHYUN}}" >> $GITHUB_ENV
+          #   echo "ACTIVE_PROFILE=seohyun" >> $GITHUB_ENV
 
-          elif [ ${{github.ref}} == 'refs/heads/deploy-dabin' ]; then
+          # elif [ ${{github.ref}} == 'refs/heads/deploy-dabin' ]; then
 
-            echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_DABIN}}" >> $GITHUB_ENV
-            echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_DABIN}}" >> $GITHUB_ENV
-            echo "GCP_VM_SSHKEY<<EOF" >> $GITHUB_ENV
-            echo "${{ secrets.GCP_VM_SSHKEY_DABIN }}" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-            echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_DABIN}}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DABIN}}" >> $GITHUB_ENV
-            echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DABIN}}" >> $GITHUB_ENV
-            echo "REACT_ENV=${{secrets.REACT_ENV_DABIN}}" >> $GITHUB_ENV
-            echo "ACTIVE_PROFILE=dabin" >> $GITHUB_ENV
+          #   echo "GCP_VM_HOST=${{secrets.GCP_VM_HOST_DABIN}}" >> $GITHUB_ENV
+          #   echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_DABIN}}" >> $GITHUB_ENV
+          #   echo "GCP_VM_SSHKEY<<EOF" >> $GITHUB_ENV
+          #   echo "${{ secrets.GCP_VM_SSHKEY_DABIN }}" >> $GITHUB_ENV
+          #   echo "EOF" >> $GITHUB_ENV
+          #   echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_DABIN}}" >> $GITHUB_ENV
+          #   echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DABIN}}" >> $GITHUB_ENV
+          #   echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DABIN}}" >> $GITHUB_ENV
+          #   echo "REACT_ENV=${{secrets.REACT_ENV_DABIN}}" >> $GITHUB_ENV
+          #   echo "ACTIVE_PROFILE=dabin" >> $GITHUB_ENV
 
           fi
 
