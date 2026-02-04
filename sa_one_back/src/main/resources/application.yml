@@ -12,13 +12,6 @@ spring:
 spring:
   config:
     activate:
-      on-profile: dev
-
----
-
-spring:
-  config:
-    activate:
       on-profile: dongwan-server
 
 domain:
@@ -64,6 +57,13 @@ app:
   cors:
     allowed-origins:
       - "https://test12345.store"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
 
 ---
 
