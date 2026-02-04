@@ -23,7 +23,7 @@ jobs:
             echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_DONGWAN}}" >> $GITHUB_ENV
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_DONGWAN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_DONGWAN}}" >> $GITHUB_ENV
-            # echo "ACTIVE_PROFILE=dongwan" >> $GITHUB_ENV
+            echo "ACTIVE_PROFILE=dongwan" >> $GITHUB_ENV
           
           # elif [ ${{github.ref}} == 'refs/heads/deploy-seohyun' ]; then
 
