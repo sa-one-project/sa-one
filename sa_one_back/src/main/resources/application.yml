@@ -71,7 +71,7 @@ spring:
   config:
     activate:
       on-profile: secret-dev
-  import: optional:classpath:application-secret-dev.yml
+    import: optional:classpath:application-secret-dev.yml
 
 ---
 
@@ -79,7 +79,7 @@ spring:
   config:
     activate:
       on-profile: secret-prod
-  import: classpath:application-secret-prod.yml
+    import: classpath:application-secret-prod.yml
 
 ---
 
