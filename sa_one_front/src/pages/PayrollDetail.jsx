@@ -116,7 +116,7 @@ function PayrollDetail() {
     return (
         <div css={S.container}>
             <button onClick={() => { setIsOwner(!isOwner); setIsEditMode(false); }} 
-                style={{ position: 'fixed', top: '20px', left: '20px', padding: '10px 15px', background: isOwner ? '#7c98b6' : '#8a7ab0', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', zIndex: 1000, fontWeight: 'bold' }}>
+                style={{ position: 'fixed', top: '20px', left: '20px', padding: '10px 15px', background: isOwner ? '#7c98b6' : '#8a7ab0', color: '#fff', border: 'none', borderRadius: '5px', cursor: 'pointer', zIndex: 1000, fontWeight: 'bold'}}>
                 {isOwner ? "현재: 사장님 모드" : "현재: 직원 모드"}
             </button>
 
