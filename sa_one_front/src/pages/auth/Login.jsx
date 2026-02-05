@@ -26,20 +26,26 @@ function Login() {
             const response = await axiosInstance.post("/api/auth/local/signin", loginData);
 
             const { accessToken, roleId } = response.data;
+            const rid = Number(roleId);
 
-            if (selectedRole === "owner" && Number(roleId) !== 2) {
+            console.log("store.roleId =", useAuthStore.getState().roleId);
+            console.log("store.role =", useAuthStore.getState().role);
+            console.log("ls.roleId =", localStorage.getItem("roleId"));
+            console.log("ls.role =", localStorage.getItem("role"));
+
+            if (selectedRole === "owner" && rid !== 2) {
                 alert("사장님 계정이 아닙니다.");
                 return;
             }
-            if (selectedRole === "employee" && Number(roleId) !== 3) {
+            if (selectedRole === "employee" && rid !== 3) {
                 alert("직원 계정이 아닙니다.");
                 return;
             }
 
-            login(accessToken, roleId);
+            login(accessToken, rid);
 
-            if (Number(roleId) === 1) navigate("/admin");
-            else if (Number(roleId) === 2) navigate("/owner");
+            if (rid === 1) navigate("/admin");
+            else if (rid === 2) navigate("/owner");
             else navigate("/employee");
 
         } catch (error) {

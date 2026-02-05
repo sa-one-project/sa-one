@@ -15,7 +15,7 @@ function Header() {
         navigate("/");
     };
 
-    // 사장님(roleId === 1)이면 파란색, 그 외(직원)는 보라색 스타일 적용
+    // 관리자(1)=파랑 / 사장(2), 직원(3)=보라
     const getActiveStyle = (path) => {
         if (location.pathname !== path) return {};
         return { color: Number(roleId) === 1 ? "#599afd" : "#9370DB" };
@@ -28,23 +28,59 @@ function Header() {
             <nav css={S.nav}>
                 {isLoggedIn ? (
                     <>
-                        {/* 사장님 전용 메뉴 */}
                         {Number(roleId) === 1 && (
+                            <>
+                                <Link 
+                                    to="/admin/dashboard"
+                                    style={getActiveStyle("/admin/dashboard")}
+                                >
+                                    관리자 대시보드
+                                </Link>
+
+                                <Link 
+                                    to="/admin/inquiries"
+                                    style={getActiveStyle("/admin/inquiries")}
+                                >
+                                    문의함
+                                </Link>
+                            </>
+                        )}
+
+                        {Number(roleId) === 2 && (
+                            <>
+                                <Link 
+                                    to="/signup/employee"
+                                    style={getActiveStyle("/signup/employee")}
+                                >
+                                    직원 추가
+                                </Link>
+
+                                <Link 
+                                    to="/owner/inquiries"
+                                    style={getActiveStyle("/owner/inquiries")}
+                                >
+                                    문의함
+                                </Link>
+                            </>
+                        )}
+
+                        {Number(roleId) === 3 && (
                             <Link 
-                                to="/signup/employee" 
-                                className={location.pathname === "/signup/employee" ? "active" : ""}
-                                style={getActiveStyle("/signup/employee")}
+                                to="/employee/inquiries"
+                                style={getActiveStyle("/employee/inquiries")}
                             >
-                                직원 추가
+                                문의함
                             </Link>
                         )}
+
+                        <Link to="/calendar" style={getActiveStyle("/calendar")}>직원 캘린더</Link>
+                        <Link to="/status" style={getActiveStyle("/status")}>출근 현황</Link>
+                        <Link to="/salary" style={getActiveStyle("/salary")}>급여명세서</Link>
+                        <Link to="/mypage" style={getActiveStyle("/mypage")}>마이페이지</Link>
                         
-                        <Link to="/calendar" className={location.pathname === "/calendar" ? "active" : ""} style={getActiveStyle("/calendar")}>직원 캘린더</Link>
-                        <Link to="/status" className={location.pathname === "/status" ? "active" : ""} style={getActiveStyle("/status")}>출근 현황</Link>
-                        <Link to="/payrolls" className={location.pathname === "/payrolls" ? "active" : ""} style={getActiveStyle("/payrolls")}>급여명세서</Link>
-                        <Link to="/mypage" className={location.pathname === "/mypage" ? "active" : ""} style={getActiveStyle("/mypage")}>마이페이지</Link>
-                        
-                        <button onClick={handleLogout} className="logout-btn">로그아웃</button>
+                        <button onClick={handleLogout} className="logout-btn">
+                            로그아웃
+                        </button>
                     </>
                 ) : (
                     <>
