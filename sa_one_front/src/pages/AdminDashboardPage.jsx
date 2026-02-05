@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchAdminDashboard } from "../../apis/adminDashboardApi";
+import { fetchAdminDashboard } from "../apis/adminDashboardApi";
 
 export default function AdminDashboardPage() {
     const [data, setData] = useState(null);

@@ -16,8 +16,8 @@
     </sql>
 
     <select id="countStores" resultType="int">
-        select count
-            (*)
+        select
+        count(*)
         from
             store_tb s
         where

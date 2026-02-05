@@ -133,6 +133,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(List.of("https://githib.store"));
+//        cors.setAllowedOrigins(List.of("http://localhost:5173"));
         cors.setAllowedMethods(List.of("*"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setAllowCredentials(true);

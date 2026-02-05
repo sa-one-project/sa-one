@@ -6,8 +6,8 @@
 <mapper namespace="com.korit.sa_one_back.mapper.admin.AdminStoreApplicationMapper">
 
     <select id="countByStatus" resultType="int">
-        select count
-            (*)
+        select
+        count(*)
         from
             store_application_tb
         where
