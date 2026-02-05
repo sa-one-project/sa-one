@@ -24,6 +24,7 @@ import AdminRouteGuard from "./routes/AdminRouteGuard.jsx";
 import MyInquiryCreatePage from "./pages/inquiries/MyInquiryCreatePage.jsx";
 import OAuth2CallbackPage from "./pages/auth/OAuth2CallbackPage.jsx";
 import OAuth2SignupPage from "./pages/auth/OAuth2SignupPage.jsx";
+import AdminDashboardPage from "./pages/AdminDashboardPage.jsx";
 
 // 헤더 노출 여부를 제어하는 별도의 컴포넌트
 function HeaderWrapper() {
@@ -88,6 +89,8 @@ function App() {
 
                 <Route path="/oauth2/callback" element={<OAuth2CallbackPage />} />
                 <Route path="/oauth2/signup" element={<OAuth2SignupPage />} />
+
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             </Routes>
         </BrowserRouter>
     );
