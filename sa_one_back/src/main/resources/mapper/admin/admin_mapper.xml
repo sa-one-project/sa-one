@@ -6,16 +6,16 @@
 <mapper namespace="com.korit.sa_one_back.mapper.admin.AdminDashboardMapper">
 
     <select id="countStoreApplicationsByStatus" resultType="java.lang.Integer">
-        select count
-            (*)
+        select
+            count(*)
         from
             store_application_tb
         where
             status = 'PENDING'
     </select>
     <select id="countInquiryByStatus" resultType="java.lang.Integer">
-        select count
-            (*)
+        select
+            count(*)
         from
             inquiry_tb
         where
