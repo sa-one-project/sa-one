@@ -70,7 +70,8 @@ function Login() {
                             직원 로그인
                         </label>
                         <label className={selectedRole === "admin" ? "active" : ""}>
-                            <input type="radio" name="role" value="admin" disabled />
+                            <input type="radio" name="role" value="admin" 
+                                    onChange={() => setSelectedRole("admin")} checked={selectedRole === "admin"}  />
                             관리자 로그인
                         </label>
                     </div>
