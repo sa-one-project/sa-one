@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -5,6 +6,7 @@ import {
     fetchAdminInquiryDetail,
     updateAdminInquiryStatus,
 } from "../../apis/adminInquiriesApi";
+import * as S from "./AdminInquiryDetailStyle";
 
 const STATUS_OPTIONS = ["OPEN", "IN_PROGRESS", "CLOSED"];
 
@@ -76,67 +78,62 @@ export default function AdminInquiryDetailPage() {
     }
 
     return (
-        <div>
-            <button onClick={() => navigate("/admin/inquiries")}>
-                ← 목록
-            </button>
+        <div css={S.page}>
+            <div css={S.card}>
+                <div css={S.topBar}>
+                    <button css={S.backBtn} onClick={() => navigate("/admin/inquiries")}>
+                        ← 목록
+                    </button>
+                </div>
 
-            <h2>{detail.title}</h2>
+                <h2 css={S.title}>{detail.title}</h2>
 
-            <div>
-                <div>작성자: {detail.userName} ({detail.userEmail})</div>
-                <div>매장: {detail.storeName || "-"}</div>
-                <div>작성일: {detail.createdAt}</div>
-                <div>검토일: {detail.reviewedAt || "-"}</div>
-            </div>
+                <div css={S.metaGrid}>
+                    <div><span className="muted">작성자:</span> {detail.userName} ({detail.userEmail})</div>
+                    <div><span className="muted">매장:</span> {detail.storeName || "-"}</div>
+                    <div><span className="muted">작성일:</span> {detail.createdAt}</div>
+                    <div><span className="muted">검토일:</span> {detail.reviewedAt || "-"}</div>
+                </div>
 
-            <div>
-                {detail.content}
-            </div>
+                <div css={S.contentBox}>{detail.content}</div>
 
-            <div>
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                    {STATUS_OPTIONS.map((s) => (
-                        <option key={s} value={s}>
-                            {s}
-                        </option>
+                <div css={S.actionRow}>
+                    <select css={S.select} value={status} onChange={(e) => setStatus(e.target.value)}>
+                        {STATUS_OPTIONS.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                        ))}
+                    </select>
+
+                    <button css={S.btn} onClick={onSaveStatus}>상태 저장</button>
+                </div>
+
+                <h3 css={S.sectionTitle}>댓글</h3>
+
+                <div css={S.commentList}>
+                    {(detail.comments || []).map((c, idx) => (
+                        <div key={c.commentId ?? idx} css={S.commentItem}>
+                            <div className="head">
+                                작성자: {c.userName ?? c.userId ?? "-"} / {c.createdAt ?? "-"}
+                            </div>
+                            <div className="body">{c.content ?? ""}</div>
+                        </div>
                     ))}
-                </select>
 
-                <button onClick={onSaveStatus}>
-                    상태 저장
-                </button>
-            </div>
+                    {(detail.comments || []).length === 0 && (
+                            <div style={{ color: "#6b7280", fontWeight: 800 }}>댓글이 없습니다.</div>
+                    )}
+                </div>
 
-            <h3>댓글</h3>
-
-            <div>
-                {(detail.comments || []).map((c, idx) => (
-                    <div key={c.commentId ?? idx}>
-                        <div>
-                            작성자: {c.userName ?? c.userId ?? "-"} / {c.createdAt ?? "-"}
-                        </div>
-                        <div style={{ whiteSpace: "pre-wrap" }}>
-                            {c.content ?? ""}
-                        </div>
+                <div css={S.editor}>
+                    <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="관리자 답변을 입력하세요"
+                    />
+                    <div className="row">
+                        <button css={S.btn} onClick={onAddComment}>댓글 등록</button>
                     </div>
-                ))}
-
-                {(detail.comments || []).length === 0 && (
-                    <div>댓글이 없습니다.</div>
-                )}
-            </div>
-
-            <div>
-                <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="관리자 답변을 입력하세요"
-                    rows={4}
-                />
-                <button onClick={onAddComment}>
-                    댓글 등록
-                </button>
+                </div>
             </div>
         </div>
     );
