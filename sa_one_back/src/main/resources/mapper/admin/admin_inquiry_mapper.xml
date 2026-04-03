@@ -15,8 +15,8 @@
     </sql>
 
     <select id="count" resultType="int">
-        select count
-            (*)
+        select
+        count(*)
         from
             inquiry_tb i
         where

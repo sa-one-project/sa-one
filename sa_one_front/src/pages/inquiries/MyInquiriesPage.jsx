@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchMyInquiries } from "../../apis/myInquiriesApi";
+import * as S from "./styles";
 
 const STATUS_OPTIONS = ["", "OPEN", "IN_PROGRESS", "CLOSED"];
 
@@ -50,33 +51,47 @@ export default function MyInquiriesPage() {
 
     const onSubmitSearch = () => {
         setPage(1);
-        // load()는 page 변경 후 자동 호출되게 두는 게 보통 안전함
     };
 
     return (
-        <div>
-            <h2>내 문의</h2>
+        <div css={S.page}>
+            <div css={S.card}>
+                <div css={S.header}>
+                <div>
+                    <h2 css={S.title}>내 문의</h2>
+                    <p css={S.subText}>상태/검색어로 필터링하고, 클릭해서 상세로 이동하세요.</p>
+                </div>
+                </div>
 
-            <div>
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <div css={S.controls}>
+                <div css={S.leftControls}>
+                    <select css={S.select} value={status} onChange={(e) => setStatus(e.target.value)}>
                     {STATUS_OPTIONS.map((s) => (
                         <option key={s} value={s}>
-                            {s || "전체"}
+                        {s || "전체"}
                         </option>
                     ))}
-                </select>
+                    </select>
 
-                <input value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="검색어" />
+                    <input
+                    css={S.input}
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                    placeholder="검색어"
+                    />
+                </div>
 
-                <button onClick={onSubmitSearch}>검색</button>
-                <button onClick={() => navigate("new")}>문의 작성</button>
-            </div>
+                <div css={S.btnRow}>
+                    <button css={S.ghostBtn} onClick={onSubmitSearch}>검색</button>
+                    <button css={S.primaryBtn} onClick={() => navigate("new")}>문의 작성</button>
+                </div>
+                </div>
 
-            {loading && <div>로딩중.</div>}
-            {error && <div>{error}</div>}
+                {loading && <div css={S.infoLine}>로딩중…</div>}
+                {error && <div css={S.infoLine}>{error}</div>}
 
-            <div>
-                <div>
+                <div css={S.table}>
+                <div css={S.thead}>
                     <div>ID</div>
                     <div>상태</div>
                     <div>제목</div>
@@ -84,29 +99,34 @@ export default function MyInquiriesPage() {
                 </div>
 
                 {items.map((it) => (
-                    <div key={it.inquiryId} onClick={() => navigate(String(it.inquiryId))}>
-                        <div>{it.inquiryId}</div>
-                        <div>{it.status}</div>
-                        <div>{it.title}</div>
-                        <div>{it.createdAt}</div>
+                    <div key={it.inquiryId} css={S.row} onClick={() => navigate(String(it.inquiryId))}>
+                    <div css={S.cell}>{it.inquiryId}</div>
+                    <div css={S.cell}>
+                        <span css={S.statusPill(it.status)}>{it.status}</span>
+                    </div>
+                    <div css={S.cell} style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {it.title}
+                    </div>
+                    <div css={[S.cell, S.muted]}>{it.createdAt}</div>
                     </div>
                 ))}
 
-                {!loading && items.length === 0 && <div style={{ padding: 12 }}>데이터가 없습니다.</div>}
-            </div>
+                {!loading && items.length === 0 && <div css={S.empty}>데이터가 없습니다.</div>}
+                </div>
 
-            <div>
-                <button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+                <div css={S.footer}>
+                <button css={S.pageBtn} disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
                     이전
                 </button>
 
-                <div>
+                <div css={S.pageInfo}>
                     {page} / {totalPages}
                 </div>
 
-                <button disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
+                <button css={S.pageBtn} disabled={page >= totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
                     다음
                 </button>
+                </div>
             </div>
         </div>
     );

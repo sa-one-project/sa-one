@@ -31,7 +31,6 @@ public class AuthController {
     @PostMapping("/local/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpReqDto dto) {
         userService.createLocalUser(dto);
-        // 가입 후 JWT 발급
         UserEntity user = userMapper.findUserByUsername(dto.getUsername());
         if (user != null) {
             String token = jwtTokenProvider.createToken(user);
@@ -44,7 +43,6 @@ public class AuthController {
     @PostMapping("/oauth2/signup")
     public ResponseEntity<?> oauth2SignUp(@RequestBody OAuth2SignUpReqDto dto,
                                           @AuthenticationPrincipal PrincipalUser principalUser) {
-        // SecurityContext에 OAuth2 인증 정보 존재
         if (principalUser == null || principalUser.isRegistered()) {
             return ResponseEntity.badRequest().body("이미 가입된 사용자 또는 인증 정보 없음");
         }

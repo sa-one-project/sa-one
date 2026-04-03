@@ -64,7 +64,6 @@ public class UserService extends DefaultOAuth2UserService {
         if (!passwordEncoder.matches(password, foundUser.getPassword())) {
             throw new BadCredentialsException(defaultMessage);
         }
-        // 토큰 생성
         final String accessToken = jwtTokenProvider.createToken(foundUser);
 
         return accessToken;
