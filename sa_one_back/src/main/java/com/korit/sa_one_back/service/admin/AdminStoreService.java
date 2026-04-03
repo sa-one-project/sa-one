@@ -44,5 +44,6 @@ public class AdminStoreService {
         AdminStoreDetailRespDto dto = adminStoreMapper.findStoreDetail(storeId);
         if (dto == null) throw new IllegalArgumentException("매장을 찾을 수 없습니다.");
         return dto;
+
     }
 }
