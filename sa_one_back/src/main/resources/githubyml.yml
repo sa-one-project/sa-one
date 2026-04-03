@@ -29,7 +29,7 @@ jobs:
             echo "GCP_VM_USERNAME=${{secrets.GCP_VM_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
             echo "GCP_VM_SSHKEY=${{secrets.GCP_VM_SSHKEY_SEOHYUN}}" >> $GITHUB_ENV
             echo "DOCKER_USERNAME=${{secrets.DOCKER_USERNAME_SEOHYUN}}" >> $GITHUB_ENV
-            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $GITHUB_ENV
+            echo "DOCKER_PASSWORD=${{secrets.DOCKER_PASSWORD_SEOHYUN}}" >> $git checkout deploy-seohyunGITHUB_ENV
             echo "APPLICATION_SECRET=${{secrets.APPLICATION_SECRET_SEOHYUN}}" >> $GITHUB_ENV
             echo "REACT_ENV=${{secrets.REACT_ENV_SEOHYUN}}" >> $GITHUB_ENV
 
