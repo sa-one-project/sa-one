@@ -132,8 +132,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowedOrigins(List.of("https://githib.store"));
-        cors.setAllowedOrigins(List.of("http://localhost:5173"));
+        cors.setAllowedOrigins(List.of("*"));
         cors.setAllowedMethods(List.of("*"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setAllowCredentials(true);
