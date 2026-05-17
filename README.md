@@ -355,7 +355,7 @@ src/main
 
 ## 회원 탈퇴
 
-<img src="./Images/회원탈퇴.png" width="1000"/>
+<img src="Images/회원탈퇴.png" width="1000"/>
 
 <br/>
 
