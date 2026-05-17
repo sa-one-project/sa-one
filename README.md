@@ -28,10 +28,9 @@
 
 | 이름 | 담당 | 역할 |
 |---|---|---|
-| 김동완 | FullStack | 관리자 페이지 및 문의 기능 구현 |
-| 문서현 | Backend | 인증/인가, 급여, 출결, 직원 관리 등 백엔드 전반 구현 |
-| 송다빈 | Frontend | 로그인, 출결, 캘린더, 마이페이지 등 프론트엔드 구현 |
-
+| 김동완 | FullStack | OAuth2 로그인, 관리자 페이지, 문의 및 급여 기능 구현 |
+| 문서현 | Backend | Local 로그인, 마이페이지, 문의함, 직원·출결 관리 구현, 문서 정리 |
+| 송다빈 | Frontend | 로그인, 캘린더, 출결, 급여, 마이페이지 UI 구현 |
 <br/>
 
 # 🛠 기술 스택
@@ -304,11 +303,155 @@ src/main
 
 # 📷 주요 화면
 
-- 시작 페이지
-- 직원 출결
-- 캘린더
-- 급여 관리
-- 관리자 페이지
+---
+
+# 📌 ERD
+
+<img src="./Images/ERD.png" width="1000"/>
+
+<br/>
+
+---
+
+# 🏠 초기 화면
+
+## 시작 화면
+
+<img src="./Images/시작하기.jpg" width="1000"/>
+
+<br/>
+
+## 메인 화면
+
+<img src="./Images/초기화면.png" width="1000"/>
+
+<br/>
+
+<img src="./Images/초기화면_2.png" width="1000"/>
+
+<br/>
+
+---
+
+# 🔐 인증 기능
+
+## 로그인
+
+<img src="./Images/로그인.jpg" width="1000"/>
+
+<br/>
+
+## 회원가입
+
+<img src="./Images/회원가입.jpg" width="1000"/>
+
+<br/>
+
+## 비밀번호 변경
+
+<img src="./Images/비밀번호_변경.png" width="1000"/>
+
+<br/>
+
+## 회원 탈퇴
+
+<img src="./Images/회원탈퇴.png" width="1000"/>
+
+<br/>
+
+---
+
+# 👤 마이페이지
+
+## 직원 마이페이지
+
+<img src="./Images/직원_마이페이지.png" width="1000"/>
+
+<br/>
+
+## 사장 마이페이지
+
+<img src="./Images/사장_마이페이지.png" width="1000"/>
+
+<br/>
+
+---
+
+# 📋 문의 관리
+
+## 관리자 문의함
+
+<img src="./Images/관리자_문의함.png" width="1000"/>
+
+<br/>
+
+---
+
+# 👥 직원 관리
+
+## 직원 등록
+
+<img src="./Images/사장_직원추가.png" width="1000"/>
+
+<br/>
+
+## 직원 캘린더
+
+<img src="./Images/직원_캘린더.png" width="1000"/>
+
+<br/>
+
+## 사장 캘린더
+
+<img src="./Images/사장_직원캘린더.png" width="1000"/>
+
+<br/>
+
+## 캘린더 수정
+
+<img src="./Images/캘린더_수정.png" width="1000"/>
+
+<br/>
+
+---
+
+# ⏰ 출결 관리
+
+## 직원 출근 현황
+
+<img src="./Images/출근현황.png" width="1000"/>
+
+<br/>
+
+## 사장 출근 현황
+
+<img src="./Images/사장_출근현황.png" width="1000"/>
+
+<br/>
+
+---
+
+# 💰 급여 관리
+
+## 직원 급여명세서
+
+<img src="./Images/직원_급여명세서.png" width="1000"/>
+
+<br/>
+
+## 사장 급여명세서
+
+<img src="./Images/사장_급여명세서.png" width="1000"/>
+
+<br/>
+
+---
+
+# 📊 관리자 기능
+
+## 관리자 대시보드
+
+<img src="./Images/관리자_대시보드.png" width="1000"/>
 
 <br/>
 
