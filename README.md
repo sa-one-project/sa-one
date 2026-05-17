@@ -253,6 +253,8 @@ src/main
 
 > 사용자, 매장, 직원, 출결, 급여, 문의 데이터를 기반으로 관계형 데이터베이스를 설계했습니다.
 
+<img src="./Images/ERD.png" width="1000"/>
+
 <br/>
 
 # 🔗 API 설계
@@ -302,14 +304,6 @@ src/main
 <br/>
 
 # 📷 주요 화면
-
----
-
-# 📌 ERD
-
-<img src="./Images/ERD.png" width="1000"/>
-
-<br/>
 
 ---
 
